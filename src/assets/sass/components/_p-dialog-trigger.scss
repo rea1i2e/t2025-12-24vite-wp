@@ -1,0 +1,38 @@
+@use '../global' as *;
+
+.p-dialog-trigger {
+  position: relative;
+  cursor: zoom-in;
+
+}
+
+.p-dialog-trigger__thumbnail {
+
+}
+
+.p-dialog-trigger__thumbnail img {
+  aspect-ratio: 2/1;
+  object-fit: cover;
+}
+
+.p-dialog-trigger__content {
+
+}
+
+.p-dialog-trigger__title {
+
+}
+
+.p-dialog-trigger__excerpt {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.p-dialog-trigger__button {
+  position: absolute;
+  inset: 0;
+  cursor: zoom-in;
+}
+

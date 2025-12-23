@@ -1,0 +1,32 @@
+@use "../global" as *;
+
+/* 動きを抑えたい人への配慮 */
+@media (prefers-reduced-motion: reduce) {
+  [data-fadein] {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* 初期（見えない＆少し下） */
+[data-fadein] {
+  opacity: 0;
+  transform: translateY(rem(40));
+  transition: opacity 1.4s cubic-bezier(0.2, 0.6, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+/* 表示状態 */
+[data-fadein].is-show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 遅延設定（pcで1行・複数列を想定／最大4列） */
+@each $delay in (200, 400, 600) {
+  [data-fadein="#{$delay}"] {
+    @include mq() {
+      transition-delay: #{$delay}ms;
+    }
+  }
+}

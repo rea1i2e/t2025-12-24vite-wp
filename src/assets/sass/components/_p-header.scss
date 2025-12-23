@@ -1,0 +1,83 @@
+@use "../global" as *;
+
+.p-header {
+  background-color: #ccc;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.p-header.is-show {
+  background-color: #eee;
+}
+
+.p-header__inner {
+  display: flex;
+  height: 100%;
+  padding-inline: rem($padding-sp);
+  @include mq() {
+  }
+}
+
+.p-header__logo {
+  width: rem(40);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  @include mq() {
+  }
+}
+
+.p-header__logo-link {
+  display: block;
+}
+
+.p-header__menu-button {
+  margin-left: auto;
+  @include mq() {
+    display: none;
+  }
+}
+
+.p-header__nav {
+  display: none;
+  @include mq() {
+    display: block;
+    margin-left: auto;
+    height: 100%;
+  }
+}
+
+.p-header__nav-items {
+  height: 100%;
+  display: flex;
+}
+
+.p-header__nav-item {
+  height: 100%;
+}
+
+.p-header__nav-item-link {
+  display: flex;
+  align-items: center;
+  gap: rem(8);
+  height: 100%;
+  padding-inline: rem(16);
+  @include mq() {
+  }
+}
+
+.p-header__nav-item-link[target="_blank"]::after {
+  --icon-size: #{rem(20)};
+  margin-block: calc((1lh - var(--icon-size)) / 2);
+  block-size: var(--icon-size);
+  aspect-ratio: 1/1;
+  mask-image: url(../images/common/icon_external.svg);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  background-color: currentColor;
+  content: "";
+}
+
+.p-header__menu-button {
+  z-index: 101;
+}

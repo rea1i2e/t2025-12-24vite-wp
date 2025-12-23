@@ -1,0 +1,20 @@
+/**
+* 参考：https://www.tak-dcxi.com/article/introduce-kiso-css/
+*/
+@import "kiso.css";
+
+img {
+  /* 低解像度ディスプレイでのジャギー防止 */
+  overflow-clip-margin: unset;
+  display: block;
+  width: 100%;
+}
+
+button {
+  border-width: 0;
+  padding: 0;
+}
+
+h1 {
+  margin-block: unset;
+}

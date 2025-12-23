@@ -1,0 +1,61 @@
+<%# 必須項目には required 属性を付与（mail.phpでも別途必須項目指定が必要） %>
+<form class="p-form" method="post" action="../MailForm01_utf8/mail.php" id="js-form">
+  <dl class="p-form__dl">
+    <dt class="p-form__dt"><label class="p-form__label" for="name">お名前<span class="p-form__required">必須</span></label></dt>
+    <dd class="p-form__dd">
+      <input type="text" name="お名前" id="name" placeholder="例：山田太郎" required />
+    </dd>
+    <dt class="p-form__dt"><label class="p-form__label">性別<span class="p-form__optional">任意</span></label></dt>
+    <dd class="p-form__dd">
+      <label><input type="radio" name="性別" value="男性" />男性</label>
+      <label><input type="radio" name="性別" value="女性" />女性</label>
+    </dd>
+    <dt class="p-form__dt"><label class="p-form__label" for="tel">電話番号<span class="p-form__optional">任意</span></label></dt>
+    <dd class="p-form__dd">
+      <input type="text" name="電話番号" id="tel" placeholder="例：03-0000-0000" />
+    </dd>
+    <dt class="p-form__dt"><label class="p-form__label" for="email">メールアドレス<span class="p-form__required">必須</span></label></dt>
+    <dd class="p-form__dd">
+      <input type="email" name="Email" id="email" placeholder="例：example@example.com" required />
+    </dd>
+    <dt class="p-form__dt"><label class="p-form__label" for="js-flatpickr-date">電話での連絡希望時間帯<span class="p-form__required">必須</span></label></dt>
+    <dd class="p-form__dd">
+      <div class="p-form__dd-inner">
+        <label class="p-form__inner-label" for="js-flatpickr-date">ご希望日</label>
+        <div class="p-form__select-wrap">
+          <input name="連絡希望日" type="text" id="js-flatpickr-date" placeholder="日付を選択" required>
+        </div>
+        <label class="p-form__inner-label" for="tel-time">ご希望時間</label>
+        <div class="p-form__select-wrap">
+          <%
+            const telTimeOptions = [
+              "09:00～12:00",
+              "12:00～15:00",
+            ];
+          %>
+          <select name="ご希望時間" id="tel-time">
+            <option value="">選択してください</option>
+            <% telTimeOptions.forEach(function(option) { %>
+            <option value="<%= option %>"><%= option %></option>
+            <% }); %>
+          </select>
+        </div>
+      </div>
+      <p class="p-form__note">※祝日は体験レッスンの受付は行っておりません。</p>
+    </dd>
+    <dt class="p-form__dt"><label class="p-form__label" for="question">ご質問など<span class="p-form__optional">任意</span></label></dt>
+    <dd class="p-form__dd">
+      <textarea name="お問い合わせ内容" id="question"></textarea>
+    </dd>
+  </dl>
+  <div class="p-form__privacy-policy">
+    <p class="p-form__agree">
+      <label><input name="個人情報保護方針に同意する[]" type="checkbox" value="個人情報保護方針に同意する" required /><span class="p-form__agree-text"><a href="<%= page.root + pages.privacy.path %>">個人情報保護方針</a>に同意する。</span></label>
+    </p>
+  </div>
+  <div class="p-form__buttons">
+    <button class="p-form__submit c-button c-button--submit" type="submit" id="js-submit">
+      <span class="c-button__text">送信する</span>
+    </button>
+  </div>
+</form>

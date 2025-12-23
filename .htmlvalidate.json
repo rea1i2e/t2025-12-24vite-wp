@@ -1,0 +1,18 @@
+{
+  "extends": ["html-validate:recommended"],
+  "rules": {
+    "close-order": "error",
+    "void-content": "error",
+    "attribute-empty-style": "off",
+    "void-style": "off",
+    "doctype-style": "off",
+    "element-required-content": "off",
+    "no-trailing-whitespace": "off",
+    "attr-quotes": "error",
+    "no-implicit-close": "error",
+    "element-permitted-content": "error",
+    "no-inline-style": "off",
+    "tel-non-breaking": "off",
+    "no-autoplay": "off"
+  }
+}

@@ -1,0 +1,202 @@
+name: Deploy to FTP
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      deploy_to_production:
+        description: '本番環境にデプロイする'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Generate deployment summary
+      if: always()
+      run: |
+        echo "## 📋 デプロイサマリー" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**ブランチ:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "**コミット:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "**コミッター:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+        echo "**イベント:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.ref }}" = "refs/heads/master" ]; then
+          echo "**🌐 テスト環境:** ${{ secrets.TEST_URL }}" >> $GITHUB_STEP_SUMMARY
+        elif [ "${{ github.event_name }}" = "pull_request" ]; then
+          echo "**🌐 PRテスト環境:** ${{ secrets.TEST_URL }}" >> $GITHUB_STEP_SUMMARY
+        elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.deploy_to_production }}" = "true" ]; then
+          echo "**🌐 本番環境:** 本番環境" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📁 デプロイされたファイル" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        find dist -type f -name "*.html" -o -name "*.css" -o -name "*.js" | head -20 >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🔗 確認リンク" >> $GITHUB_STEP_SUMMARY
+        echo "- [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+        echo "- [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})" >> $GITHUB_STEP_SUMMARY
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          echo "- [プルリクエスト](https://github.com/${{ github.repository }}/pull/${{ github.event.number }})" >> $GITHUB_STEP_SUMMARY
+        fi
+      
+    - name: Deploy to Test Environment
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./dist/
+        server-dir: ./
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/.DS_Store
+          **/Thumbs.db
+          
+    - name: Deploy to Production
+      if: github.event_name == 'workflow_dispatch' && inputs.deploy_to_production == true
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./dist/
+        server-dir: ./
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/.DS_Store
+          **/Thumbs.db
+          
+    - name: Deploy to Test Environment (PR)
+      if: github.event_name == 'pull_request'
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./dist/
+        server-dir: ./
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/.DS_Store
+          **/Thumbs.db
+          
+    - name: Send Discord Notification - Test Deploy
+      if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      uses: Ilshidur/action-discord@master
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      with:
+        args: |
+          🧪 **テスト環境デプロイ完了**
+          
+          **ブランチ:** ${{ github.ref_name }}
+          **コミット:** ${{ github.sha }}
+          **コミッター:** ${{ github.actor }}
+          **メッセージ:** ${{ github.event.head_commit.message }}
+          
+          **テストURL:** ${{ secrets.TEST_URL }}
+          
+          **🔍 変更確認:**
+          • [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+          
+    - name: Send Discord Notification - Production Deploy
+      if: success() && github.event_name == 'workflow_dispatch' && inputs.deploy_to_production == true
+      uses: Ilshidur/action-discord@master
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      with:
+        args: |
+          🚀 **本番環境デプロイ完了**
+          
+          **ブランチ:** ${{ github.ref_name }}
+          **コミット:** ${{ github.sha }}
+          **実行者:** ${{ github.actor }}
+          **メッセージ:** ${{ github.event.head_commit.message }}
+          
+          **本番URL:** 本番環境
+          
+          **🔍 変更確認:**
+          • [本番環境を開く](https://example.com)
+          • [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+          
+    - name: Send Discord Notification - PR Test Deploy
+      if: success() && github.event_name == 'pull_request'
+      uses: Ilshidur/action-discord@master
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      with:
+        args: |
+          🔍 **PRテスト環境デプロイ完了**
+          
+          **PR:** #${{ github.event.number }}
+          **ブランチ:** ${{ github.head_ref }}
+          **コミット:** ${{ github.sha }}
+          **作成者:** ${{ github.actor }}
+          
+          **PRテストURL:** ${{ secrets.TEST_URL }}
+          
+          **🔍 変更確認:**
+          • [PRテスト環境を開く](${{ secrets.TEST_URL }})
+          • [プルリクエスト](https://github.com/${{ github.repository }}/pull/${{ github.event.number }})
+          • [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+          
+    - name: Send Discord Notification - Failure
+      if: failure()
+      uses: Ilshidur/action-discord@master
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      with:
+        args: |
+          ❌ **デプロイ失敗**
+          
+          **ブランチ:** ${{ github.ref_name }}
+          **コミット:** ${{ github.sha }}
+          **コミッター:** ${{ github.actor }}
+          **イベント:** ${{ github.event_name }}
+          
+          **🔍 詳細確認:**
+          • [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+          ${{ github.event_name == 'pull_request' && format('• [プルリクエスト](https://github.com/{0}/pull/{1})', github.repository, github.event.number) || '' }}
+          
+          **🌐 環境URL:**
+          ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && format('• テスト環境: {0}', secrets.TEST_URL) || '' }}
+          ${{ github.event_name == 'pull_request' && format('• PRテスト環境: {0}', secrets.TEST_URL) || '' }}
+          ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_to_production == true && '• 本番環境: 本番環境' || '' }}

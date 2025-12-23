@@ -1,0 +1,67 @@
+@use "../global" as *;
+
+.p-splide-thumbnail {
+}
+
+.p-splide-thumbnail__main.splide {
+}
+
+.p-splide-thumbnail__main-track.splide__track {
+}
+
+.p-splide-thumbnail__main-list.splide__list {
+}
+
+.p-splide-thumbnail__main-item.splide__slide {
+}
+
+.p-splide-thumbnail__main-item.splide__slide img {
+  aspect-ratio: 3/2;
+  object-fit: cover;
+}
+
+.p-splide-thumbnail__nav.splide {
+}
+
+.p-splide-thumbnail__nav-arrows.splide__arrows {
+  // background-color: pink;
+  display: flex;
+  justify-content: space-between;
+}
+
+.p-splide-thumbnail__nav-prev.splide__arrow--prev,
+.p-splide-thumbnail__nav-next.splide__arrow--next {
+  background-color: currentColor;
+  width: rem(50);
+  aspect-ratio: 1;
+  mask: url(/assets/images/common/icon_arrow_right.svg) no-repeat center / contain;
+}
+
+.p-splide-thumbnail__nav-prev.splide__arrow--prev {
+  rotate: 180deg;
+}
+
+.p-splide-thumbnail__nav-track.splide__track {
+}
+
+.p-splide-thumbnail__nav-list.splide__list {
+}
+
+.p-splide-thumbnail__nav-item.splide__slide {
+  width: rem(120);
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+  @include mq() {
+    width: rem(300);
+  }
+}
+
+.p-splide-thumbnail__nav-item.splide__slide.is-active {
+  opacity: 0.7;
+}
+
+.p-splide-thumbnail__nav-item.splide__slide img {
+  aspect-ratio: 16/9;
+  object-fit: cover;
+}
+

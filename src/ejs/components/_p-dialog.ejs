@@ -1,0 +1,16 @@
+<% dialogs.forEach((dialog, index) => { %>
+  <dialog id="modal<%- index + 1 %>" class="p-dialog js-dialog" <%- index === 0 ? 'autofocus' : '' %>>
+    <div class="p-dialog__container">
+      <figure class="p-dialog__image">
+        <img src="<%- imagePath + dialog.image.file %>" alt="<%- dialog.image.alt %>">
+      </figure>
+      <h1 class="p-dialog__title"><%- dialog.title %></h1>
+      <% dialog.descriptions.forEach(description => { %>
+        <p class="p-dialog__description"><%- description %></p>
+      <% }); %>
+    </div>
+    <button class="p-dialog__close" type="button" aria-labelledby="close<%- index + 1 %>" data-modal-close>
+      <span id="close<%- index + 1 %>" class="u-screen-reader">モーダルを閉じる</span>
+    </button>
+  </dialog>
+<% }); %>

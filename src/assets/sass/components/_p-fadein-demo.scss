@@ -1,0 +1,126 @@
+@use "../global" as *;
+
+.p-fadein-demo {
+  background-color: #f7f7fb;
+  color: #1a1a1a;
+  line-height: 1.8;
+}
+
+.p-fadein-demo__hero,
+.p-fadein-demo__guide,
+.p-fadein-demo__cards,
+.p-fadein-demo__notes {
+  padding-block: clamp(60px, 8vw, 120px);
+}
+
+.p-fadein-demo__hero {
+  background: linear-gradient(135deg, #ede8ff, #fef9ff);
+}
+
+.p-fadein-demo__eyebrow {
+  font-size: rem(14);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #6c5ce7;
+  display: inline-flex;
+  gap: rem(8);
+}
+
+.p-fadein-demo__eyebrow::before {
+  content: "";
+  width: rem(24);
+  height: 1px;
+  background-color: currentColor;
+  align-self: center;
+}
+
+.p-fadein-demo__title {
+  margin-top: rem(16);
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.p-fadein-demo__lead {
+  margin-top: rem(24);
+  max-width: 720px;
+  font-size: rem(16);
+}
+
+.p-fadein-demo__guide {
+  background-color: #fff;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.p-fadein-demo__section-title {
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 600;
+  margin-bottom: rem(24);
+}
+
+.p-fadein-demo__steps {
+  counter-reset: step;
+  display: grid;
+  gap: rem(16);
+  padding-left: 0;
+  list-style: none;
+}
+
+.p-fadein-demo__steps li {
+  counter-increment: step;
+  padding: rem(16) rem(20) rem(16) rem(56);
+  border-radius: rem(12);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: #fafbff;
+  position: relative;
+}
+
+.p-fadein-demo__steps li::before {
+  content: counter(step);
+  position: absolute;
+  inset-block: 50%;
+  inset-inline-start: rem(20);
+  translate: 0 -50%;
+  width: rem(28);
+  height: rem(28);
+  border-radius: 50%;
+  background-color: #6c5ce7;
+  color: #fff;
+  font-size: rem(14);
+  display: grid;
+  place-items: center;
+}
+
+.p-fadein-demo__cards-inner {
+  display: grid;
+  gap: rem(24);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.p-fadein-demo__card {
+  padding: rem(24);
+  border-radius: rem(16);
+  background-color: #fff;
+  box-shadow: 0 15px 45px rgba(108, 92, 231, 0.1);
+  border: 1px solid rgba(108, 92, 231, 0.1);
+}
+
+.p-fadein-demo__card-title {
+  font-size: rem(18);
+  font-weight: 600;
+  margin-bottom: rem(12);
+}
+
+.p-fadein-demo__card-body {
+  font-size: rem(14);
+}
+
+.p-fadein-demo__notes {
+  background-color: #fff;
+}
+
+.p-fadein-demo__notes p {
+  max-width: 720px;
+}
+

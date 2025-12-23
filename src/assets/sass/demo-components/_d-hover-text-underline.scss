@@ -1,0 +1,9 @@
+@use "../global" as *;
+
+.d-hover-text-underline {
+  @include hover-text-underline();
+}
+
+.d-hover-text-underline-slide {
+  @include hover-text-underline-slide();
+}

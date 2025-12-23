@@ -1,0 +1,45 @@
+<% 
+let tag = (page.path === '') ? 'h1' : 'div';
+%>
+<header class="p-header l-header">
+  <div class="p-header__inner">
+    <<%= tag %> class="p-header__logo">
+      <a href="<%- page.root %>" class="p-header__logo-link">
+        <img src="/vite.svg" alt="vite">
+      </a>
+    </<%= tag %>>
+    <button type="button" class="p-header__menu-button c-menu-button" id="js-menu" aria-controls="js-drawer" aria-expanded="false" aria-label="メニューを開閉する">
+      <span class="c-menu-button__line"></span>
+    </button>
+    <nav class="p-header__nav" aria-label="グローバルナビゲーション">
+      <ul class="p-header__nav-items">
+        <% Object.entries(pages).forEach(([key, item]) => { %>
+        <% if (!isExcluded(key, headerExcludePages)) { %>
+        <li class="p-header__nav-item">
+          <a href="<%- item.path.startsWith('http') ? item.path : page.root + item.path %>" class="p-header__nav-item-link" <%- item.targetBlank ? 'target="_blank" rel="noopener noreferrer"' : '' %>>
+            <%- item.label %>
+          </a>
+        </li>
+        <% } %>
+        <% }); %>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="js-drawer" class="p-drawer l-drawer" aria-hidden="true" inert>
+  <div class="p-drawer__inner">
+    <nav class="p-drawer__nav" aria-label="ドロワーメニュー">
+      <ul class="p-drawer__nav-items" id="js-drawer-menu">
+        <% Object.entries(pages).forEach(([key, item]) => {
+          if (!isExcluded(key, drawerExcludePages)) { %>
+        <li class="p-drawer__nav-item">
+          <a href="<%- item.path.startsWith('http') ? item.path : page.root + item.path %>" class="p-drawer__nav-item-link" <%- item.targetBlank ? 'target="_blank" rel="noopener noreferrer"' : '' %>>
+            <%- item.label %>
+          </a>
+        </li>
+        <% }
+        }); %>
+      </ul>
+    </nav>
+  </div>
+</div>

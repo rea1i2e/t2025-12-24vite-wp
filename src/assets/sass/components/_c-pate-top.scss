@@ -1,0 +1,33 @@
+@use '../global' as *;
+
+.c-page-top {
+  position: sticky;
+  bottom: rem(60);
+  padding-inline-end: rem(60);
+  background-color: orange;
+  text-align: right;
+}
+
+.c-page-top__button {
+  display: inline-flex;
+  flex-direction: column;
+  gap: rem(10);
+  background-color: pink;
+  opacity: 0;
+}
+
+.c-page-top__button.is-show {
+  opacity: 1;
+}
+
+.c-page-top__button::before {
+  width: rem(40);
+  aspect-ratio: 1;
+  background: url(/assets/images/common/arrow_up.svg) no-repeat center / contain;
+  content: "";
+}
+
+.c-page-top__text {
+  font-size: rem(10);
+}
+

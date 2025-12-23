@@ -1,0 +1,19 @@
+@use "../global" as *;
+
+@if $startFrom == sp {
+  //pcで表示
+  .u-pc {
+    display: none;
+    @include mq() {
+      display: block; /* 古いブラウザ用フォールバック */
+      display: revert; /* モダンブラウザではUAスタイルに戻す */
+    }
+  }
+} @else {
+  //pcで表示
+  .u-pc {
+    @include mq() {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,58 @@
+@use "../global" as *;
+// demoページ用のスタイル（納品時にはファイルごと削除）
+
+.p-demo {
+  padding-block-start: calc(var(--header-height) + rem(80));
+}
+
+.p-demo__inner {
+  display: grid;
+  gap: rem(60);
+}
+
+.p-demo__inner > * {
+  min-width: 0;
+}
+
+.p-demo__section {
+  min-width: 0;
+  display: grid;
+  gap: rem(20);
+}
+
+.p-demo__section > * {
+  min-width: 0;
+}
+
+.p-demo__title {
+}
+
+.p-demo__items {
+  margin-block: revert;
+  padding-inline-start: revert;
+  list-style-type: revert;
+  display: grid;
+  gap: rem(8);
+}
+
+.p-demo__item {
+}
+
+.p-demo__cards {
+  @include mq() {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: rem(32);
+  }
+}
+
+.p-demo__card {
+}
+
+.p-demo__button {
+  margin-block-start: rem(80);
+  text-align: center;
+}
+
+.p-demo__text {
+}

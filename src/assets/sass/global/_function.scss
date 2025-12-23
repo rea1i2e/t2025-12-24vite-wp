@@ -1,0 +1,90 @@
+@use "sass:math";
+@use "setting" as *;
+
+// 数値のみを取り出す
+// 参照：https://css-tricks.com/snippets/sass/strip-unit-function/
+@function strip-unit($number) {
+  @if type-of($number) == "number" and not unitless($number) {
+    @return math.div($number, $number * 0 + 1);
+  }
+  @return $number;
+}
+
+@function vw($window_width, $size) {
+  @return math.div($size, $window_width) * 100vw;
+}
+
+@function cqi($window_width, $size) {
+  @return math.div($size, $window_width) * 100cqi;
+}
+
+// spデザインの状態を基準にvw変換
+@function vwsp($size) {
+	@return math.div($size, $width-sp) * 100vw;
+}
+
+// spデザインの状態を基準にcqi変換
+@function cqisp($size) {
+	@return math.div($size, $width-sp) * 100cqi;
+}
+
+// pcデザインの状態を基準にvw変換
+@function vwpc($size) {
+	@return math.div($size, $width-pc) * 100vw;
+}
+
+// pcデザインの状態を基準にcqi変換
+@function cqipc($size) {
+	@return math.div($size, $width-pc) * 100cqi;
+}
+
+//  pcデザインの状態を基準にvw変換（pcデザインの状態異常には拡大しない）
+@function maxvwpc($size) {
+  @if $size < 0 {
+    // マイナスの値が入力された場合
+    @return max((math.div($size, $width-pc) * 100vw), #{$size}px);
+  } @else {
+    // マイナスの値が入力されなかった場合
+    @return min((math.div($size, $width-pc) * 100vw), #{$size}px);
+  }
+}
+//  pcデザインの状態を基準にvw変換（pcデザインの幅の状態異常には拡大しない）
+@function maxcqipc($size) {
+  @if $size < 0 {
+    // マイナスの値が入力された場合
+    @return max((math.div($size, $width-pc) * 100cqi), #{$size}px);
+  } @else {
+    // マイナスの値が入力されなかった場合
+    @return min((math.div($size, $width-pc) * 100cqi), #{$size}px);
+  }
+}
+
+// remへの計算式（16pxを基準としている。10pxを基準とする場合は16を10に変更する）
+@function rem($pixels) {
+  @return math.div($pixels, 16) * 1rem;
+}
+
+// px → remへと変換し、最小値10pxを設ける
+@function maxrem($pixels) {
+  @return max(math.div($pixels, 16) * 1rem, 10px);
+}
+
+// ピクパ時は、remに変換しない
+// @function rem($pixels) {
+//   @return #{$pixels}px;
+// }
+// @function maxrem($pixels) {
+//   @return #{$pixels}px;
+// }
+// @function maxvwsp($pixels) {
+//   @return #{$pixels}px;
+// }
+// @function maxvwpc($pixels) {
+//   @return #{$pixels}px;
+// }
+// @function maxcqisp($pixels) {
+//   @return #{$pixels}px;
+// }
+// @function maxcqipc($pixels) {
+//   @return #{$pixels}px;
+// }

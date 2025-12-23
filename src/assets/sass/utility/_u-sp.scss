@@ -1,0 +1,15 @@
+@use "../global" as *;
+
+.u-sp {
+    @if $startFrom == sp {
+    @include mq() {
+      display: none;
+    }
+  } @else {
+    display: none;
+    @include mq() {
+      display: block; /* 古いブラウザ用フォールバック */
+      display: revert; /* モダンブラウザではUAスタイルに戻す */
+    }
+  }
+}

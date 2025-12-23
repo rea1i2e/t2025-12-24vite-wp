@@ -1,0 +1,29 @@
+<% if (typeof accordionItems === 'undefined') {
+  accordionItems = [
+    {
+      summary: '概要',
+      content: '折りたたまれている部分です。'
+    },
+    {
+      summary: 'Q. buttonタグでもアコーディオンは作れそうですが？',
+      content: '<p>A. <code>details</code>タグと<code>summary</code>タグがオススメです。</p>'
+    }
+  ];
+} %>
+<div class="p-accordions">
+  <% accordionItems.forEach((item) => { %>
+  <details class="p-accordions__details js-details">
+    <summary class="p-accordions__summary js-summary">
+      <span class="p-accordions__summary-inner">
+        <%- item.summary %><span class="p-accordions__icon"></span>
+      </span>
+    </summary>
+    <div class="p-accordions__content js-content">
+      <div class="p-accordions__content-inner">
+        <%- item.content %>
+      </div>
+    </div>
+  </details>
+  <% }); %>
+</div>
+

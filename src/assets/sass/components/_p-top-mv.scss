@@ -1,0 +1,46 @@
+@use "../global" as *;
+
+.p-top-mv {
+  position: relative;
+}
+
+.p-top-mv__slider.splide {
+  height: 100%;
+}
+
+.p-top-mv__slider-track.splide__track {
+  height: 100%;
+}
+
+.p-top-mv__slider-list.splide__list {
+  // height: 100%; // splideに書いてある
+}
+
+.p-top-mv__slider-item.splide__slide {
+  height: 100%;
+}
+
+.p-top-mv__slider-item img {
+  height: 100%;
+  object-fit: cover;
+  transition: transform 8s ease-out;
+}
+
+.p-top-mv__slider-item.is-active img {
+  transform: scale(1.1);
+}
+
+.p-top-mv__copy {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.p-top-mv__inner {
+}
+
+.p-top-mv__main-copy {
+}
+
+.p-top-mv__sub-copy {
+}

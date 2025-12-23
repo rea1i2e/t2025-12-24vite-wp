@@ -1,0 +1,27 @@
+@use "../global" as *;
+/* フォントの読み込みとカスタムプロパティ定義 */
+
+@font-face {
+  font-family: "Noto Sans JP VF";
+  src: url("/fonts/NotoSansJP-VF.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --desigh-width: 375;
+  --base-font-family: "Noto Sans JP VF";
+  --color-black: #000;
+  --color-white: #fff;
+  --header-height: #{rem(72)};
+  --inner: #{rem($inner-sp)};
+  --inner-padding: #{rem($padding-sp)};
+  --hover-transition: 0.3s ease-in-out;
+  @include mq() {
+    --desigh-width: 1440;
+    --header-height: #{rem(90)};
+    --inner-padding: #{rem($padding-pc)};
+    --inner: #{rem($inner-pc)};
+  }
+}

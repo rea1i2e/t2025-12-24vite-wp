@@ -1,0 +1,67 @@
+<% 
+  const key = 'demoHoverCard';
+  const pageData = pages[key];
+  const page = {
+    title: pageData.title ? pageData.title + titleSeparator + siteName : siteName,
+    description: pageData.description,
+    keywords: pageData.keywords,
+    path: pageData.path,
+    root: pageData.root,
+  };
+%>
+<!DOCTYPE html>
+<html lang="ja">
+<%- include(ejsPath + 'common/_head.ejs', { page }) %>
+
+<body>
+  <%- include(ejsPath + 'common/_header.ejs', { page }) %>
+<main class="p-demo">
+  <div class="p-demo__inner l-inner">
+    <h1 class="p-demo__title"><%- pageData.title %></h1>
+    <section class="p-demo__section">
+      <h2 class="p-demo__subtitle">カード型：画像拡大</h2>
+      <div class="p-demo__content">
+        <div class="p-demo-cards">
+          <% posts.slice(0, 3).forEach((post) => { %>
+            <article class="p-demo-cards__item">
+              <a href="<%- post.link %>" class="p-demo-cards__item-link p-demo-cards__item-link--hover-scale">
+                <figure class="p-demo-cards__image">
+                  <img src="<%- imagePath + post.image.file %>" alt="<%- post.image.alt %>">
+                </figure>
+                <div class="p-demo-cards__body">
+                  <h3 class="p-demo-cards__title"><%- post.title %></h3>
+                  <p class="p-demo-cards__description"><%- post.description %></p>
+                </div>
+              </a>
+            </article>
+          <% }); %>
+        </div>
+      </div>
+    </section>
+    <section class="p-demo__section">
+      <h2 class="p-demo__subtitle">カード型：シャドウ（途中）</h2>
+      <div class="p-demo__content">
+        <div class="p-demo-cards">
+          <% posts.slice(0, 3).forEach((post) => { %>
+            <article class="p-demo-cards__item">
+              <a href="<%- post.link %>" class="p-demo-cards__item-link p-demo-cards__item-link--hover-shadow">
+                <figure class="p-demo-cards__image">
+                  <img src="<%- imagePath + post.image.file %>" alt="<%- post.image.alt %>">
+                </figure>
+                <div class="p-demo-cards__body">
+                  <h3 class="p-demo-cards__title"><%- post.title %></h3>
+                  <p class="p-demo-cards__description"><%- post.description %></p>
+                </div>
+              </a>
+            </article>
+          <% }); %>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+  <%- include(ejsPath + 'common/_footer.ejs', { page }) %>
+</body>
+
+</html>
+

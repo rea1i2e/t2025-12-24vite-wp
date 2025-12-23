@@ -1,0 +1,62 @@
+@use "../global" as *;
+
+.p-sub-mv {
+  padding-top: var(--header-height);
+}
+
+.p-sub-mv__inner {
+}
+
+.p-sub-mv__title {
+  color: var(--color-deep-green);
+  padding-bottom: rem(58);
+
+}
+
+.p-sub-mv__title-ja {
+  font-family: var(--font-zen-old-mincho);
+  font-size: maxrem(28);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  @include mq() {
+    font-size: maxrem(48);
+  }
+}
+
+.p-sub-mv__title-en {
+  margin-top: rem(4);
+  font-family: var(--font-zen-old-mincho);
+  font-size: maxrem(14);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  @include mq() {
+    font-size: maxrem(16);
+  }
+}
+
+.p-sub-mv__image {
+}
+
+.p-sub-mv__image img {
+  aspect-ratio: 375/200;
+  object-fit: cover;
+  max-height: rem(390);
+  @include mq() {
+    max-height: rem(390);
+    aspect-ratio: 2880/780;
+  }
+}
+
+
+//画像がないページの余白を合わせる
+.p-sub-mv:not(:has(img)) {
+  @include mq() {
+    padding-top: rem(237);
+  }
+}
+
+.p-sub-mv:not(:has(img))::before {
+  @include mq() {
+    top: rem(113);
+  }
+}

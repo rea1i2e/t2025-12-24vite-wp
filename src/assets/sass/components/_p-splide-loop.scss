@@ -1,0 +1,19 @@
+@use "../global" as *;
+
+.p-splide-loop.splide {
+}
+
+.p-splide-loop__slider-track.splide__track {
+}
+
+.p-splide-loop__slider-list.splide__list {
+}
+
+.p-splide-loop__slider-item.splide__slide {
+  width: rem(300);
+}
+
+.p-splide-loop__slider-item.splide__slide img {
+  aspect-ratio: 3/2;
+  object-fit: cover;
+}

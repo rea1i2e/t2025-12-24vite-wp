@@ -1,0 +1,27 @@
+@use "../global" as *;
+
+.p-loop-slider {
+}
+
+.p-loop-slider__slider {
+}
+
+.p-loop-slider__slider-track {
+}
+
+
+.p-loop-slider__slider-list {
+}
+
+
+.p-loop-slider__slider-item {
+  width: rem(190);
+  @include mq() {
+    width: rem(498);
+  }
+}
+
+.p-loop-slider__slider-item img {
+  aspect-ratio: 966/1140;
+  object-fit: cover;
+}

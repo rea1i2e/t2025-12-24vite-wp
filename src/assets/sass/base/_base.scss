@@ -1,0 +1,83 @@
+@use "../global" as *;
+
+/* リキッドレイアウト */
+html {
+  font-size: 16px;
+
+  @if $startFrom == sp {
+    @media (max-width: 375px) {
+      font-size: vw(375, 16);
+      font-size: cqi(375, 16);
+    }
+
+    @include mq() {
+      font-size: vw($inner-pc + $padding-pc * 2, 16);
+      font-size: cqi($inner-pc + $padding-pc * 2, 16);
+    }
+
+    @media (min-width: #{$inner-pc + $padding-pc * 2}px) {
+      font-size: 16px;
+    }
+  } @else {
+    @media (max-width: #{$inner-pc + $padding-pc * 2}px) {
+      font-size: vw($inner-pc + $padding-pc * 2, 16);
+      font-size: cqi($inner-pc + $padding-pc * 2, 16);
+    }
+
+    @include mq() {
+      font-size: 16px;
+    }
+
+    @media (max-width: 375px) {
+      font-size: vw(375, 16);
+      font-size: cqi(375, 16);
+    }
+  }
+}
+
+body {
+  container-type: inline-size;
+  display: grid;
+  /* headerは浮いているので、行数にカウントしない */
+  grid-template-rows: 1fr auto;
+  min-height: 100vh;
+  text-rendering: optimizeSpeed;
+  font-family: var(--base-font-family);
+  line-height: 1.5;
+}
+
+body > * {
+  min-width: 0; /* gridの副作用防止 */
+}
+
+a {
+  transition: opacity var(--hover-transition);
+}
+
+a:not([class]) {
+  text-decoration: underline;
+}
+
+/* pcの電話番号発信対応 */
+a[href^="tel:"] {
+  @if $startFrom == sp {
+    @include mq() {
+      pointer-events: none;
+    }
+  } @else {
+    pointer-events: none;
+    @include mq() {
+      pointer-events: initial;
+    }
+  }
+}
+
+@media (any-hover: hover) {
+  a:hover {
+    opacity: 0.7;
+  }
+}
+
+a:focus-visible {
+  opacity: 0.7;
+}

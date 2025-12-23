@@ -1,0 +1,139 @@
+@use '../global' as *;
+
+.p-hover-change {
+}
+
+.p-hover-change__items {
+  --image-width: #{rem(600)};
+  // --image-height: #{rem(900)};
+  display: grid;
+  gap: rem(74);
+
+  @include mq() {
+    position: relative;
+    grid-template-columns: calc(var(--image-width) / 3) calc(var(--image-width) / 3) calc(
+        var(--image-width) / 3
+      ) repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(5, auto);
+    grid-template-areas:
+      "image image image item1 item1 item1"
+      "image image image item2 item2 item2"
+      "image image image item3 item3 item3"
+      "image image image item4 item4 item4"
+      "item5 item5 item6 item6 item7 item7";
+    gap: rem(0); // gapで余白を開けると、ホバー切り替え時にデフォルト値に戻ってしまう
+    overflow: visible;
+  }
+}
+
+.p-hover-change__item {
+  padding: 1em;
+  background-color: beige;
+  border: 1px solid;
+}
+
+.p-hover-change__item-inner {
+
+}
+
+.p-hover-change__item--panel {
+  display: none;
+  @include mq() {
+    position: relative;
+    display: block;
+    grid-area: image;
+    background-color: orange;
+  }
+}
+
+.p-hover-change__item:nth-child(2) {
+  @include mq() {
+    grid-area: item1;
+  }
+}
+
+.p-hover-change__item:nth-child(3) {
+  @include mq() {
+    grid-area: item2;
+  }
+}
+
+.p-hover-change__item:nth-child(4) {
+  @include mq() {
+    grid-area: item3;
+  }
+}
+
+.p-hover-change__item:nth-child(5) {
+  @include mq() {
+    grid-area: item4;
+  }
+}
+
+.p-hover-change__item:nth-child(6) {
+  @include mq() {
+    grid-area: item5;
+  }
+}
+
+.p-hover-change__item:nth-child(7) {
+  @include mq() {
+    grid-area: item6;
+  }
+}
+
+.p-hover-change__item:nth-child(8) {
+  @include mq() {
+    grid-area: item7;
+  }
+}
+
+.p-hover-change__image-pc {
+  display: none;
+  @include mq() {
+    position: absolute;
+    inset: 0;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+}
+
+/* 初期表示（1番目） */
+.p-hover-change__image-pc[data-image="0"] {
+  opacity: 1;
+}
+
+.p-hover-change__items:has(.p-hover-change__item[data-image="1"]:hover) .p-hover-change__image-pc[data-image="1"],
+.p-hover-change__items:has(.p-hover-change__item[data-image="2"]:hover) .p-hover-change__image-pc[data-image="2"],
+.p-hover-change__items:has(.p-hover-change__item[data-image="3"]:hover) .p-hover-change__image-pc[data-image="3"],
+.p-hover-change__items:has(.p-hover-change__item[data-image="4"]:hover) .p-hover-change__image-pc[data-image="4"],
+.p-hover-change__items:has(.p-hover-change__item[data-image="5"]:hover) .p-hover-change__image-pc[data-image="5"],
+.p-hover-change__items:has(.p-hover-change__item[data-image="6"]:hover) .p-hover-change__image-pc[data-image="6"],
+.p-hover-change__items:has(.p-hover-change__item[data-image="7"]:hover) .p-hover-change__image-pc[data-image="7"] {
+  opacity: 1;
+}
+
+.p-hover-change__image-pc img {
+  height: 100%;
+  object-fit: cover;
+}
+
+.p-hover-change__image-sp {
+  @include mq() {
+    display: none;
+  }
+}
+
+.p-hover-change__content {
+
+}
+
+.p-hover-change__title {
+
+}
+
+.p-hover-change__description {
+
+}
+

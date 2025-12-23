@@ -1,0 +1,38 @@
+@use "../global" as *;
+
+.p-tab__menu-items {
+  display: flex;
+  gap: rem(5);
+  @include mq() {
+    gap: rem(20);
+  }
+}
+
+.p-tab__button {
+}
+
+.p-tab__button.is-active {
+  background-color: pink;
+}
+
+.p-tab__contents {
+  margin-top: rem(16);
+}
+
+.p-tab__content {
+  display: none;
+}
+
+.p-tab__content.is-active {
+  display: block;
+  animation: fade 0.5s ease;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

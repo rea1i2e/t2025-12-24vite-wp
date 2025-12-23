@@ -1,0 +1,191 @@
+@use "../global" as *;
+
+.c-button {
+  --button-bg: transparent;
+  --button-text-color: #000;
+
+  position: relative;
+  display: inline-flex;
+  padding: rem(16) rem(32);
+  background-color: var(--button-bg);
+  border: 2px solid var(--color-black);
+  color: var(--button-text-color);
+}
+
+@media (any-hover: hover) {
+  .c-button:hover {
+    opacity: 1;
+  }
+}
+
+/* 背景色の変化 */
+.c-button-background {
+  --button-bg-hover: #2ecc71;
+  --button-text-color-hover: #fff;
+  transition:
+  background-color var(--hover-transition),
+  color var(--hover-transition);
+}
+
+@media (any-hover: hover) {
+  .c-button-background:hover {
+    background-color: var(--button-bg-hover);
+    color: var(--button-text-color-hover);
+  }
+}
+
+/* スケール（拡大/縮小） */
+.c-button-scale {
+  transition: transform var(--hover-transition);
+}
+
+@media (any-hover: hover) {
+  .c-button-scale:hover {
+    transform: scale(1.1);
+  }
+}
+
+/* スライド */
+.c-button-slide {
+  --button-bg: transparent;
+  --button-bg-hover: #2ecc71;
+  --button-text-color-hover: #fff;
+  position: relative;
+  z-index: 0;
+  transition: color var(--hover-transition);
+}
+
+.c-button-slide::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-color: var(--button-bg-hover);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+  content: "";
+}
+
+@media (any-hover: hover) {
+  .c-button-slide:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* シャドウの変化 */
+.c-button-shadow {
+  --button-bg: #9b59b6;
+  --button-text-color: #fff;
+  --button-bg-hover: #9b59b6;
+  --button-text-color-hover: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition:
+    box-shadow var(--hover-transition),
+    transform var(--hover-transition);
+}
+
+@media (any-hover: hover) {
+  .c-button-shadow:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+  }
+}
+
+/* グラデーションの変化 */
+.c-button-gradient {
+  --button-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --button-text-color: #fff;
+  --button-bg-hover: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  position: relative;
+  z-index: 0;
+  background-image: var(--button-bg);
+}
+
+.c-button-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--button-bg-hover);
+  border-radius: rem(8);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+// .c-button-gradient > * {
+//   position: relative;
+//   z-index: 1;
+// }
+
+@media (any-hover: hover) {
+  .c-button-gradient:hover::before {
+    opacity: 1;
+  }
+}
+
+/* リップルエフェクト */
+.c-button-ripple {
+  --button-bg: #f39c12;
+  --button-text-color: #fff;
+  --button-bg-hover: #f39c12;
+  --button-text-color-hover: #fff;
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.c-button-ripple .p-button__ripple {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  background-color: red;
+  width: 0;
+  height: 0;
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.6s,
+    height 0.6s;
+}
+
+@media (any-hover: hover) {
+  .c-button-ripple:hover .p-button__ripple {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+/* アイコンのアニメーション */
+.c-button-icon {
+  --button-bg: #1abc9c;
+  --button-text-color: #fff;
+  --button-bg-hover: #1abc9c;
+  --button-text-color-hover: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: rem(8);
+}
+
+.c-button-icon .p-button__icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+@media (any-hover: hover) {
+  .c-button-icon:hover .p-button__icon {
+    transform: translateX(5px);
+  }
+}
+
+/* 動きを抑えたい人への配慮 */
+@media (prefers-reduced-motion: reduce) {
+  .c-button,
+  .p-button__text,
+  .p-button__icon,
+  .p-button__ripple {
+    transition: none !important;
+    transform: none !important;
+  }
+}

@@ -1,0 +1,39 @@
+@use "../global" as *;
+
+.c-scroll {
+  writing-mode: vertical-lr;
+}
+
+.c-scroll__text {
+}
+
+.c-scroll__text {
+  display: flex;
+  gap: rem(15);
+  align-items: center;
+}
+
+.c-scroll__text::before {
+  width: rem(7);
+  aspect-ratio: 66/1732;
+  content: "";
+  mask: url(../images/common/arrow_scroll.svg) no-repeat center / contain;
+  background-color: currentColor;
+  animation: scroll 2s infinite;
+}
+
+/* 矢印のアニメーション */
+@keyframes scroll {
+  0% {
+    clip-path: inset(0 0 0);
+  }
+  50% {
+    clip-path: inset(100% 0 0);
+  }
+  51% {
+    clip-path: inset(0 0 100%);
+  }
+  100% {
+    clip-path: inset(0 0 0);
+  }
+}

@@ -1,0 +1,115 @@
+@use "../global" as *;
+
+:where(dialog) {
+  inline-size: unset;
+  max-inline-size: unset;
+  block-size: unset;
+  max-block-size: unset;
+  padding: unset;
+  margin: unset;
+  color: unset;
+  background-color: unset;
+  border: unset;
+  overflow: unset; // スクロールさせたい場合は、子孫要素で
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:where(:root[data-mousedown] dialog *) {
+  outline: none;
+}
+
+[data-modal-open]:where(:root[data-mousedown] *) {
+  outline: none;
+}
+
+.p-dialog {
+  // デバッグ用
+  // position: fixed;
+  // inset: 0;
+  // z-index: 1001;
+
+  --duration: 0.5s;
+
+  margin: auto;
+  width: calc(100% - var(--inner-padding) * 2);
+  height: fit-content;
+  max-height: 80%;
+  overflow-y: auto;
+  overscroll-behavior: contain; /* この要素のスクロールが終端に達しても親要素（背景）にスクロールを伝播させない */
+  background-color: var(--color-white);
+  box-shadow: 0 0 0 100vmax rgba(#333, 0.8);
+  transition:
+    opacity var(--duration),
+    scale var(--duration);
+  // contain: strict;
+  contain: layout style paint; // sizeを除外（height: fit-contentと競合するため）
+  outline: none;
+  
+
+  @include mq() {
+    max-width: rem(1000);
+    // height: calc(100svb - rem($padding-pc * 2));
+  }
+}
+
+.p-dialog:not([data-active="true"]) {
+  opacity: 0;
+  scale: 0.95;
+}
+
+.p-dialog::backdrop {
+  transition: opacity 0.5s;
+}
+
+.p-dialog:not([data-active="true"])::backdrop {
+  opacity: 0;
+}
+
+.p-dialog__container {
+  padding-block: var(--inner-padding);
+  padding-inline: var(--inner-padding);
+}
+
+.p-dialog__close {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  width: rem(54);
+  aspect-ratio: 1;
+  transition: opacity var(--hover-transition);
+  background-color: orange; // test
+}
+
+.p-dialog__close::before,
+.p-dialog__close::after {
+  position: absolute;
+  inset: 0;
+  display: inline-block;
+  width: calc(32 / 54 * 100%);
+  height: rem(3);
+  margin: auto;
+  content: "";
+  background-color: currentColor;
+}
+
+.p-dialog__close::before {
+  rotate: 45deg;
+}
+
+.p-dialog__close::after {
+  rotate: 135deg;
+}
+
+@media (any-hover: hover) {
+  .p-dialog__close:hover {
+    opacity: 0.7;
+  }
+}
+
+.p-dialog__close:focus-visible {
+  opacity: 0.7;
+}

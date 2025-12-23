@@ -1,0 +1,20 @@
+<% 
+const splideLoopImages = [
+    { file: "demo/dummy1.jpg", alt: "" },
+    { file: "demo/dummy2.jpg", alt: "" },
+    { file: "demo/dummy3.jpg", alt: "" },
+    { file: "demo/dummy4.jpg", alt: "" },
+    { file: "demo/dummy5.jpg", alt: "" },
+  ];
+%>
+<div class="p-splide-loop splide" id="js-splide-loop">
+  <div class="p-splide-loop__slider-track splide__track">
+    <ul class="p-splide-loop__slider-list splide__list">
+      <% splideLoopImages.forEach((item) => { %>
+      <li class="p-splide-loop__slider-item splide__slide">
+        <img src="<%- imagePath %><%- item.file %>" alt="<%- item.alt %>">
+      </li>
+      <% }); %>
+    </ul>
+  </div>
+</div>

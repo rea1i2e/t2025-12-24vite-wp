@@ -1,0 +1,12 @@
+@use './global' as *;
+@use "./base/_reset";
+@use "./base/_root";
+@use "./base/_base";
+@use "./layouts/**";
+@use "./demo-components/**"; // demoページ用スタイル
+@use "./components/**";
+@use "./utility/**";
+
+/* デバッグ用のスタイル */
+// html { scroll-behavior: auto; } // ピクパ時に邪魔になる
+// *, *::before, *::after { outline: 1px solid red; } // 横スクロール発見用

@@ -1,0 +1,49 @@
+/* 使い方
+・本体
+.c-button {
+  @include hover-scale(); // 初期値
+  @include hover-scale(1.2); // 拡大率を上げる
+  }
+  
+・子要素のimg
+.p-card {
+  @include hover-scale-img();
+}
+*/
+
+@mixin hover-scale($scale: 1.1, $duration: 0.3s, $easing: ease-in-out) {
+  transition: scale $duration $easing;
+
+  @media (any-hover: hover) {
+    &:hover {
+      opacity: 1;
+      scale: $scale;
+    }
+  }
+
+  &:focus-visible {
+    opacity: 1;
+    scale: $scale;
+  }
+}
+
+@mixin hover-scale-img($scale: 1.1, $duration: 0.3s, $easing: ease-in-out) {
+  @media (any-hover: hover) {
+    img {
+      transition: scale $duration $easing;
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &:hover img {
+      scale: $scale;
+    }
+  }
+
+  &:focus-visible {
+    opacity: 1;
+    scale: $scale;
+  }
+}

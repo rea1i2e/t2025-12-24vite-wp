@@ -1,0 +1,91 @@
+<% 
+  const key = 'demoHoverButton';
+  const pageData = pages[key];
+  const page = {
+    title: pageData.title ? pageData.title + titleSeparator + siteName : siteName,
+    description: pageData.description,
+    keywords: pageData.keywords,
+    path: pageData.path,
+    root: pageData.root,
+  };
+%>
+<!DOCTYPE html>
+<html lang="ja">
+<%- include(ejsPath + 'common/_head.ejs', { page }) %>
+
+<body>
+  <%- include(ejsPath + 'common/_header.ejs', { page }) %>
+<main class="p-demo">
+  <div class="p-demo__inner l-inner">
+    <h1 class="p-demo__title"><%- pageData.title %></h1>
+    <section class="p-demo__section">
+      <h2 class="p-demo__subtitle">背景色の変化</h2>
+      <div class="p-demo__content">
+        <div class="p-demo__button">
+          <a href="#" class="c-button c-button-background">背景色が変わるボタン</a>
+        </div>
+      </div>
+    </section>
+    <section class="p-demo__section">
+      <h2 class="p-demo__subtitle">スケール（拡大/縮小）</h2>
+      <div class="p-demo__content">
+        <div class="p-demo__button">
+          <a href="#" class="c-button c-button-scale">拡大するボタン</a>
+        </div>
+      </div>
+    </section>
+    <section class="p-demo__section">
+      <h2 class="p-demo__subtitle">スライド</h2>
+      <div class="p-demo__content">
+        <div class="p-demo__button">
+          <a href="#" class="c-button c-button-slide">
+            <span class="p-button__text">スライドするボタン</span>
+          </a>
+        </div>
+      </div>
+    </section>
+    <section class="p-demo__section">
+      <h2 class="p-demo__subtitle">シャドウの変化</h2>
+      <div class="p-demo__content">
+        <div class="p-demo__button">
+          <a href="#" class="c-button c-button-shadow">シャドウが変わるボタン</a>
+        </div>
+      </div>
+    </section>
+    <section class="p-demo__section">
+      <h2 class="p-demo__subtitle">グラデーションの変化</h2>
+      <div class="p-demo__content">
+        <div class="p-demo__button">
+          <a href="#" class="c-button c-button-gradient">グラデーションが変わるボタン</a>
+        </div>
+      </div>
+    </section>
+    <section class="p-demo__section">
+      <h2 class="p-demo__subtitle">リップルエフェクト</h2>
+      <div class="p-demo__content">
+        <div class="p-demo__button">
+          <a href="#" class="c-button c-button-ripple">
+            <span class="p-button__ripple"></span>
+            リップルエフェクト
+          </a>
+        </div>
+      </div>
+    </section>
+    <section class="p-demo__section">
+      <h2 class="p-demo__subtitle">アイコンのアニメーション</h2>
+      <div class="p-demo__content">
+        <div class="p-demo__button">
+          <a href="#" class="c-button c-button-icon">
+            <span class="p-button__text">アイコンアニメーション</span>
+            <span class="p-button__icon">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+  <%- include(ejsPath + 'common/_footer.ejs', { page }) %>
+</body>
+
+</html>
+

@@ -1,0 +1,340 @@
+@use "../global" as *;
+
+.p-form {
+  --dt-width: #{rem(300)};
+  --border-color: #ccc;
+  --border-width: 1px;
+  --border-rdius: #{rem(3)};
+  --text-padding-block: #{rem(9)};
+  --text-padding-inline: #{rem(4)};
+  // --input-bg: var(--color-white);
+  --select-icon-right: #{rem(8)};
+  --select-icon-width: #{rem(16)};
+  --select-icon-color: rgb(176 176 176);
+  --select-padding-inline: #{rem(4) calc( rem(4) + var(--select-icon-right) + var(--select-icon-width))};
+  --radio-size: #{rem(17)};
+  --radio-bg: var(--color-white);
+  --radio-check-color: currentColor;
+  --checkbox-size: #{rem(17)};
+  --checkbox-bg: transparent;
+  --checkbox-check-color: currentColor;
+  --placeholder-color: #ccc; // selectの初期値文字色は、src/assets/js/_option-color.jsで制御
+  @include mq() {
+    --select-padding-inline: #{rem(8) calc( rem(8) + var(--select-icon-right) + var(--select-icon-width))};
+    --text-padding-inline: #{rem(16)};
+  }
+}
+
+.p-form__dl {
+  display: grid;
+  font-size: maxrem(16);
+  @include mq() {
+    --dd-padding-block: #{rem(24)};
+    grid-template-columns: auto 1fr;
+    column-gap: rem(40);
+    row-gap: rem(50);
+    font-size: maxrem(18);
+    column-gap: rem(0);
+  }
+}
+
+.p-form__dt {
+  @include mq() {
+    width: var(--dt-width);
+  }
+}
+
+.p-form__dd {
+  background-color: var(--color-white);
+  // padding-block: var(--dd-padding-block);
+}
+
+// .p-form__dd:first-of-type {
+//   @include mq() {
+//     padding-block-start: 0;
+//   }
+// }
+
+// .p-form__dd:last-of-type {
+//   @include mq() {
+//     padding-block-end: 0;
+//   }
+// }
+
+.p-form__dt + .p-form__dd {
+  margin-top: rem(7);
+  @include mq() {
+    margin-top: 0;
+  }
+}
+
+.p-form__dd + .p-form__dt {
+  margin-top: rem(22);
+  @include mq() {
+    margin-top: 0;
+  }
+}
+
+.p-form__label {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: rem(8);
+  justify-content: flex-start;
+  align-items: center;
+  font-weight: 700;
+}
+
+.p-form__required,
+.p-form__optional {
+  padding-inline: rem(8);
+}
+
+.p-form__required {
+  background-color: rgb(204 75 45);
+  color: var(--color-white);
+}
+
+.p-form__optional {
+  background-color: rgb(220 220 220);
+  color: rgb(64 62 61);
+}
+
+
+
+.p-form__dd-inner {
+  display: grid;
+  grid-template-columns: rem(100) 1fr;
+  gap: rem(8) rem(12);
+  @include mq() {
+    grid-template-columns: repeat(4, auto)
+  }
+}
+
+.p-form__inner-label {
+  padding-block: var(--text-padding-block);
+}
+
+.p-form ::placeholder {
+  color: var(--placeholder-color);
+}
+
+
+/* セレクトボックス・flatpickrのスタイル */
+.p-form__select-wrap {
+  position: relative;
+  @include mq() {
+    width: fit-content;
+  }
+}
+
+.p-form__select-wrap::after {
+  position: absolute;
+  top: 50%;
+  right: var(--select-icon-right);
+  transform: translateY(-50%);
+  width: var(--select-icon-width);
+  aspect-ratio: 16/9;
+  // mask: url(/assets/images/arrow_down.png) no-repeat center / contain;
+  content: "";
+  background-color: var(--select-icon-color);
+  pointer-events: none;
+}
+
+.p-form select {
+  appearance: none;
+  padding-block: var(--text-padding-block);
+  padding-inline: var(--select-padding-inline);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-rdius);
+  width: 100%;
+}
+
+/* input(radio, checkbox以外のスタイル */
+.p-form input:not([type="radio" i]):not([type="checkbox" i]),
+.p-form textarea {
+  width: 100%;
+  padding-block: var(--text-padding-block);
+  padding-inline: var(--text-padding-inline);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-rdius);
+}
+
+.p-form input:is(#tel, #lesson-date, #tennis-experience) {
+  @include mq() {
+    width: rem(342);
+  }
+}
+
+.p-form input:is(#tel-date),
+.p-form__select-wrap:has(#tel-time) {
+  @include mq() {
+    width: rem(193);
+  }
+}
+
+/* ラジオボタンのスタイル */
+.p-form__dd:has(input[type="radio" i]) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: rem(24);
+  @include mq() {
+    gap: rem(18);
+  }
+}
+
+label:has(input[type="radio" i]) {
+  display: inline grid;
+  grid-template-columns: auto 1fr;
+  column-gap: rem(10);
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.p-form input[type="radio" i] {
+  margin-block: calc((1lh - var(--radio-size)) / 2);
+  position: relative;
+  inline-size: var(--radio-size);
+  block-size: var(--radio-size); /* aspect-rationだとSafariでつぶれる */
+  background-color: var(--radio-size);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 50%;
+  appearance: none; /* 標準の見た目とCSSの制限を除去 */
+  box-shadow: 0 0 0 0 transparent;
+}
+
+.p-form input[type="radio" i]::before {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  content: "";
+  opacity: 0;
+  border-radius: 50%;
+  background-color: var(--radio-check-color);
+  transform: scale(0.5);
+}
+
+.p-form input[type="radio" i]:checked:before {
+  opacity: 1;
+}
+
+/* チェックボックスのスタイル */
+.p-form label:has(input[type="checkbox" i]) {
+  display: inline grid;
+  grid-template-columns: auto auto;
+  column-gap: rem(10);
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.p-form input[type="checkbox" i] {
+  margin-block: calc((1lh - var(--checkbox-size)) / 2);
+  position: relative;
+  inline-size: var(--checkbox-size);
+  block-size: var(--checkbox-size); /* aspect-rationだとSafariでつぶれる */
+  background-color: var(--checkbox-bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-rdius);
+  appearance: none; /* 標準の見た目とCSSの制限を除去 */
+  box-shadow: 0 0 0 0 transparent;
+}
+
+.p-form input[type="checkbox" i]::before {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  content: "";
+  opacity: 0;
+  // mask-image: url(../images/icon_check.svg);
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  background-color: var(--checkbox-check-color);
+}
+
+.p-form input[type="checkbox" i]:checked:before {
+  opacity: 1;
+}
+
+/* type="date" */
+.p-form input[type="date" i]:not([type=radio i]):not([type=checkbox i]) {
+ position: relative;
+ padding-block: calc(var(--text-padding-block) - rem(1));
+  min-height: rem(46); // iPhone Safariでpadding-block効かない対策
+  appearance: none;
+  text-align: left;
+  @include mq() {
+    min-height: rem(49); // iPhone Safariでpadding-block効かない対策
+  }
+}
+
+// Chrome, Edge
+input[type="date" i]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  block-size: 100%;
+  inline-size: var(--select-icon-width);
+  opacity: 0;
+}
+ 
+// Firefox
+@-moz-document url-prefix() {
+  .p-form__select-wrap:has(input[type="date" i])::after {
+    content: none;
+  }
+}
+
+input::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+.p-form textarea {
+  field-sizing: content;
+  width: 100%;
+  min-height: 5lh;
+  resize: none;
+}
+
+.p-form__note {
+  margin-top: rem(4);
+  color: rgb(64 62 61);
+  font-size: maxrem(11);
+  @include mq() {
+    margin-top: rem(8);
+    font-size: maxrem(14);
+  }
+}
+
+.p-form__privacy-policy {
+  margin-top: rem(32);
+}
+
+.p-form__agree {
+  margin-top: rem(16);
+  text-align: center;
+}
+
+.p-form__agree-text a {
+  text-decoration: underline;
+}
+
+.p-form__buttons {
+  margin-top: rem(21);
+  text-align: center;
+  @include mq() {
+    margin-top: rem(40);
+  }
+}
+
+.p-form__submit:disabled {
+  background-color: #e5e7eb;
+  cursor: not-allowed;
+}
+
+/* エラー */
+[aria-invalid="true"]:is(.p-form__input, .p-form__textarea) {
+  background-color: #fee2e2;
+}

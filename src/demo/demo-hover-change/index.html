@@ -1,0 +1,56 @@
+<% 
+  const key = 'demoHoverChange';
+  const pageData = pages[key];
+  const page = {
+    title: pageData.title ? pageData.title + titleSeparator + siteName : siteName,
+    description: pageData.description,
+    keywords: pageData.keywords,
+    path: pageData.path,
+    root: pageData.root,
+  };
+%>
+<!DOCTYPE html>
+<html lang="ja">
+<%- include(ejsPath + 'common/_head.ejs', { page }) %>
+
+<body>
+  <%- include(ejsPath + 'common/_header.ejs', { page }) %>
+<main class="p-demo">
+  <div class="p-demo__inner l-inner">
+    <h1 class="p-demo__title"><%- pageData.title %></h1>
+    <section class="p-demo__section">
+      <h2 class="p-demo__subtitle">PC表示でのみ、ホバーで画像やコンテンツの表示を切り替える</h2>
+      <div class="p-demo__content">
+        <div class="p-hover-change">
+          <ol class="p-hover-change__items">
+            <li class="p-hover-change__item p-hover-change__item--panel">
+              <% posts.forEach((post, index) => { %>
+              <figure class="p-hover-change__image-pc" data-image="<%- index %>">
+                <img src="<%- imagePath + post.image.file %>" alt="<%- post.image.alt %>">
+              </figure>
+              <% }); %>
+            </li>
+            <% posts.forEach((post, index) => { %>
+            <li class="p-hover-change__item" data-image="<%- index %>">
+              <div class="p-hover-change__item-inner">
+                <figure class="p-hover-change__image-sp">
+                  <img src="<%- imagePath + post.image.fileSp %>" alt="<%- post.image.alt %>">
+                </figure>
+                <div class="p-hover-change__content">
+                  <h3 class="p-hover-change__title"><%- post.title %></h3>
+                  <p class="p-hover-change__description"><%- post.description %></p>
+                </div>
+              </div>
+            </li>
+            <% }); %>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+  <%- include(ejsPath + 'common/_footer.ejs', { page }) %>
+</body>
+
+</html>
+

@@ -1,0 +1,27 @@
+@use "../global" as *;
+
+.p-splide-fade.splide {
+  height: 100vh;
+}
+
+.p-splide-fade__slider-track.splide__track {
+  height: 100%;
+}
+
+.p-splide-fade__slider-list.splide__list {
+  height: 100%;
+}
+
+.p-splide-fade__slider-item.splide__slide {
+  height: 100%;
+}
+
+.p-splide-fade__slider-item.splide__slide img {
+  height: 100%;
+  object-fit: cover;
+  transition: 8s;
+}
+
+.p-splide-fade__slider-item.splide__slide.is-active img {
+  transform: scale(1.1);
+}

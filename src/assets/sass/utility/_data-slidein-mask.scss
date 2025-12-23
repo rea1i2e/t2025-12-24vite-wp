@@ -1,0 +1,53 @@
+@use '../global' as *;
+
+[data-slidein-mask] {
+  position: relative;
+  z-index: 0;
+  clip-path: inset(0 100% 0 0);
+  --mask-color: var(--color-orange);
+  --mask-color: #fb9250;
+  // --mask-color: var(--color-white);
+}
+
+[data-slidein-mask]::before {
+  position: absolute;
+  inset: rem(-20) 0 0;
+  z-index: -1;
+  background-color: var(--mask-color);
+  content: "";
+  clip-path: inset(0 0 0%);
+}
+
+[data-slidein-mask].is-show {
+  animation: slidein 0.3s ease-out forwards;
+}
+
+[data-slidein-mask].is-show::before {
+  animation: mask 0.8s 0.3s cubic-bezier(0.8, 0, 0.17, 1) forwards;
+}
+
+[data-slidein-mask="delay1"].is-show::before {
+  animation-delay: 0.6s;
+}
+
+[data-slidein-mask="delay2"].is-show::before {
+  animation-delay: 0.9s;
+}
+
+@keyframes slidein {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  100% {
+    clip-path: inset(0 0% 0 0);
+  }
+}
+
+@keyframes mask {
+  0% {
+    clip-path: inset(0 0 0 0%);
+  }
+  100% {
+    clip-path: inset(0 0 0 100%);
+  }
+}
