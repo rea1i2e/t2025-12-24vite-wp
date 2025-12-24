@@ -43,22 +43,35 @@
 - [x] Vite連携(prod): `dist/.vite/manifest.json` を読んでenqueueする（JS由来CSSも含む）
 - [x] 参照パス調整: フォント/画像/CSS内URLなどをWP基準に（Viteで解決できる形に整理）
 - [x] 依存整理: 不要になったnpm依存（EJS/after-build/HTML検証等）を削除
+- [x] ドロワーメニューが機能しない（開閉しない/反応しない）
 
-## 未解消課題（次に対応する）
-- [ ] ドロワーメニューが機能しない（開閉しない/反応しない）
-- [ ] ヘッダー/ドロワー/フッターのメニューの実装方針を確定（`wp_nav_menu`を使わない前提で）
+## 課題の整理（優先度と分類）
+### P0（体験/動作を止める）
+- [x] メニューの供給元を確定（旧環境同様: `get_nav_items()` を単一の供給元とする）
+
+### P1（移植/運用の中核）
+- [ ] 既存phpファイルの引き継ぎ（**functions-lib** の取捨選択と統合）
+  - すでに移植済み: 旧テンプレ互換のヘルパー（`functions-lib/func-legacy.php`）、テンプレ（`front-page.php` など）、components（`components/*`）
+  - 未移植: CPT/ショートコード/セキュリティ/recaptcha 等（旧テーマ: `functions-lib/*.php`）
+- [x] 画像の `width` / `height` 属性（テーマ同梱画像は `t2025_img()` で付与。WPメディアは `wp_get_attachment_image()` を優先）
+- [x] 画像の `loading` 属性（default: `lazy`。LCP候補は `eager` + `fetchpriority="high"` を使用）
+- [ ] 自動デプロイ
+  - [ ] GitHub Actionsの設定（できればコマンドで再現できる形）
+  - [ ] `dist/` をコミットするかどうか方針決め（デプロイ方法とセットで）
+
+### P2（整理・品質）
 - [ ] Huskyを削除（依存・scripts・フック運用）
-- [ ] `dist/` をコミットするかどうか方針決め（デプロイ方法とセットで）
-- [ ] テンプレ最小セット追加（`front-page.php`, `page.php`, `single.php` 等）
+- [ ] 旧静的サイト資産の残骸を整理（`src/ejs/**` など、使わないものを最終削除）
+- [ ] デバッグコード/スタイルの撤去（例: `src/assets/sass/components/_p-drawer.scss` の `background-color: pink;`）
 - [ ] WebP生成ポリシーを案件ごとに決める（有効/無効、品質、サイズ比較の扱い）
 
-### ドロワーメニュー不具合（原因候補）
+### ドロワーメニュー不具合（原因候補）※解消済み
 - JS側は `#js-menu` / `#js-drawer` / `#js-drawer-menu` が揃わないと初期化を中止します（`src/assets/js/_drawer.js` の `if (!menuButton || !drawer || !drawerMenu) return;`）。
-- WP側で `wp_nav_menu(... 'fallback_cb' => false ...)` のため、メニュー未設定だと `#js-drawer-menu` 自体が出力されない可能性があります（`header.php`）。※ `wp_nav_menu` を使わない方針なら別対応にする
-- 対応案（どれか）:
-  - WP管理画面で「メニュー」を作成し、ロケーション `global` に割り当てる
-  - もしくは `fallback_cb` を見直して必ず出力されるようにする
-  - もしくはJSを「メニュー無しでも開閉だけは動く」ように改修する
+- 現在のWPテンプレは **上記IDを固定で出力**しているため、次は以下を確認する:
+  - クリックイベントがバインドされているか（`#js-menu`）
+  - `aria-hidden` / `aria-expanded` の切り替えが期待通りか（CSSは `aria-hidden="false"` で表示）
+  - `inert` の有無・ブラウザ互換（必要ならpolyfill/撤去）
+  - `z-index` / `position` 競合（ヘッダー固定化・管理バー対応と干渉していないか）
 
 ## 作業ログ（解消方法の記録）
 ### YYYY-MM-DD
@@ -80,7 +93,7 @@
 - 影響範囲: テーマとして有効化可能
 
 ### 2025-12-24
-- 変更: Vite連携の土台追加（`inc/vite.php`, `functions.php`でenqueue、`vite.config.js`をJS/CSSエントリ+manifestへ移行）
+- 変更: Vite連携の土台追加（`functions-lib/func-vite.php`, `functions.php`でenqueue、`vite.config.js`をJS/CSSエントリ+manifestへ移行）
 - 目的: 開発（HMR）/本番（manifest）で同一エントリを読み込むため
 - 方法: devは`@vite/client`とエントリを読み込み、prodは`dist/manifest.json`からCSS/JSをenqueue
 - 影響範囲: `vite`のビルド対象がHTMLからJSエントリへ変更
@@ -127,6 +140,18 @@
 - 方法: `dist/.vite/manifest.json` の `css` 配列を読み、`wp_enqueue_style` で追加読み込み
 - 影響範囲: 本番のCSS読み込み本数（`main-*.css` が追加される）
 
+### 2025-12-24
+- 変更: 旧テーマ（`t_2025-01-11wp`）のPHP資産を一部移植（テンプレ/コンポーネント/ヘルパー）
+- 目的: 既存のPHPテンプレ資産を新テーマで動かしながら移行できるようにするため
+- 方法:
+  - `functions-lib/func-legacy.php` を追加し、旧テンプレ互換の関数（`page_path`, `img_path`, `get_nav_items`, `display_thumbnail` 等）を提供
+  - `header.php` / `footer.php` を旧テーマのクラス・構造に寄せて更新
+  - `front-page.php` / `page.php` / `single.php` / `archive.php` / `home.php` / `page-contact.php` / `404.php` を追加
+  - 不足していた `components/p-pagenavi.php` は簡易版を新規作成
+- 影響範囲:
+  - テンプレ互換のため関数名は旧テーマ準拠（将来的に整理する余地あり）
+  - 画像URLは `t2025_theme_asset_url()` 経由で dev/prod を吸収
+
 ## 開発（HMR）確認手順（HTTPSのWP）
 ### 前提
 - WP表示URLがHTTPSの場合、Vite dev serverもHTTPSで配信しないとMixed Contentでブロックされる
@@ -153,7 +178,7 @@
 - `VITE_WEBP_SKIP_IF_LARGER`（default: true）: `true` の場合は「最適化後より大きいWebPは出力しない」
 
 ### 2025-12-24
-- 変更: prod側のmanifest参照パスを `dist/.vite/manifest.json` に追従（`inc/vite.php`）
+- 変更: prod側のmanifest参照パスを `dist/.vite/manifest.json` に追従（`functions-lib/func-vite.php`）
 - 目的: `vite build` の実際の出力先に合わせて、WPが正しくhashファイルをenqueueできるようにするため
 - 方法: `t2025_vite_manifest_path()` を `dist/.vite/manifest.json` 優先 + `dist/manifest.json` フォールバックに変更
 - 影響範囲: 本番（build成果物）の読み込み

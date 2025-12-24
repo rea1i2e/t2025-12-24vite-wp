@@ -56,13 +56,13 @@ flowchart LR
 - `functions.php`
   - enqueueの入口（Vite dev/prod切替）
   - `script_loader_tag` で `type="module"` を強制付与（devで `import` を扱うため）
-- `inc/vite.php`
+- `functions-lib/func-vite.php`
   - dev: `@vite/client` と `src/assets/**` を `localhost:5173` から読み込み
   - prod: `dist/.vite/manifest.json` を読んで `dist/assets/**` を読み込み
   - JS entryに紐づく `css`（例: ライブラリCSS）も prodでenqueue
 
 #### dev / prod の判定方法
-判定は `inc/vite.php` の `t2025_vite_is_dev()` で行います。
+判定は `functions-lib/func-vite.php` の `t2025_vite_is_dev()` で行います。
 
 - `functions.php` で `T2025_VITE_DEV_SERVER` を定義（`is_ssl()` に応じて `https://localhost:5173` または `http://localhost:5173`）
 - `T2025_VITE_DEV_SERVER/@vite/client` に `wp_remote_head()` で到達確認（短いtimeout）
@@ -102,7 +102,7 @@ flowchart LR
 ## 4. ディレクトリ構成（要点）
 
 - `header.php` / `footer.php` / `index.php` / `functions.php`: WPクラシックテーマ
-- `inc/vite.php`: Vite連携（dev/prod切替 + manifest解決）
+- `functions-lib/func-vite.php`: Vite連携（dev/prod切替 + manifest解決）
 - `src/assets/`
   - `sass/`: 自作Sass
   - `js/`: 自作JS
@@ -125,7 +125,7 @@ flowchart LR
 ## 6. 付録（関連ファイル早見）
 
 - Vite設定: `vite.config.js`
-- Vite連携: `functions.php`, `inc/vite.php`
+- Vite連携: `functions.php`, `functions-lib/func-vite.php`
 - Sass入口: `src/assets/sass/style.scss`
 - JS入口: `src/assets/js/main.js`
 - 移行ログ: `docs/wp-migration.md`
