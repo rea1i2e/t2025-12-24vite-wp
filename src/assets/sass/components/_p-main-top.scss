@@ -1,0 +1,5 @@
+@use '../global' as *;
+
+.p-main-top {
+  padding-block-start: calc(var(--header-height) + rem(80));
+}

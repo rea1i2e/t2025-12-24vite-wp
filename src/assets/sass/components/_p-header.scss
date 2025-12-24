@@ -1,6 +1,11 @@
 @use "../global" as *;
 
 .p-header {
+  position: fixed;
+  z-index: 1001;
+  inset-block-start: var(--wp-admin-bar-height, 0);
+  inset-inline: 0;
+  height: var(--header-height);
   background-color: #ccc;
   transition: background-color 0.3s ease-in-out;
 }
@@ -37,7 +42,7 @@
   }
 }
 
-.p-header__nav {
+.p-header__pc-nav {
   display: none;
   @include mq() {
     display: block;
@@ -46,16 +51,16 @@
   }
 }
 
-.p-header__nav-items {
+.p-header__pc-nav-items {
   height: 100%;
   display: flex;
 }
 
-.p-header__nav-item {
+.p-header__pc-nav-item {
   height: 100%;
 }
 
-.p-header__nav-item-link {
+.p-header__pc-nav-link {
   display: flex;
   align-items: center;
   gap: rem(8);
@@ -65,7 +70,7 @@
   }
 }
 
-.p-header__nav-item-link[target="_blank"]::after {
+.p-header__pc-nav-link[target="_blank"]::after {
   --icon-size: #{rem(20)};
   margin-block: calc((1lh - var(--icon-size)) / 2);
   block-size: var(--icon-size);

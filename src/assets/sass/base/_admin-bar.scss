@@ -1,0 +1,22 @@
+@use "../global" as *;
+
+:root {
+  --wp-admin-bar-height: 0px;
+}
+
+:root:has(.admin-bar) {
+  --wp-admin-bar-height: 32px;
+}
+
+@media (max-width: 782px) {
+  :root:has(.admin-bar) {
+    --wp-admin-bar-height: 46px;
+  }
+}
+
+/* 小さい画面では #wpadminbar を固定 */
+@media (max-width: 600px) {
+  #wpadminbar {
+    position: fixed !important;
+  }
+}

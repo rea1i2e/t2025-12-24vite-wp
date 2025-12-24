@@ -1,6 +1,9 @@
 @use "../global" as *;
 
 .p-drawer {
+  position: fixed;
+  inset: var(--wp-admin-bar-height, 0) 0 0;
+  z-index: 1;
   background-color: #ccc;
   padding-block: rem(80);
   overflow: auto;
