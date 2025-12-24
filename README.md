@@ -14,6 +14,8 @@ WordPress（クラシックテーマ）用の制作環境です。
 - `FTP_USERNAME`
 - `FTP_PASSWORD`
 - `FTP_SERVER_DIR`
+ - `DISCORD_WEBHOOK`（任意: Discord通知を使う場合）
+- `TEST_URL`（任意: デプロイ通知/サマリーに表示するURL）
   - 例: `/public_html/wp-content/themes/t2025-12-24vite-wp/`
   - 「テーマディレクトリ直下」にこのリポジトリの中身（`style.css`, `*.php`, `functions-lib/`, `components/`, `dist/` など）を配置する想定
 

@@ -58,6 +58,16 @@ gh secret set FTP_USERNAME   --body "${FTP_USERNAME}"
 gh secret set FTP_PASSWORD   --body "${FTP_PASSWORD}"
 gh secret set FTP_SERVER_DIR --body "${FTP_SERVER_DIR}"
 
+# Optional: Discord notifications
+if [[ -n "${DISCORD_WEBHOOK:-}" ]]; then
+  gh secret set DISCORD_WEBHOOK --body "${DISCORD_WEBHOOK}"
+fi
+
+# Optional: URL shown in GitHub Actions summary / Discord messages
+if [[ -n "${TEST_URL:-}" ]]; then
+  gh secret set TEST_URL --body "${TEST_URL}"
+fi
+
 echo "Done."
 echo "You can verify names (values are hidden) with: gh secret list"
 
