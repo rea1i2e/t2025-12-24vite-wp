@@ -36,13 +36,28 @@
 - テーマ同梱の画像・フォント（ただし参照パスはWP基準に修正）
 
 ## 課題リスト（チェックリスト）
-- [ ] docs: このファイルに「作業ログ」を残す運用を開始
-- [ ] 不要物削除: EJS/静的HTML/after-build/静的サイト固有設定を削除
-- [ ] WP最小テーマ: `style.css` / `functions.php` / `index.php` / `header.php` / `footer.php` を追加
-- [ ] Vite連携(dev): `@vite/client` + エントリをWPから読み込めるようにする
-- [ ] Vite連携(prod): `dist/manifest.json` を読んでenqueueする
-- [ ] 参照パス調整: フォント/画像/CSS内URLなどをWP基準に
-- [ ] 依存整理: 不要になったnpm依存（EJS/after-build/HTML検証等）を削除
+- [x] docs: このファイルに「作業ログ」を残す運用を開始
+- [x] 不要物削除: EJS/静的HTML/after-build/静的サイト固有設定を削除
+- [x] WP最小テーマ: `style.css` / `functions.php` / `index.php` / `header.php` / `footer.php` を追加
+- [x] Vite連携(dev): `@vite/client` + エントリをWPから読み込めるようにする（HMR/フルリロード含む）
+- [x] Vite連携(prod): `dist/.vite/manifest.json` を読んでenqueueする（JS由来CSSも含む）
+- [x] 参照パス調整: フォント/画像/CSS内URLなどをWP基準に（Viteで解決できる形に整理）
+- [x] 依存整理: 不要になったnpm依存（EJS/after-build/HTML検証等）を削除
+
+## 未解消課題（次に対応する）
+- [ ] ドロワーメニューが機能しない（開閉しない/反応しない）
+- [ ] ヘッダー/ドロワー/フッターのメニューの実装方針を確定（`wp_nav_menu`を使わない前提で）
+- [ ] Huskyを削除（依存・scripts・フック運用）
+- [ ] `dist/` をコミットするかどうか方針決め（デプロイ方法とセットで）
+- [ ] テンプレ最小セット追加（`front-page.php`, `page.php`, `single.php` 等）
+
+### ドロワーメニュー不具合（原因候補）
+- JS側は `#js-menu` / `#js-drawer` / `#js-drawer-menu` が揃わないと初期化を中止します（`src/assets/js/_drawer.js` の `if (!menuButton || !drawer || !drawerMenu) return;`）。
+- WP側で `wp_nav_menu(... 'fallback_cb' => false ...)` のため、メニュー未設定だと `#js-drawer-menu` 自体が出力されない可能性があります（`header.php`）。※ `wp_nav_menu` を使わない方針なら別対応にする
+- 対応案（どれか）:
+  - WP管理画面で「メニュー」を作成し、ロケーション `global` に割り当てる
+  - もしくは `fallback_cb` を見直して必ず出力されるようにする
+  - もしくはJSを「メニュー無しでも開閉だけは動く」ように改修する
 
 ## 作業ログ（解消方法の記録）
 ### YYYY-MM-DD

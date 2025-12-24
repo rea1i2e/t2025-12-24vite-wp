@@ -12,13 +12,11 @@
     "clean": "rm -rf dist src/.vite src/.img",
     "clean:all": "rm -rf dist src/.vite src/.img node_modules package-lock.json",
     "reinstall": "npm run clean:all && npm install",
-    "prepare": "husky",
     "test": "open https://t2025-10-01vite.rea1i2e.net/"
   },
   "devDependencies": {
     "@vheemstra/vite-plugin-imagemin": "^2.2.1",
     "autoprefixer": "^10.4.21",
-    "husky": "^9.1.7",
     "imagemin-gif2webp": "^3.0.0",
     "imagemin-gifsicle": "^7.0.0",
     "imagemin-mozjpeg": "^10.0.0",

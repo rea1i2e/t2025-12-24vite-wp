@@ -29,15 +29,7 @@ $logo_tag = is_front_page() ? 'h1' : 'div';
 		</button>
 
 		<nav class="p-header__nav" aria-label="グローバルナビゲーション">
-			<?php
-			wp_nav_menu([
-				'theme_location' => 'global',
-				'container'      => false,
-				'menu_class'     => 'p-header__nav-items',
-				'fallback_cb'    => false,
-				'depth'          => 1,
-			]);
-			?>
+			<ul class="p-header__nav-items"></ul>
 		</nav>
 	</div>
 </header>
@@ -45,16 +37,7 @@ $logo_tag = is_front_page() ? 'h1' : 'div';
 <div id="js-drawer" class="p-drawer l-drawer" aria-hidden="true" inert>
 	<div class="p-drawer__inner">
 		<nav class="p-drawer__nav" aria-label="ドロワーメニュー">
-			<?php
-			wp_nav_menu([
-				'theme_location' => 'global',
-				'container'      => false,
-				'menu_class'     => 'p-drawer__nav-items',
-				'menu_id'        => 'js-drawer-menu',
-				'fallback_cb'    => false,
-				'depth'          => 1,
-			]);
-			?>
+			<ul class="p-drawer__nav-items" id="js-drawer-menu"></ul>
 		</nav>
 	</div>
 </div>

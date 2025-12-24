@@ -17,11 +17,6 @@ function t2025_setup(): void {
 		'script',
 		'style',
 	]);
-
-	register_nav_menus([
-		'global' => 'Global Navigation',
-		'footer' => 'Footer Navigation',
-	]);
 }
 add_action('after_setup_theme', 't2025_setup');
 
