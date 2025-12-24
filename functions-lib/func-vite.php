@@ -75,6 +75,19 @@ function t2025_theme_asset_url(string $srcPath): string {
 }
 
 /**
+ * Resolve a theme image URL under `src/assets/images/**`.
+ *
+ * Example:
+ * - t2025_theme_image_url('demo/dummy1.jpg')
+ *
+ * @param string $pathUnderImages Example: 'demo/dummy1.jpg'
+ */
+function t2025_theme_image_url(string $pathUnderImages): string {
+	$pathUnderImages = ltrim($pathUnderImages, '/');
+	return t2025_theme_asset_url('src/assets/images/' . $pathUnderImages);
+}
+
+/**
  * Enqueue Vite client (dev only)
  *
  * @param string $handle Example: 't2025'

@@ -1,5 +1,5 @@
 {
-  "name": "t2025-10-01vite",
+  "name": "t2025-12-24vite-wp",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -12,7 +12,7 @@
     "clean": "rm -rf dist src/.vite src/.img",
     "clean:all": "rm -rf dist src/.vite src/.img node_modules package-lock.json",
     "reinstall": "npm run clean:all && npm install",
-    "test": "open https://t2025-10-01vite.rea1i2e.net/"
+    "test": "open https://t2025-12-24vite-wp.rea1i2e.net/"
   },
   "devDependencies": {
     "@vheemstra/vite-plugin-imagemin": "^2.2.1",
