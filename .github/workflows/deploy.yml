@@ -1,4 +1,4 @@
-name: Deploy to FTP
+name: Deploy Theme to FTP
 
 on:
   push:
@@ -53,9 +53,13 @@ jobs:
         fi
         
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 📁 デプロイされたファイル" >> $GITHUB_STEP_SUMMARY
+        echo "### 📁 デプロイ対象（テーマ一式）" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-        find dist -type f -name "*.html" -o -name "*.css" -o -name "*.js" | head -20 >> $GITHUB_STEP_SUMMARY
+        echo "Theme root files (examples):" >> $GITHUB_STEP_SUMMARY
+        ls -1 *.php style.css 2>/dev/null | head -30 >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Built assets (examples):" >> $GITHUB_STEP_SUMMARY
+        find dist -type f \( -name "*.css" -o -name "*.js" -o -name "*.json" -o -name "*.woff2" -o -name "*.svg" -o -name "*.jpg" -o -name "*.png" -o -name "*.webp" \) | head -30 >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
         
         echo "" >> $GITHUB_STEP_SUMMARY
@@ -73,12 +77,25 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./dist/
-        server-dir: ./
+        # Deploy the entire theme directory (excluding dev-only files).
+        local-dir: ./
+        # Example: /public_html/wp-content/themes/t2025-12-24vite-wp/
+        # Set this in repo secrets.
+        server-dir: ${{ secrets.FTP_SERVER_DIR }}
         exclude: |
           **/.git*
           **/.git*/**
           **/node_modules/**
+          **/.github/**
+          **/docs/**
+          **/src/**
+          **/scripts/**
+          **/*.map
+          **/package.json
+          **/package-lock.json
+          **/vite.config.*
+          **/postcss.config.*
+          **/README.md
           **/.DS_Store
           **/Thumbs.db
           
@@ -89,12 +106,22 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./dist/
-        server-dir: ./
+        local-dir: ./
+        server-dir: ${{ secrets.FTP_SERVER_DIR }}
         exclude: |
           **/.git*
           **/.git*/**
           **/node_modules/**
+          **/.github/**
+          **/docs/**
+          **/src/**
+          **/scripts/**
+          **/*.map
+          **/package.json
+          **/package-lock.json
+          **/vite.config.*
+          **/postcss.config.*
+          **/README.md
           **/.DS_Store
           **/Thumbs.db
           
@@ -105,12 +132,22 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./dist/
-        server-dir: ./
+        local-dir: ./
+        server-dir: ${{ secrets.FTP_SERVER_DIR }}
         exclude: |
           **/.git*
           **/.git*/**
           **/node_modules/**
+          **/.github/**
+          **/docs/**
+          **/src/**
+          **/scripts/**
+          **/*.map
+          **/package.json
+          **/package-lock.json
+          **/vite.config.*
+          **/postcss.config.*
+          **/README.md
           **/.DS_Store
           **/Thumbs.db
           

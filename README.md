@@ -1,8 +1,45 @@
-# t2025-10-01vite
+# t2025-12-24vite-wp（WordPressテーマ + Vite）
 
-Vite + EJS + Sass 構成の静的サイトテンプレート。ビルド時に画像圧縮と WebP 生成、HTML の <img> を <picture> 最適化、width/height 自動付与を行います。（AVIFは「生成」は未対応ですが、`dist/` にAVIFが存在する場合は <picture> に <source type="image/avif"> を挿入します）
+WordPress（クラシックテーマ）用の制作環境です。
+
+- 開発: WordPressで表示しつつ、CSS/JSは Vite dev server（HMR）を参照
+- 本番: `npm run build` で `dist/` を生成し、WordPress側で読み込み
+
+## 自動デプロイ（GitHub Actions / FTP）
+
+ワークフロー: `.github/workflows/deploy.yml`
+
+### 必要なGitHub Secrets
+- `FTP_SERVER`
+- `FTP_USERNAME`
+- `FTP_PASSWORD`
+- `FTP_SERVER_DIR`
+  - 例: `/public_html/wp-content/themes/t2025-12-24vite-wp/`
+  - 「テーマディレクトリ直下」にこのリポジトリの中身（`style.css`, `*.php`, `functions-lib/`, `components/`, `dist/` など）を配置する想定
+
+### デプロイされないもの（方針）
+サーバには **開発用ファイルを置かない**想定です。ワークフローで以下は除外しています:
+- `src/`, `docs/`, `scripts/`, `node_modules/` など
+
+### Secrets設定のスクリプト化（gh）
+GitHub CLI（`gh`）を使って、Secretsをコマンドで投入できます。
+
+1) 雛形をコピーして編集（このファイル自体はコミットしない）:
+
+```bash
+cp env.deploy.example .env.deploy
+```
+
+2) Secretsを投入:
+
+```bash
+./scripts/setup-secrets.sh
+```
+
+※初回は `gh auth login` が必要です。
 
 ## GitHub CLIを使った導入手順
+※以下は旧テンプレ由来の説明が残っているため、必要に応じて整理してください。
 
 ### 新規リポジトリ作成＋クローンする場合は、コマンドを実行
 ```bash
