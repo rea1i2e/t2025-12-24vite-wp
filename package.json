@@ -12,7 +12,8 @@
     "clean": "rm -rf dist src/.vite src/.img",
     "clean:all": "rm -rf dist src/.vite src/.img node_modules package-lock.json",
     "reinstall": "npm run clean:all && npm install",
-    "test": "open https://t2025-12-24vite-wp.rea1i2e.net/"
+    "test": "open https://t2025-12-24vite-wp.rea1i2e.net/",
+    "test:admin": "open https://t2025-12-24vite-wp.rea1i2e.net/wp-admin/"
   },
   "devDependencies": {
     "@vheemstra/vite-plugin-imagemin": "^2.2.1",
