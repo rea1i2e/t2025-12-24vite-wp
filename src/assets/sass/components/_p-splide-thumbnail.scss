@@ -34,7 +34,7 @@
   background-color: currentColor;
   width: rem(50);
   aspect-ratio: 1;
-  mask: url(/assets/images/common/icon_arrow_right.svg) no-repeat center / contain;
+  mask: url("../images/common/icon_arrow_right.svg") no-repeat center / contain;
 }
 
 .p-splide-thumbnail__nav-prev.splide__arrow--prev {

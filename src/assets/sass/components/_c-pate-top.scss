@@ -23,7 +23,7 @@
 .c-page-top__button::before {
   width: rem(40);
   aspect-ratio: 1;
-  background: url(/assets/images/common/arrow_up.svg) no-repeat center / contain;
+  background: url("../images/common/arrow_up.svg") no-repeat center / contain;
   content: "";
 }
 

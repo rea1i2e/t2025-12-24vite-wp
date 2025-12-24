@@ -10,3 +10,8 @@
 /* デバッグ用のスタイル */
 // html { scroll-behavior: auto; } // ピクパ時に邪魔になる
 // *, *::before, *::after { outline: 1px solid red; } // 横スクロール発見用
+
+.test {
+  background: url("../images/common/arrow_up.svg") no-repeat center / contain;
+  background-color: pink;
+}
