@@ -14,10 +14,12 @@ WordPress（クラシックテーマ）用の制作環境です。
 - `FTP_USERNAME`
 - `FTP_PASSWORD`
 - `FTP_SERVER_DIR`
- - `DISCORD_WEBHOOK`（任意: Discord通知を使う場合）
+- 例: `/public_html/wp-content/themes/t2025-12-24vite-wp/`
+- 「テーマディレクトリ直下」にこのリポジトリの中身（`style.css`, `*.php`, `functions-lib/`, `components/`, `dist/` など）を配置する想定
+
+### 任意のGitHub Secrets（使う場合のみ）
+- `DISCORD_WEBHOOK`（任意: Discord通知を使う場合）
 - `TEST_URL`（任意: デプロイ通知/サマリーに表示するURL）
-  - 例: `/public_html/wp-content/themes/t2025-12-24vite-wp/`
-  - 「テーマディレクトリ直下」にこのリポジトリの中身（`style.css`, `*.php`, `functions-lib/`, `components/`, `dist/` など）を配置する想定
 
 ### デプロイされないもの（方針）
 サーバには **開発用ファイルを置かない**想定です。ワークフローで以下は除外しています:
@@ -35,6 +37,13 @@ cp env.deploy.example .env.deploy
 2) Secretsを投入:
 
 ```bash
+bash scripts/setup-secrets.sh
+```
+
+（または実行権限を付けて実行）
+
+```bash
+chmod +x scripts/setup-secrets.sh
 ./scripts/setup-secrets.sh
 ```
 
