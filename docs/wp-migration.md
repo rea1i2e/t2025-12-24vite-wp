@@ -50,6 +50,7 @@
 - [ ] Huskyを削除（依存・scripts・フック運用）
 - [ ] `dist/` をコミットするかどうか方針決め（デプロイ方法とセットで）
 - [ ] テンプレ最小セット追加（`front-page.php`, `page.php`, `single.php` 等）
+- [ ] WebP生成ポリシーを案件ごとに決める（有効/無効、品質、サイズ比較の扱い）
 
 ### ドロワーメニュー不具合（原因候補）
 - JS側は `#js-menu` / `#js-drawer` / `#js-drawer-menu` が揃わないと初期化を中止します（`src/assets/js/_drawer.js` の `if (!menuButton || !drawer || !drawerMenu) return;`）。
@@ -143,6 +144,13 @@
 ## PHP変更の即時反映（dev時）
 - PHPはHMRで差し替えできないため、**PHPファイル変更を検知してブラウザをフルリロード**する
 - `vite.config.js` にPHP変更で `full-reload` を投げる処理を追加済み
+
+## WebP生成の制御（案件ごと）
+`vite.config.js` のWebP生成は環境変数で制御します。
+
+- `VITE_ENABLE_WEBP`（default: true）: `true/false` でWebP生成をON/OFF
+- `VITE_WEBP_QUALITY`（default: 75）: WebPのquality
+- `VITE_WEBP_SKIP_IF_LARGER`（default: true）: `true` の場合は「最適化後より大きいWebPは出力しない」
 
 ### 2025-12-24
 - 変更: prod側のmanifest参照パスを `dist/.vite/manifest.json` に追従（`inc/vite.php`）

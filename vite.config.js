@@ -50,6 +50,91 @@ function wpPhpFullReload() {
   };
 }
 
+function toPosixPath(p) {
+  return p.replaceAll("\\", "/");
+}
+
+function listFilesRecursive(dir) {
+  const out = [];
+  if (!fs.existsSync(dir)) return out;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const abs = path.join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...listFilesRecursive(abs));
+    else if (entry.isFile()) out.push(abs);
+  }
+  return out;
+}
+
+/**
+ * Emit theme images to dist as hashed assets, and write a map for PHP to resolve.
+ * - source key: "src/assets/images/<relpath>"
+ * - output value: "<dist-relative-path>" (e.g. "assets/images/foo-xxxx.jpg")
+ */
+function wpThemeImagesManifest() {
+  const imagesRoot = path.resolve(__dirname, "src/assets/images");
+  const allowExt = new Set([
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".gif",
+    ".svg",
+    ".webp",
+    ".avif",
+  ]);
+
+  const idByKey = new Map();
+
+  return {
+    name: "wp-theme-images-manifest",
+    apply: "build",
+    buildStart() {
+      const files = listFilesRecursive(imagesRoot).filter((abs) =>
+        allowExt.has(path.extname(abs).toLowerCase())
+      );
+
+      for (const abs of files) {
+        const rel = toPosixPath(path.relative(imagesRoot, abs));
+        const key = `src/assets/images/${rel}`;
+        const source = fs.readFileSync(abs);
+        const fileId = this.emitFile({
+          type: "asset",
+          // Keep original subdirectory info in the name so output can preserve dirs.
+          name: rel,
+          source,
+        });
+        idByKey.set(key, fileId);
+      }
+    },
+    generateBundle(_, bundle) {
+      const map = {};
+      for (const [key, id] of idByKey.entries()) {
+        map[key] = toPosixPath(this.getFileName(id));
+      }
+
+      // Write a simple JSON map for PHP to resolve <img src> in production.
+      // (Avoid writing under ".vite/" to reduce conflicts with Vite's manifest plugin.)
+      this.emitFile({
+        type: "asset",
+        fileName: "theme-assets.json",
+        source: JSON.stringify(map, null, 2),
+      });
+    },
+  };
+}
+
+function envBool(name, defaultValue = false) {
+  const v = process.env[name];
+  if (v == null || v === "") return defaultValue;
+  return ["1", "true", "yes", "on"].includes(String(v).toLowerCase());
+}
+
+function envNumber(name, defaultValue) {
+  const v = process.env[name];
+  if (v == null || v === "") return defaultValue;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : defaultValue;
+}
+
 export default defineConfig({
   root: ".",
   base: "",
@@ -81,9 +166,19 @@ export default defineConfig({
       },
       output: {
         assetFileNames: (info) => {
-          const n = info.name ?? "";
-          if (/\.(png|jpe?g|gif|svg|webp|avif)$/i.test(n))
-            return "assets/images/[name]-[hash][extname]";
+          const n = (info.name ?? "").replaceAll("\\", "/");
+          const isImage = /\.(png|jpe?g|gif|svg|webp|avif)$/i.test(n);
+
+          if (isImage) {
+            // Preserve subdirectories under src/assets/images/** when possible.
+            // Example: "demo/dummy1.jpg" -> "assets/images/demo/dummy1-[hash].jpg"
+            const dir = path.posix.dirname(n);
+            const ext = path.posix.extname(n);
+            const base = path.posix.basename(n, ext);
+            const subdir = dir === "." ? "" : `${dir}/`;
+            return `assets/images/${subdir}${base}-[hash]${ext}`;
+          }
+
           if (/\.css$/i.test(n)) return "assets/css/[name]-[hash][extname]";
           return "assets/[name]-[hash][extname]";
         },
@@ -94,6 +189,7 @@ export default defineConfig({
   },
   plugins: [
     wpPhpFullReload(),
+    wpThemeImagesManifest(),
     sassGlobImports(),
     // 画像圧縮とWebP変換
     viteImagemin({
@@ -102,21 +198,27 @@ export default defineConfig({
       include: /\.(png|jpe?g|gif|svg)$/i,
       plugins: {
         // 静的インポートに変更
-        jpg: imageminMozjpeg({ quality: 75, progressive: true }),
+        jpg: imageminMozjpeg({ quality: envNumber("VITE_JPEG_QUALITY", 75), progressive: true }),
         png: imageminPngquant({ quality: [0.65, 0.8], speed: 3 }),
         gif: imageminGifsicle({ optimizationLevel: 2 }),
         svg: imageminSvgo()
       },
-      makeWebp: {
-        plugins: {
-          // 静的インポートに変更
-          jpg: imageminWebp({ quality: 75 }),
-          png: imageminWebp({ quality: 75 }),
-          gif: imageminGif2webp({ quality: 75 }),
-        },
-        formatFilePath: (file) => file.replace(/\.(jpe?g|png|gif)$/i, ".webp"),
-        skipIfLargerThan: "optimized"
-      }
+      ...(envBool("VITE_ENABLE_WEBP", false) // trueでwebP生成
+        ? {
+            makeWebp: {
+              plugins: {
+                // 静的インポートに変更
+                jpg: imageminWebp({ quality: envNumber("VITE_WEBP_QUALITY", 75) }),
+                png: imageminWebp({ quality: envNumber("VITE_WEBP_QUALITY", 75) }),
+                gif: imageminGif2webp({ quality: envNumber("VITE_WEBP_QUALITY", 75) }),
+              },
+              formatFilePath: (file) =>
+                file.replace(/\.(jpe?g|png|gif)$/i, ".webp"),
+              // 'optimized' | number (bytes). This project uses 'optimized' by default.
+              skipIfLargerThan: envBool("VITE_WEBP_SKIP_IF_LARGER", true) ? "optimized" : 0,
+            },
+          }
+        : {})
     })
   ]
 });

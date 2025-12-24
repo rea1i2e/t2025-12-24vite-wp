@@ -6,6 +6,7 @@ declare(strict_types=1);
 $site_name  = (string) get_bloginfo('name');
 $page_title = (string) wp_get_document_title();
 $home_url   = (string) home_url('/');
+$dummy1_url = (string) t2025_theme_asset_url('src/assets/images/demo/dummy1.jpg');
 
 get_header();
 
@@ -35,6 +36,8 @@ if (have_posts()) {
 		?>
 	</div>
   <div class="test">background-imageのテスト</div>
+  <h2>imgタグのテスト</h2>
+  <img src="<?php echo esc_url($dummy1_url); ?>" alt="dummy1.jpg">
 </main>
 <?php
 

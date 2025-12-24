@@ -40,6 +40,40 @@ function t2025_vite_manifest_path(): string {
 	return t2025_vite_dist_path() . '/manifest.json';
 }
 
+function t2025_vite_theme_assets_path(): string {
+	return t2025_vite_dist_path() . '/theme-assets.json';
+}
+
+/**
+ * Resolve a theme asset URL.
+ *
+ * Intended for <img src="..."> where PHP needs to know the built file name.
+ *
+ * @param string $srcPath Example: 'src/assets/images/demo/dummy1.jpg'
+ */
+function t2025_theme_asset_url(string $srcPath): string {
+	$srcPath = ltrim($srcPath, '/');
+
+	if (t2025_vite_is_dev()) {
+		return t2025_vite_dev_server() . '/' . $srcPath;
+	}
+
+	$mapPath = t2025_vite_theme_assets_path();
+	if (!file_exists($mapPath)) {
+		return '';
+	}
+
+	$raw = file_get_contents($mapPath);
+	if ($raw === false) return '';
+
+	$map = json_decode($raw, true);
+	if (!is_array($map) || !isset($map[$srcPath]) || !is_string($map[$srcPath])) {
+		return '';
+	}
+
+	return t2025_vite_dist_url() . '/' . ltrim($map[$srcPath], '/');
+}
+
 /**
  * Enqueue Vite client (dev only)
  *
