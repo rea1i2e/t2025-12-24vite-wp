@@ -1,10 +1,8 @@
 import { defineConfig } from "vite";
-import { ViteEjsPlugin } from "vite-plugin-ejs";
-import liveReload from "vite-plugin-live-reload";
 import sassGlobImports from "vite-plugin-sass-glob-import";
+import fs from "node:fs";
 import path, { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { globSync } from "glob";
 import viteImagemin from "@vheemstra/vite-plugin-imagemin";
 import imageminMozjpeg from "imagemin-mozjpeg";
 import imageminPngquant from "imagemin-pngquant";
@@ -13,35 +11,74 @@ import imageminSvgo from "imagemin-svgo";
 import imageminWebp from "imagemin-webp";
 // imagemin-gif2webp は CJS なので default import の互換に依存せず、名前空間受け取りにします
 import gif2webpCjs from 'imagemin-gif2webp';
-import { siteConfig } from "./config/site.config.js";
-import { posts } from "./src/ejs/data/posts.js";
 const imageminGif2webp = gif2webpCjs;
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const certDir = path.resolve(__dirname, ".certs");
 
-// src配下のHTMLを全部エントリに（publicディレクトリを除外）
-const htmlFiles = globSync("src/**/*.html", {
-  ignore: ["src/public/**/*.html"]
-});
+function getHttpsConfig() {
+  const keyPath =
+    process.env.VITE_HTTPS_KEY || path.join(certDir, "localhost-key.pem");
+  const certPath =
+    process.env.VITE_HTTPS_CERT || path.join(certDir, "localhost.pem");
+  if (!fs.existsSync(keyPath) || !fs.existsSync(certPath)) return false;
+  return {
+    key: fs.readFileSync(keyPath),
+    cert: fs.readFileSync(certPath),
+  };
+}
+
+/**
+ * Full reload the browser when PHP templates change (WordPress).
+ * Note: PHP cannot be hot-replaced; we trigger a browser reload instead.
+ */
+function wpPhpFullReload() {
+  return {
+    name: "wp-php-full-reload",
+    apply: "serve",
+    configureServer(server) {
+      const patterns = [
+        "**/*.php",
+      ];
+      server.watcher.add(patterns);
+      server.watcher.on("change", (file) => {
+        if (!file.endsWith(".php")) return;
+        server.ws.send({ type: "full-reload", path: "*" });
+      });
+    },
+  };
+}
 
 export default defineConfig({
-  root: "src",
-  base: "./",
+  root: ".",
+  base: "",
+  publicDir: "src/public",
   server: {
     host: true,
-    open: true
+    port: 5173,
+    strictPort: true,
+    cors: true,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
+    https: getHttpsConfig(),
+    ...(getHttpsConfig()
+      ? {
+          hmr: { protocol: "wss" },
+        }
+      : {}),
+    open: false
   },
   build: {
     outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,
+    manifest: true,
     rollupOptions: {
-      input: Object.fromEntries(
-        htmlFiles.map((file) => [
-          file.replace(/^src\//, "").replace(/\.html$/, ""),
-          resolve(__dirname, file),
-        ])
-      ),
+      input: {
+        main: resolve(__dirname, "src/assets/js/main.js"),
+        style: resolve(__dirname, "src/assets/sass/style.scss"),
+      },
       output: {
         assetFileNames: (info) => {
           const n = info.name ?? "";
@@ -56,11 +93,7 @@ export default defineConfig({
     }
   },
   plugins: [
-    ViteEjsPlugin({
-      ...siteConfig,
-      posts,
-    }),
-    liveReload(["ejs/**/*.ejs"]),
+    wpPhpFullReload(),
     sassGlobImports(),
     // 画像圧縮とWebP変換
     viteImagemin({
