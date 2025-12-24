@@ -57,7 +57,7 @@
 - [x] 画像の `loading` 属性（default: `lazy`。LCP候補は `eager` + `fetchpriority="high"` を使用）
 - [ ] 自動デプロイ
   - [ ] GitHub Actionsの設定（できればコマンドで再現できる形）
-  - [ ] `dist/` をコミットするかどうか方針決め（デプロイ方法とセットで）
+  - [x] `dist/` をコミットするかどうか方針決め（CIで `npm run build` → FTP転送するため、`dist/` はコミットしない）
 
 ### P2（整理・品質）
 - [ ] Huskyを削除（依存・scripts・フック運用）
