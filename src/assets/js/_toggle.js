@@ -55,6 +55,8 @@ const initToggle = () => {
     const content = toggleItem.querySelector('.js-toggle-item-content');
     
     if (!trigger || !content) return;
+
+    content.style.overflow = 'hidden';
     
     trigger.addEventListener('click', () => {
       // 連打防止用。アニメーション中だったらクリックイベントを受け付けないでリターンする

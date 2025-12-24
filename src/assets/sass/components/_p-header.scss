@@ -58,6 +58,7 @@
 
 .p-header__pc-nav-item {
   height: 100%;
+  position: relative;
 }
 
 .p-header__pc-nav-link {
@@ -68,6 +69,64 @@
   padding-inline: rem(16);
   @include mq() {
   }
+}
+
+.p-header__pc-nav-item:has(.p-header__pc-nav-submenu) .p-header__pc-nav-link {
+  background-color: pink;
+}
+
+.p-header__pc-nav-item:has(.p-header__pc-nav-submenu) .p-header__pc-nav-link::after {
+  width: rem(16);
+  aspect-ratio: 1;
+  background: url(../images/common/arrow_down.svg) no-repeat center / contain;
+  content: "";
+}
+
+// Dropdown (children)
+.p-header__pc-nav-submenu {
+  @include mq() {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-start: 0;
+    min-inline-size: rem(200);
+    background: pink;
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 1s ease,
+      visibility 0s linear 1s; /* ←ここが“待つ” */
+    }
+  }
+  
+  // Show submenu on hover/focus within (PC)
+  .p-header__pc-nav-item:hover .p-header__pc-nav-submenu,
+  .p-header__pc-nav-item:focus-within .p-header__pc-nav-submenu {
+    @include mq() {
+    transition:
+      opacity 1s ease;
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.p-header__pc-nav-submenu-items {
+}
+
+.p-header__pc-nav-submenu-item {
+}
+
+.p-header__pc-nav-submenu-link {
+  display: block;
+  padding: rem(8) rem(16);
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.p-header__pc-nav-submenu-link:hover,
+.p-header__pc-nav-submenu-link:focus-visible {
+  background: rgba(0, 0, 0, 0.06);
 }
 
 .p-header__pc-nav-link[target="_blank"]::after {

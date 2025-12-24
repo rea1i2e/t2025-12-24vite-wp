@@ -1,0 +1,54 @@
+@use "../global" as *;
+
+.p-toggle-nav-items {
+}
+
+.p-toggle-nav-items__item {
+}
+
+.p-toggle-nav-items__item--contact {
+}
+
+// state（現在ページ）
+.p-toggle-nav-items__item.is-current {
+}
+
+.p-toggle-nav-items__link {
+  display: block;
+  padding-block: rem(8);
+  background-color: var(--color-white);
+}
+
+.p-toggle-nav-items__button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: rem(16);
+  width: 100%;
+  padding-inline-end: rem(16);
+  padding-block: rem(8);
+}
+
+.p-toggle-nav-items__button::after {
+  width: rem(16);
+  aspect-ratio: 1;
+  background: url(../images/common/arrow_down.svg) no-repeat center / contain;
+  content: "";
+}
+
+.p-toggle-nav-items__submenu {
+}
+
+.js-toggle-item-content {
+}
+
+.p-toggle-nav-items__sub-item {
+}
+
+.p-toggle-nav-items__sub-item.is-current {
+}
+
+.p-toggle-nav-items__sub-link {
+  padding-block: rem(8);
+  padding-inline: 1em;
+}
