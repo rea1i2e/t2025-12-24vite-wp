@@ -15,7 +15,7 @@ import './_splide-thumbnail.js';
 import './_fadein.js';
 import './_page-top.js';
 // import './_counter.js';
-// import './_tab.js';
+import './_tab.js';
 import './_dialog.js';
 // import './_modal.js';
 import './_accordion.js';

@@ -4,9 +4,9 @@
 @use "./base/_base";
 @use "./layout/**";
 @use "./components/**";
+@use "./components-demo/**"; // demoページ用スタイル
 @use "./utility/**";
 
-@use "./demo-components/**"; // demoページ用スタイル
 
 
 /* デバッグ用のスタイル */

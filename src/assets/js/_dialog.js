@@ -6,6 +6,7 @@
  * ・scrollbar-gutter: stable;を前提にしているため、paddingInlineEndを設定しない
  */
 
+
 const initializeModal = (modal) => {
   // モーダル要素が見つからない場合はエラーをログに記録して早期リターン
   if (!modal) {
@@ -127,8 +128,6 @@ const openModal = (modal) => {
   isTransitioning = true;
   modal.showModal();
   // modal.show();
-  // モーダル内のスクロール位置をリセット（showModal()後のフォーカス移動でスクロール位置が変わってしまうのを防ぐ）
-  // modal.scrollTop = 0;
   backfaceFixed(true);
   manageEventListeners(modal, true);
 
@@ -145,10 +144,10 @@ const closeModal = async (modal) => {
 
   isTransitioning = true;
   modal.setAttribute("data-active", "false");
+  backfaceFixed(false);
   manageEventListeners(modal, false);
 
   await waitModalAnimation(modal);
-  backfaceFixed(false);
   modal.close();
 
   if (currentOpenTrigger) {
@@ -164,6 +163,13 @@ const isVerticalWritingMode = () => {
   const writingMode = window.getComputedStyle(document.documentElement)
     .writingMode;
   return writingMode.includes("vertical");
+};
+
+// スクロールバーの幅を計算する
+const getScrollBarSize = () => {
+  const scrollBarXSize = window.innerHeight - document.body.clientHeight;
+  const scrollBarYSize = window.innerWidth - document.body.clientWidth;
+  return isVerticalWritingMode() ? scrollBarXSize : scrollBarYSize;
 };
 
 // スクロール位置を取得する
@@ -205,25 +211,22 @@ const restorePosition = (scrollPosition) => {
 
 // 背面を固定する
 const backfaceFixed = (fixed) => {
+  const scrollBarWidth = getScrollBarSize();
   const scrollPosition = getScrollPosition(fixed);
+  document.body.style.paddingInlineEnd = fixed ? `${scrollBarWidth}px` : "";
   applyStyles(scrollPosition, fixed);
   if (!fixed) {
     restorePosition(scrollPosition);
   }
 };
 
-const initDialog = () => {
-  const targets = document.querySelectorAll(".js-dialog");
+const targets = document.querySelectorAll(".js-dialog");
 
-  targets?.forEach((target) => {
-    initializeModal(target);
-  });
+targets?.forEach((target) => {
+  initializeModal(target);
+});
 
-  // // デバッグ用：1つ目のモーダルを自動的に開く
-  // if (targets.length > 0) {
-  //   openModal(targets[0]);
-  // }
-};
-
-// type="module"のスクリプトはDOMContentLoadedの後に実行されるため、単純に呼び出すだけで良い
-initDialog();
+// // デバッグ用：1つ目のモーダルを自動的に開く
+// if (targets.length > 0) {
+//   openModal(targets[0]);
+// }
