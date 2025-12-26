@@ -8,31 +8,31 @@
  *
  * ▼ リンクとして出力（追加属性あり）
  *   get_template_part('components/c-button', null, [
- *     'text' => '...', // ※表示テキストは呼び出し側で指定
- *     'href' => '...',
+ *     'text' => '資料ダウンロード',
+ *     'href' => get_page_path('/download/'),
  *     'attributes' => [
  *       'data-slidein-mask' => 'white',
- *       'aria-label' => '...',
+ *       'aria-label' => '資料ダウンロードページへ',
  *     ],
  *   ]);
  *
  * ▼ target="_blank"（rel は自動で noopener noreferrer）
  *   get_template_part('components/c-button', null, [
- *     'text' => '...',
- *     'href' => '...',
+ *     'text' => '外部サイトを開く',
+ *     'href' => 'https://example.com/',
  *     'target' => '_blank',
  *   ]);
  *
  * ▼ href なし（<span> として出力）
  *   get_template_part('components/c-button', null, [
- *     'text' => '...',
+ *     'text' => '送信する',
  *   ]);
  *
  * @param array $args 引数配列
  *   - text (string, 必須): ボタンのテキスト
  *   - href (string, オプション): リンクURL（指定がない場合は<span>タグ）
  *   - target (string, オプション): ターゲット属性（例: '_blank'）
- *   - attributes (array, オプション): 追加属性の配列（例: ['data-slidein-mask' => 'white', 'aria-label' => '...']）
+ *   - attributes (array, オプション): 追加属性の配列（例: ['data-slidein-mask' => 'white', 'aria-label' => '資料ダウンロードページへ']）
  */
 
 declare(strict_types=1);
