@@ -1,0 +1,57 @@
+@use "../global" as *;
+
+.p-archive {
+}
+
+.p-archive__inner {
+}
+
+.p-archive__page-title {
+}
+
+.p-archive__items {
+  margin-block-start: rem(40);
+}
+
+.p-archive-items {
+  display: grid;
+  row-gap: rem(40);
+}
+
+.p-archive-items__post {
+}
+
+.p-archive-items__link {
+  display: grid;
+  grid-template-columns: rem(100) 1fr;
+  grid-template-areas: "thumbnail date"
+  "thumbnail title";
+  column-gap: rem(20);
+}
+
+.p-archive-items__thumbnail {
+  grid-area: thumbnail;
+}
+
+.p-archive-items__thumbnail img {
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.p-archive-items__date {
+  grid-area: date;
+}
+
+.p-archive-items__title {
+  grid-area: title;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.p-archive-items__pagenavi {
+}
+
+.p-archive-items__no-post {
+}
