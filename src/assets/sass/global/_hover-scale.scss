@@ -29,6 +29,10 @@
 
 @mixin hover-scale-img($scale: 1.1, $duration: 0.3s, $easing: ease-in-out) {
   @media (any-hover: hover) {
+    figure {
+      overflow: hidden;
+    }
+    
     img {
       transition: scale $duration $easing;
     }
@@ -44,6 +48,9 @@
 
   &:focus-visible {
     opacity: 1;
+  }
+
+  &:focus-visible img {
     scale: $scale;
   }
 }
