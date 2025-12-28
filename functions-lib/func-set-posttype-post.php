@@ -2,11 +2,20 @@
 declare(strict_types=1);
 
 /**
- * 「投稿」のラベルを「お知らせ」に変更（管理画面向け）
+ * 「投稿」ラベル名を返す（必要ならフィルタで差し替え可能）
  */
+if (!function_exists('ty_post_label_name')) {
+	function ty_post_label_name(): string
+	{
+		/**
+		 * @param string $name デフォルトの表示名
+		 */
+		return (string) apply_filters('ty_post_label_name', 'お知らせ');
+	}
+}
 
-if (!function_exists('ty_change_post_object_label_to_news')) {
-	function ty_change_post_object_label_to_news(): void
+if (!function_exists('ty_change_post_object_labels')) {
+	function ty_change_post_object_labels(): void
 	{
 		if (!is_admin()) return;
 
@@ -14,7 +23,7 @@ if (!function_exists('ty_change_post_object_label_to_news')) {
 		if (!isset($wp_post_types['post']) || !is_object($wp_post_types['post'])) return;
 		if (!isset($wp_post_types['post']->labels) || !is_object($wp_post_types['post']->labels)) return;
 
-		$name = 'お知らせ';
+		$name = ty_post_label_name();
 		$labels = $wp_post_types['post']->labels;
 
 		$labels->name = $name;
@@ -29,20 +38,20 @@ if (!function_exists('ty_change_post_object_label_to_news')) {
 	}
 }
 
-if (!function_exists('ty_change_post_menu_label_to_news')) {
-	function ty_change_post_menu_label_to_news(): void
+if (!function_exists('ty_change_post_menu_labels')) {
+	function ty_change_post_menu_labels(): void
 	{
 		if (!is_admin()) return;
 
 		global $menu, $submenu;
 		if (!is_array($menu) || !is_array($submenu)) return;
 
-		$name = 'お知らせ';
+		$name = ty_post_label_name();
 		$menu[5][0] = $name;
 		if (isset($submenu['edit.php'][5][0])) $submenu['edit.php'][5][0] = "{$name}一覧";
 		if (isset($submenu['edit.php'][10][0])) $submenu['edit.php'][10][0] = "新しい{$name}";
 	}
 }
 
-add_action('init', 'ty_change_post_object_label_to_news');
-add_action('admin_menu', 'ty_change_post_menu_label_to_news');
+add_action('init', 'ty_change_post_object_labels');
+add_action('admin_menu', 'ty_change_post_menu_labels');
