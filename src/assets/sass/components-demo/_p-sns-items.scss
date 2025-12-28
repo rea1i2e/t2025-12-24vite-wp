@@ -1,0 +1,24 @@
+@use '../global' as *;
+
+.p-sns-items {
+  display: inline-flex;
+  gap: rem(40);
+  align-items: center;
+  justify-content: center;
+  @include mq() {
+    gap: rem(22);
+  }
+}
+
+.p-sns-items__item {
+  width: rem(35);
+  @include mq() {
+    display: flex;
+    
+  }
+}
+
+.p-sns-items__link {
+  display: block;
+  @include hover-scale();
+}

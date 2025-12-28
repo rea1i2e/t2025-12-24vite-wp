@@ -3,7 +3,8 @@
     <nav class="p-footer__nav" aria-label="フッターナビゲーション">
       <ul class="p-footer__nav-list">
         <?php foreach (get_nav_items() as $item) : ?>
-          <?php if (($item['slug'] ?? '') === 'top') continue; // 一部除外 ?>
+          <?php if (($item['slug'] ?? '') === 'top') continue; // 一部除外 
+          ?>
 
           <?php
           $slug = (string) ($item['slug'] ?? '');
@@ -101,6 +102,9 @@
           </li>
         <?php endforeach; ?>
       </ul>
+      <div class="p-footer__sns-items">
+        <?php get_template_part('components-demo/p-sns-items', null, ['color' => 'white']); ?>
+      </div>
     </nav>
 
     <div class="p-footer__bottom">
@@ -113,6 +117,5 @@
 
 <?php wp_footer(); ?>
 </body>
+
 </html>
-
-

@@ -25,7 +25,7 @@
       <nav class="p-header__pc-nav">
         <ul class="p-header__pc-nav-items">
           <?php foreach (get_nav_items() as $item) : ?>
-            <?php if (in_array($item['slug'], ['site-policy'])) continue; // 一部除外 ?>
+            <?php if (in_array($item['slug'], ['privacy-policy', 'terms-of-use'])) continue; // 一部除外 ?>
             <?php
             // URL生成
             $item_url = '';
@@ -178,6 +178,9 @@
           </li>
         <?php endforeach; ?>
       </ul>
+      <div class="p-drawer__sns-items">
+        <?php get_template_part('components-demo/p-sns-items'); ?>
+      </div>
     </div>
   </nav>
 
