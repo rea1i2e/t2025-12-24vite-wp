@@ -19,7 +19,7 @@
         ]); ?>
       </div>
       <div class="p-demo__content">
-        <?php // get_template_part('components-demo/p-demo-image'); ?>
+        <?php get_template_part('components-demo/p-demo-image'); ?>
       </div>
     </div>
   </section>

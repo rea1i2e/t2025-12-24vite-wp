@@ -1,9 +1,17 @@
 <?php get_header(); ?>
 <main class="p-main-sub">
+  <?php get_template_part('components-demo/sub-mv', null, [
+    'title_ja' => 'デフォルト投稿一覧',
+    'title_en' => 'home.php',
+    'image' => [
+      'file' => 'demo/dummy1.jpg',
+      'fileSp' => 'demo/dummy2.jpg',
+      'alt' => 'ボルネオの森',
+    ],
+  ]); ?>
   <div class="p-archive">
     <div class="p-archive__inner l-inner">
       <?php get_template_part('components/breadcrumb') ?>
-      <h1 class="p-archive__page-title">デフォルト投稿一覧 home.php</h1>
       <div class="p-archive__items p-archive-items">
         <?php if (have_posts()) : ?>
           <?php while (have_posts()) : the_post(); ?>
