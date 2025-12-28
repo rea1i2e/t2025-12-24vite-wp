@@ -89,19 +89,19 @@ function get_thumbnail_data($size = 'full', $fallback = true)
     }
 
     // フォールバック画像（dev/prod でパスが変わるため、可能ならヘルパー経由で解決する）
-    // - URL:  t2025_theme_image_url()（devはViteサーバー / prodはdistのハッシュ名）
-    // - PATH: t2025_theme_image_file_path()（devはsrc/配下 / prodはdistを参照）
+    // - URL:  ty_theme_image_url()（devはViteサーバー / prodはdistのハッシュ名）
+    // - PATH: ty_theme_image_file_path()（devはsrc/配下 / prodはdistを参照）
     $fallback_under_images = 'common/logo.svg';
 
-    $fallback_url = function_exists('t2025_theme_image_url')
-        ? t2025_theme_image_url($fallback_under_images)
+    $fallback_url = function_exists('ty_theme_image_url')
+        ? ty_theme_image_url($fallback_under_images)
         : get_template_directory_uri() . '/src/assets/images/' . $fallback_under_images;
 
-    $fallback_path = function_exists('t2025_theme_image_file_path')
-        ? t2025_theme_image_file_path($fallback_under_images)
+    $fallback_path = function_exists('ty_theme_image_file_path')
+        ? ty_theme_image_file_path($fallback_under_images)
         : get_template_directory() . '/src/assets/images/' . $fallback_under_images;
 
-    $dims = t2025_get_image_dimensions($fallback_path);
+    $dims = ty_get_image_dimensions($fallback_path);
 
     return [
         'url'    => $fallback_url,
@@ -120,7 +120,7 @@ function get_thumbnail_data($size = 'full', $fallback = true)
  *
  * @return array{width:int|null,height:int|null}
  */
-function t2025_get_image_dimensions($path)
+function ty_get_image_dimensions($path)
 {
     if (!is_string($path) || $path === '' || !is_readable($path)) {
         return ['width' => null, 'height' => null];

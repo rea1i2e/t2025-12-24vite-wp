@@ -12,7 +12,7 @@ declare(strict_types=1);
  * Note: `$location` is kept for backward compatibility with previous calls,
  * but is intentionally ignored.
  */
-function t2025_menu_items_html(
+function ty_menu_items_html(
 	string $location,
 	string $itemClass,
 	string $linkClass,

@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * Theme setup (base)
  */
-function t2025_setup(): void {
+function ty_setup(): void {
 	add_theme_support('title-tag');
 	add_theme_support('post-thumbnails');
 	add_theme_support('html5', [
@@ -18,6 +18,6 @@ function t2025_setup(): void {
 		'style',
 	]);
 }
-add_action('after_setup_theme', 't2025_setup');
+add_action('after_setup_theme', 'ty_setup');
 
 

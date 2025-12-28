@@ -10,14 +10,14 @@ declare(strict_types=1);
  */
 
 
-if (!defined('T2025_VITE_DEV_SERVER')) {
-	define('T2025_VITE_DEV_SERVER', is_ssl() ? 'https://localhost:5173' : 'http://localhost:5173');
+if (!defined('TY_VITE_DEV_SERVER')) {
+	define('TY_VITE_DEV_SERVER', is_ssl() ? 'https://localhost:5173' : 'http://localhost:5173');
 }
 
 // 開発中かどうかを判定する
-function t2025_vite_is_dev(): bool
+function ty_vite_is_dev(): bool
 {
-	$dev_server = defined('T2025_VITE_DEV_SERVER') ? (string) T2025_VITE_DEV_SERVER : '';
+	$dev_server = defined('TY_VITE_DEV_SERVER') ? (string) TY_VITE_DEV_SERVER : '';
 	if ($dev_server === '') return false;
 
 	$health_url = rtrim($dev_server, '/') . '/@vite/client';
@@ -26,39 +26,39 @@ function t2025_vite_is_dev(): bool
 }
 
 // Vite dev server のベースURLを返す（末尾スラッシュなし）
-function t2025_vite_dev_server(): string
+function ty_vite_dev_server(): string
 {
-	$dev_server = defined('T2025_VITE_DEV_SERVER') ? (string) T2025_VITE_DEV_SERVER : 'http://localhost:5173';
+	$dev_server = defined('TY_VITE_DEV_SERVER') ? (string) TY_VITE_DEV_SERVER : 'http://localhost:5173';
 	return rtrim($dev_server, '/');
 }
 
 // dist ディレクトリのURLを返す
-function t2025_vite_dist_url(): string
+function ty_vite_dist_url(): string
 {
 	return rtrim(get_stylesheet_directory_uri(), '/') . '/dist';
 }
 
 // dist ディレクトリの実ファイルパスを返す
-function t2025_vite_dist_path(): string
+function ty_vite_dist_path(): string
 {
 	return rtrim(get_stylesheet_directory(), '/') . '/dist';
 }
 
 // Vite の manifest.json の実ファイルパスを返す（出力先の差分を吸収）
-function t2025_vite_manifest_path(): string
+function ty_vite_manifest_path(): string
 {
 	// Vite はデフォルトで dist/.vite/manifest.json に manifest を出力する
-	$path = t2025_vite_dist_path() . '/.vite/manifest.json';
+	$path = ty_vite_dist_path() . '/.vite/manifest.json';
 	if (file_exists($path)) return $path;
 
 	// 旧設定等で dist/manifest.json に出力される場合のフォールバック
-	return t2025_vite_dist_path() . '/manifest.json';
+	return ty_vite_dist_path() . '/manifest.json';
 }
 
 // theme-assets.json の実ファイルパスを返す
-function t2025_vite_theme_assets_path(): string
+function ty_vite_theme_assets_path(): string
 {
-	return t2025_vite_dist_path() . '/theme-assets.json';
+	return ty_vite_dist_path() . '/theme-assets.json';
 }
 
 /**
@@ -66,12 +66,12 @@ function t2025_vite_theme_assets_path(): string
  *
  * @return array<string, string>
  */
-function t2025_vite_theme_assets_map(): array
+function ty_vite_theme_assets_map(): array
 {
 	static $cache = null;
 	if (is_array($cache)) return $cache;
 
-	$mapPath = t2025_vite_theme_assets_path();
+	$mapPath = ty_vite_theme_assets_path();
 	if (!file_exists($mapPath)) {
 		$cache = [];
 		return $cache;
@@ -107,34 +107,34 @@ function t2025_vite_theme_assets_map(): array
  *
  * @param string $srcPath 例: 'src/assets/images/demo/dummy1.jpg'
  */
-function t2025_theme_asset_url(string $srcPath): string
+function ty_theme_asset_url(string $srcPath): string
 {
 	$srcPath = ltrim($srcPath, '/');
 
-	if (t2025_vite_is_dev()) {
-		return t2025_vite_dev_server() . '/' . $srcPath;
+	if (ty_vite_is_dev()) {
+		return ty_vite_dev_server() . '/' . $srcPath;
 	}
 
-	$map = t2025_vite_theme_assets_map();
+	$map = ty_vite_theme_assets_map();
 	if (!isset($map[$srcPath]) || !is_string($map[$srcPath])) {
 		return '';
 	}
 
-	return t2025_vite_dist_url() . '/' . ltrim($map[$srcPath], '/');
+	return ty_vite_dist_url() . '/' . ltrim($map[$srcPath], '/');
 }
 
 /**
  * `src/assets/images/**` 配下のテーマ画像 URL を解決する
  *
  * 例:
- * - t2025_theme_image_url('demo/dummy1.jpg')
+ * - ty_theme_image_url('demo/dummy1.jpg')
  *
  * @param string $pathUnderImages 例: 'demo/dummy1.jpg'
  */
-function t2025_theme_image_url(string $pathUnderImages): string
+function ty_theme_image_url(string $pathUnderImages): string
 {
 	$pathUnderImages = ltrim($pathUnderImages, '/');
-	return t2025_theme_asset_url('src/assets/images/' . $pathUnderImages);
+	return ty_theme_asset_url('src/assets/images/' . $pathUnderImages);
 }
 
 /**
@@ -142,11 +142,11 @@ function t2025_theme_image_url(string $pathUnderImages): string
  *
  * @param string $handle 例: 't2025'
  */
-function t2025_enqueue_vite_client(string $handle = 't2025'): void
+function ty_enqueue_vite_client(string $handle = 't2025'): void
 {
-	if (!t2025_vite_is_dev()) return;
+	if (!ty_vite_is_dev()) return;
 
-	$dev = t2025_vite_dev_server();
+	$dev = ty_vite_dev_server();
 	wp_enqueue_script(
 		$handle . '-vite-client',
 		$dev . '/@vite/client',
@@ -163,11 +163,11 @@ function t2025_enqueue_vite_client(string $handle = 't2025'): void
  * @param string $entry  例: 'src/assets/js/main.js'
  * @param string $handle 例: 't2025'
  */
-function t2025_enqueue_vite_script_entry(string $entry, string $handle = 't2025'): void
+function ty_enqueue_vite_script_entry(string $entry, string $handle = 't2025'): void
 {
-	if (t2025_vite_is_dev()) {
-		t2025_enqueue_vite_client($handle);
-		$dev = t2025_vite_dev_server();
+	if (ty_vite_is_dev()) {
+		ty_enqueue_vite_client($handle);
+		$dev = ty_vite_dev_server();
 
 		wp_enqueue_script(
 			$handle . '-vite-entry',
@@ -180,7 +180,7 @@ function t2025_enqueue_vite_script_entry(string $entry, string $handle = 't2025'
 		return;
 	}
 
-	$manifest_path = t2025_vite_manifest_path();
+	$manifest_path = ty_vite_manifest_path();
 	if (!file_exists($manifest_path)) {
 		return;
 	}
@@ -193,7 +193,7 @@ function t2025_enqueue_vite_script_entry(string $entry, string $handle = 't2025'
 		return;
 	}
 
-	$dist_url = t2025_vite_dist_url();
+	$dist_url = ty_vite_dist_url();
 	$entry_data = $manifest[$entry];
 
 	// JS エントリから import される CSS（例: ライブラリCSS）
@@ -227,11 +227,11 @@ function t2025_enqueue_vite_script_entry(string $entry, string $handle = 't2025'
  * @param string $entry  例: 'src/assets/sass/style.scss'
  * @param string $handle 例: 't2025'
  */
-function t2025_enqueue_vite_style_entry(string $entry, string $handle = 't2025'): void
+function ty_enqueue_vite_style_entry(string $entry, string $handle = 't2025'): void
 {
-	if (t2025_vite_is_dev()) {
-		t2025_enqueue_vite_client($handle);
-		$dev = t2025_vite_dev_server();
+	if (ty_vite_is_dev()) {
+		ty_enqueue_vite_client($handle);
+		$dev = ty_vite_dev_server();
 		wp_enqueue_style(
 			$handle . '-vite-style',
 			$dev . '/' . ltrim($entry, '/'),
@@ -241,7 +241,7 @@ function t2025_enqueue_vite_style_entry(string $entry, string $handle = 't2025')
 		return;
 	}
 
-	$manifest_path = t2025_vite_manifest_path();
+	$manifest_path = ty_vite_manifest_path();
 	if (!file_exists($manifest_path)) return;
 
 	$manifest_raw = file_get_contents($manifest_path);
@@ -250,7 +250,7 @@ function t2025_enqueue_vite_style_entry(string $entry, string $handle = 't2025')
 	$manifest = json_decode($manifest_raw, true);
 	if (!is_array($manifest) || !isset($manifest[$entry]) || !is_array($manifest[$entry])) return;
 
-	$dist_url = t2025_vite_dist_url();
+	$dist_url = ty_vite_dist_url();
 	$entry_data = $manifest[$entry];
 
 	if (!isset($entry_data['file']) || !is_string($entry_data['file'])) return;

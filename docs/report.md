@@ -62,10 +62,10 @@ flowchart LR
   - JS entryに紐づく `css`（例: ライブラリCSS）も prodでenqueue
 
 #### dev / prod の判定方法
-判定は `functions-lib/func-vite.php` の `t2025_vite_is_dev()` で行います。
+判定は `functions-lib/func-vite.php` の `ty_vite_is_dev()` で行います。
 
-- `functions.php` で `T2025_VITE_DEV_SERVER` を定義（`is_ssl()` に応じて `https://localhost:5173` または `http://localhost:5173`）
-- `T2025_VITE_DEV_SERVER/@vite/client` に `wp_remote_head()` で到達確認（短いtimeout）
+- `functions.php` で `TY_VITE_DEV_SERVER` を定義（`is_ssl()` に応じて `https://localhost:5173` または `http://localhost:5173`）
+- `TY_VITE_DEV_SERVER/@vite/client` に `wp_remote_head()` で到達確認（短いtimeout）
   - 到達できる: **dev扱い**（Vite dev serverから `@vite/client` と `src/assets/**` を読み込む）
   - 到達できない: **prod扱い**（`dist/.vite/manifest.json` を参照して `dist/assets/**` をenqueue）
 

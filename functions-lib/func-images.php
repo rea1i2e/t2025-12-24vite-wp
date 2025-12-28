@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * 画像ヘルパー
  *
- * - `t2025_theme_asset_url()` でテーマアセットURLを解決（dev/prod を吸収）
+ * - `ty_theme_asset_url()` でテーマアセットURLを解決（dev/prod を吸収）
  * - 可能であれば width/height を付与して CLS を抑制
  * - loading/decoding のデフォルト値を用意
  */
@@ -15,7 +15,7 @@ declare(strict_types=1);
  *
  * @param string $srcPath 例: 'src/assets/images/demo/dummy1.jpg'
  */
-function t2025_theme_asset_file_path(string $srcPath): string {
+function ty_theme_asset_file_path(string $srcPath): string {
 	$srcPath = ltrim($srcPath, '/'); // 冒頭に/があったら除外
 
 	// dev では、テーマ配下（src/）に実ファイルが存在する
@@ -23,8 +23,8 @@ function t2025_theme_asset_file_path(string $srcPath): string {
 	if (file_exists($devCandidate)) return $devCandidate;
 
 	// prod では、theme-assets.json のマッピングから dist 側の実ファイルへ解決する
-	if (!function_exists('t2025_vite_theme_assets_map')) return '';
-	$map = t2025_vite_theme_assets_map();
+	if (!function_exists('ty_vite_theme_assets_map')) return '';
+	$map = ty_vite_theme_assets_map();
 	if (!isset($map[$srcPath]) || !is_string($map[$srcPath])) return '';
 
 	$rel = ltrim($map[$srcPath], '/'); // 例: assets/images/demo/dummy1-xxxx.jpg
@@ -37,27 +37,27 @@ function t2025_theme_asset_file_path(string $srcPath): string {
  *
  * @param string $pathUnderImages 例: 'demo/dummy1.jpg'
  */
-function t2025_theme_image_file_path(string $pathUnderImages): string {
+function ty_theme_image_file_path(string $pathUnderImages): string {
 	$pathUnderImages = ltrim($pathUnderImages, '/');
-	return t2025_theme_asset_file_path('src/assets/images/' . $pathUnderImages);
+	return ty_theme_asset_file_path('src/assets/images/' . $pathUnderImages);
 }
 
 /**
  * `src/assets/images/**` 配下のテーマ画像から <img> タグを組み立てる（推奨）
  *
  * 例:
- * - t2025_img('demo/dummy1.jpg', 'alt')
+ * - ty_img('demo/dummy1.jpg', 'alt')
  *
  * @param string $pathUnderImages 例: 'demo/dummy1.jpg'
  * @param array<string, mixed> $attrs 追加属性（class, loading, decoding, fetchpriority など）
  */
-function t2025_img(string $pathUnderImages, string $alt = '', array $attrs = []): string {
+function ty_img(string $pathUnderImages, string $alt = '', array $attrs = []): string {
 	$pathUnderImages = ltrim($pathUnderImages, '/');
-	$url = function_exists('t2025_theme_image_url') ? t2025_theme_image_url($pathUnderImages) : '';
+	$url = function_exists('ty_theme_image_url') ? ty_theme_image_url($pathUnderImages) : '';
 	if ($url === '') {
 		// フォールバック：images配下のsrcパスを直接組み立てる
 		$srcPath = 'src/assets/images/' . $pathUnderImages;
-		$url = function_exists('t2025_theme_asset_url') ? t2025_theme_asset_url($srcPath) : '';
+		$url = function_exists('ty_theme_asset_url') ? ty_theme_asset_url($srcPath) : '';
 	}
 	if ($url === '') {
 		return '';
@@ -73,7 +73,7 @@ function t2025_img(string $pathUnderImages, string $alt = '', array $attrs = [])
 	// width/height が未指定で、取得可能な場合のみ付与する
 	$needsSize = empty($attrs['width']) || empty($attrs['height']);
 	if ($needsSize) {
-		$path = t2025_theme_image_file_path($pathUnderImages);
+		$path = ty_theme_image_file_path($pathUnderImages);
 		if ($path !== '') {
 			$ext = strtolower((string) pathinfo($path, PATHINFO_EXTENSION));
 			$isRaster = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'], true);
@@ -101,10 +101,10 @@ function t2025_img(string $pathUnderImages, string $alt = '', array $attrs = [])
 }
 
 /**
- * @deprecated 互換用。今後は `t2025_img()` を使用してください。
+ * @deprecated 互換用。今後は `ty_img()` を使用してください。
  */
-function t2025_img_image(string $pathUnderImages, string $alt = '', array $attrs = []): string {
-	return t2025_img($pathUnderImages, $alt, $attrs);
+function ty_img_image(string $pathUnderImages, string $alt = '', array $attrs = []): string {
+	return ty_img($pathUnderImages, $alt, $attrs);
 }
 
 /**
@@ -115,7 +115,7 @@ function t2025_img_image(string $pathUnderImages, string $alt = '', array $attrs
  *
  * @param array<string, mixed> $attrs
  */
-function t2025_build_html_attrs(array $attrs): string {
+function ty_build_html_attrs(array $attrs): string {
 	$out = '';
 	foreach ($attrs as $k => $v) {
 		if ($v === null || $v === false) continue;
@@ -141,7 +141,7 @@ function t2025_build_html_attrs(array $attrs): string {
  * PC/SP 画像を <picture> で出し分けして出力する（dev/prod を吸収）
  *
  * 例:
- * - echo t2025_picture_img('common/sub-mv.jpg', 'common/sub-mv_sp.jpg', '...', ['loading' => 'eager']);
+ * - echo ty_picture_img('common/sub-mv.jpg', 'common/sub-mv_sp.jpg', '...', ['loading' => 'eager']);
  *
  * 注意:
  * - width/height は <img> に付与するのが主目的です（<source> の width/height は仕様上必須ではありません）
@@ -152,7 +152,7 @@ function t2025_build_html_attrs(array $attrs): string {
  * @param array<string, mixed> $imgAttrs <img> に付与する追加属性（loading, fetchpriority, class など）
  * @param string      $spMedia          SP判定 media
  */
-function t2025_picture_img(
+function ty_picture_img(
 	string $pcPathUnderImages,
 	?string $spPathUnderImages,
 	string $alt = '',
@@ -162,16 +162,16 @@ function t2025_picture_img(
 	$pcPathUnderImages = ltrim($pcPathUnderImages, '/');
 	$spPathUnderImages = $spPathUnderImages !== null ? ltrim($spPathUnderImages, '/') : null;
 
-	if (!function_exists('t2025_theme_image_url') || !function_exists('t2025_theme_image_file_path')) {
+	if (!function_exists('ty_theme_image_url') || !function_exists('ty_theme_image_file_path')) {
 		return '';
 	}
 
-	$pc_url = t2025_theme_image_url($pcPathUnderImages);
-	$pc_path = t2025_theme_image_file_path($pcPathUnderImages);
+	$pc_url = ty_theme_image_url($pcPathUnderImages);
+	$pc_path = ty_theme_image_file_path($pcPathUnderImages);
 	if ($pc_url === '' || $pc_path === '') return '';
 
-	$pc_dims = function_exists('t2025_get_image_dimensions')
-		? t2025_get_image_dimensions($pc_path)
+	$pc_dims = function_exists('ty_get_image_dimensions')
+		? ty_get_image_dimensions($pc_path)
 		: (function_exists('getimagesize') ? (function () use ($pc_path) {
 			$size = @getimagesize($pc_path);
 			return (is_array($size) && !empty($size[0]) && !empty($size[1]))
@@ -192,12 +192,12 @@ function t2025_picture_img(
 
 	$source_html = '';
 	if ($spPathUnderImages !== null && $spPathUnderImages !== '') {
-		$sp_url = t2025_theme_image_url($spPathUnderImages);
-		$sp_path = t2025_theme_image_file_path($spPathUnderImages);
+		$sp_url = ty_theme_image_url($spPathUnderImages);
+		$sp_path = ty_theme_image_file_path($spPathUnderImages);
 
 		if ($sp_url !== '' && $sp_path !== '') {
-			$sp_dims = function_exists('t2025_get_image_dimensions')
-				? t2025_get_image_dimensions($sp_path)
+			$sp_dims = function_exists('ty_get_image_dimensions')
+				? ty_get_image_dimensions($sp_path)
 				: (function_exists('getimagesize') ? (function () use ($sp_path) {
 					$size = @getimagesize($sp_path);
 					return (is_array($size) && !empty($size[0]) && !empty($size[1]))
@@ -213,13 +213,13 @@ function t2025_picture_img(
 			if (!empty($sp_dims['width'])) $source_attrs['width'] = (int) $sp_dims['width'];
 			if (!empty($sp_dims['height'])) $source_attrs['height'] = (int) $sp_dims['height'];
 
-			$source_html = '<source' . t2025_build_html_attrs($source_attrs) . '>';
+			$source_html = '<source' . ty_build_html_attrs($source_attrs) . '>';
 		}
 	}
 
 	return '<picture>'
 		. $source_html
-		. '<img' . t2025_build_html_attrs($imgAttrs) . '>'
+		. '<img' . ty_build_html_attrs($imgAttrs) . '>'
 		. '</picture>';
 }
 

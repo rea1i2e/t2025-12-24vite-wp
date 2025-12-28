@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * Notes:
  * - Keep function names to minimize template changes.
- * - Asset URLs are resolved via `t2025_theme_asset_url()` (Vite dev/prod aware).
+ * - Asset URLs are resolved via `ty_theme_asset_url()` (Vite dev/prod aware).
  */
 
 if (!function_exists('temp_path')) {
@@ -36,7 +36,7 @@ if (!function_exists('img_path')) {
 	 */
 	function img_path(string $file = ''): void {
 		$file = ltrim($file, '/'); // e.g. 'common/logo.svg'
-		$url = function_exists('t2025_theme_image_url') ? t2025_theme_image_url($file) : '';
+		$url = function_exists('ty_theme_image_url') ? ty_theme_image_url($file) : '';
 		echo esc_url($url);
 	}
 }

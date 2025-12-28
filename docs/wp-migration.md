@@ -53,7 +53,7 @@
 - [ ] 既存phpファイルの引き継ぎ（**functions-lib** の取捨選択と統合）
   - すでに移植済み: 旧テンプレ互換のヘルパー（`functions-lib/func-legacy.php`）、テンプレ（`front-page.php` など）、components（`components/*`）
   - 未移植: CPT/ショートコード/セキュリティ/recaptcha 等（旧テーマ: `functions-lib/*.php`）
-- [x] 画像の `width` / `height` 属性（テーマ同梱画像は `t2025_img('demo/dummy1.jpg')` のように指定して付与。WPメディアは `wp_get_attachment_image()` を優先）
+- [x] 画像の `width` / `height` 属性（テーマ同梱画像は `ty_img('demo/dummy1.jpg')` のように指定して付与。WPメディアは `wp_get_attachment_image()` を優先）
 - [x] 画像の `loading` 属性（default: `lazy`。LCP候補は `eager` + `fetchpriority="high"` を使用）
 - [ ] 自動デプロイ
   - [ ] GitHub Actionsの設定（できればコマンドで再現できる形）
@@ -113,7 +113,7 @@
 ### 2025-12-24
 - 変更: dev server判定とenqueueを調整（HTTPS環境を考慮、dev時はエントリをheadで読み込み）
 - 目的: HTTPSのWP表示でMixed Contentを避けつつ、dev時のCSS適用遅れ（FOUC）を抑える
-- 方法: `T2025_VITE_DEV_SERVER`をHTTPS優先で定義、dev判定の`wp_remote_head`で`sslverify=false`、dev時のエントリscriptをheadで読み込み
+- 方法: `TY_VITE_DEV_SERVER`をHTTPS優先で定義、dev判定の`wp_remote_head`で`sslverify=false`、dev時のエントリscriptをheadで読み込み
 - 影響範囲: dev時の読み込み順、Vite dev serverのURL指定
 
 ### 2025-12-24
@@ -150,7 +150,7 @@
   - 不足していた `components/p-pagenavi.php` は簡易版を新規作成
 - 影響範囲:
   - テンプレ互換のため関数名は旧テーマ準拠（将来的に整理する余地あり）
-  - 画像URLは `t2025_theme_asset_url()` 経由で dev/prod を吸収
+  - 画像URLは `ty_theme_asset_url()` 経由で dev/prod を吸収
 
 ## 開発（HMR）確認手順（HTTPSのWP）
 ### 前提
@@ -180,7 +180,7 @@
 ### 2025-12-24
 - 変更: prod側のmanifest参照パスを `dist/.vite/manifest.json` に追従（`functions-lib/func-vite.php`）
 - 目的: `vite build` の実際の出力先に合わせて、WPが正しくhashファイルをenqueueできるようにするため
-- 方法: `t2025_vite_manifest_path()` を `dist/.vite/manifest.json` 優先 + `dist/manifest.json` フォールバックに変更
+- 方法: `ty_vite_manifest_path()` を `dist/.vite/manifest.json` 優先 + `dist/manifest.json` フォールバックに変更
 - 影響範囲: 本番（build成果物）の読み込み
 
 ## 削除予定リスト（確定したらチェック）

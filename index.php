@@ -6,7 +6,7 @@ declare(strict_types=1);
 $site_name  = (string) get_bloginfo('name');
 $page_title = (string) wp_get_document_title();
 $home_url   = (string) home_url('/');
-$dummy1_url = (string) t2025_theme_asset_url('src/assets/images/demo/dummy1.jpg');
+$dummy1_url = (string) ty_theme_asset_url('src/assets/images/demo/dummy1.jpg');
 
 get_header();
 
