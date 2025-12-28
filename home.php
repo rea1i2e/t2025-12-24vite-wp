@@ -5,7 +5,7 @@
     'title_en' => 'home.php',
     'image' => [
       'file' => 'demo/dummy1.jpg',
-      'fileSp' => 'demo/dummy2.jpg',
+      // 'fileSp' => 'demo/dummy2.jpg', 省略可能
       'alt' => 'ボルネオの森',
     ],
   ]); ?>

@@ -1,6 +1,47 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * sub-mv（サブMV）コンポーネント
+ *
+ * =========================================
+ * 使い方（例）
+ * =========================================
+ *
+ * ▼ 基本（画像なし）
+ * get_template_part('components-demo/sub-mv', null, [
+ *   'tag' => 'h1', // p/h1-h6（それ以外はp扱い）
+ *   'title_ja' => '',
+ *   'title_en' => '',
+ * ]);
+ *
+ * ▼ 画像あり（PCのみ）
+ * get_template_part('components-demo/sub-mv', null, [
+ *   'tag' => 'h1',
+ *   'title_ja' => '',
+ *   'title_en' => '',
+ *   'image' => [
+ *     'file' => 'common/sub-mv.jpg',   // `src/assets/images/` 配下の相対パス
+ *     'alt'  => '',                   // alt（省略/空の場合は alt="" になる）
+ *   ],
+ * ]);
+ *
+ * ▼ 画像あり（PC/SP 切り替え）
+ * get_template_part('components-demo/sub-mv', null, [
+ *   'tag' => 'h1',
+ *   'title_ja' => '',
+ *   'title_en' => '',
+ *   'image' => [
+ *     'file'   => 'common/sub-mv.jpg',
+ *     'fileSp' => 'common/sub-mv_sp.jpg', // なくてもOK（null/空なら <source> を出さない）
+ *     'alt'    => '',
+ *   ],
+ * ]);
+ *
+ * 補足:
+ * - 画像は `t2025_picture_img()` で出力します（dev/prod のURL解決・width/height付与などを吸収）
+ */
+
 // デフォルト値を設定
 $default_args = [
 	'tag' => 'h1',
@@ -26,16 +67,20 @@ $title_ja_tag = in_array($sub_mv_args['tag'], $allowed_tags, true) ? (string) $s
 $title_wrap_tag = ($title_ja_tag === 'p') ? 'div' : 'hgroup';
 
 // 画像URLを解決（URLが取れない場合は画像を出さない）
-$pc_src = '';
-$sp_src = '';
-if (!empty($sub_mv_args['image']['file']) && function_exists('t2025_theme_image_url')) {
-	$pc_src = t2025_theme_image_url((string) $sub_mv_args['image']['file']);
-	if (!empty($sub_mv_args['image']['fileSp'])) {
-		$sp_src = t2025_theme_image_url((string) $sub_mv_args['image']['fileSp']);
-	}
+$picture_html = '';
+if (!empty($sub_mv_args['image']['file']) && function_exists('t2025_picture_img')) {
+	$pc_file = (string) $sub_mv_args['image']['file'];
+	$sp_file = !empty($sub_mv_args['image']['fileSp']) ? (string) $sub_mv_args['image']['fileSp'] : null;
+	$alt = (string) $sub_mv_args['image']['alt'];
+
+	// 既存の出力に寄せて、loading/decoding は付与しない（必要ならここで指定）
+	$picture_html = t2025_picture_img($pc_file, $sp_file, $alt, [
+		'loading' => 'eager',
+		'fetchpriority' => 'high',
+	]);
 }
 
-$has_image = ($pc_src !== '');
+$has_image = ($picture_html !== '');
 ?>
 <div class="p-sub-mv l-sub-mv" id="js-mv">
   <div class="p-sub-mv__inner l-inner">
@@ -48,12 +93,7 @@ $has_image = ($pc_src !== '');
   </div>
   <?php if ($has_image) : ?>
     <figure class="p-sub-mv__image">
-      <picture>
-        <?php if ($sp_src !== '') : ?>
-          <source srcset="<?php echo esc_url($sp_src); ?>" media="(max-width: 767px)">
-        <?php endif; ?>
-        <img src="<?php echo esc_url($pc_src); ?>" alt="<?php echo esc_attr((string) $sub_mv_args['image']['alt']); ?>">
-      </picture>
+      <?php echo $picture_html; ?>
     </figure>
   <?php endif; ?>
 </div>

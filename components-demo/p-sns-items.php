@@ -20,7 +20,7 @@ $color = isset($args['color']) ? $args['color'] : '';
   <?php foreach ($sns_items as $item): ?>
     <li class="p-sns-items__item">
       <a class="p-sns-items__link" href="<?php echo $item['url']; ?>" target="_blank" rel="noopener noreferrer">
-        <?php echo t2025_img_image($color === 'white' ? $item['img_src_white'] : $item['img_src'], $item['alt']); ?>
+        <?php echo t2025_img($color === 'white' ? $item['img_src_white'] : $item['img_src'], $item['alt']); ?>
       </a>
     </li>
   <?php endforeach; ?>

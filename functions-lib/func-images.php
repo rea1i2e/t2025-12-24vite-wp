@@ -3,44 +3,39 @@
 declare(strict_types=1);
 
 /**
- * Image helpers
+ * 画像ヘルパー
  *
- * - Resolve theme asset URL via `t2025_theme_asset_url()` (dev/prod aware)
- * - Add width/height when possible to reduce CLS
- * - Provide sane defaults for loading/decoding
+ * - `t2025_theme_asset_url()` でテーマアセットURLを解決（dev/prod を吸収）
+ * - 可能であれば width/height を付与して CLS を抑制
+ * - loading/decoding のデフォルト値を用意
  */
 
 /**
- * Resolve the filesystem path for a theme image referenced by src path.
+ * src パスで指定されたテーマ画像の「実ファイルパス」を解決する
  *
- * @param string $srcPath Example: 'src/assets/images/demo/dummy1.jpg'
+ * @param string $srcPath 例: 'src/assets/images/demo/dummy1.jpg'
  */
 function t2025_theme_asset_file_path(string $srcPath): string {
-	$srcPath = ltrim($srcPath, '/');
+	$srcPath = ltrim($srcPath, '/'); // 冒頭に/があったら除外
 
-	// In dev, the file exists under the theme directory.
+	// dev では、テーマ配下（src/）に実ファイルが存在する
 	$devCandidate = get_theme_file_path($srcPath);
 	if (file_exists($devCandidate)) return $devCandidate;
 
-	// In prod, resolve from theme-assets.json mapping.
-	$mapPath = function_exists('t2025_vite_theme_assets_path') ? t2025_vite_theme_assets_path() : '';
-	if ($mapPath === '' || !file_exists($mapPath)) return '';
+	// prod では、theme-assets.json のマッピングから dist 側の実ファイルへ解決する
+	if (!function_exists('t2025_vite_theme_assets_map')) return '';
+	$map = t2025_vite_theme_assets_map();
+	if (!isset($map[$srcPath]) || !is_string($map[$srcPath])) return '';
 
-	$raw = file_get_contents($mapPath);
-	if ($raw === false) return '';
-
-	$map = json_decode($raw, true);
-	if (!is_array($map) || !isset($map[$srcPath]) || !is_string($map[$srcPath])) return '';
-
-	$rel = ltrim($map[$srcPath], '/'); // e.g. assets/images/demo/dummy1-xxxx.jpg
+	$rel = ltrim($map[$srcPath], '/'); // 例: assets/images/demo/dummy1-xxxx.jpg
 	$distCandidate = get_theme_file_path('dist/' . $rel);
 	return file_exists($distCandidate) ? $distCandidate : '';
 }
 
 /**
- * Resolve the filesystem path for a theme image under `src/assets/images/**`.
+ * `src/assets/images/**` 配下のテーマ画像の「実ファイルパス」を解決する
  *
- * @param string $pathUnderImages Example: 'demo/dummy1.jpg'
+ * @param string $pathUnderImages 例: 'demo/dummy1.jpg'
  */
 function t2025_theme_image_file_path(string $pathUnderImages): string {
 	$pathUnderImages = ltrim($pathUnderImages, '/');
@@ -48,15 +43,25 @@ function t2025_theme_image_file_path(string $pathUnderImages): string {
 }
 
 /**
- * Build an <img> tag for a theme asset referenced by src path.
+ * `src/assets/images/**` 配下のテーマ画像から <img> タグを組み立てる（推奨）
  *
- * @param string $srcPath Example: 'src/assets/images/demo/dummy1.jpg'
- * @param array<string, mixed> $attrs Extra attributes (class, loading, decoding, fetchpriority, etc.)
+ * 例:
+ * - t2025_img('demo/dummy1.jpg', 'alt')
+ *
+ * @param string $pathUnderImages 例: 'demo/dummy1.jpg'
+ * @param array<string, mixed> $attrs 追加属性（class, loading, decoding, fetchpriority など）
  */
-function t2025_img(string $srcPath, string $alt = '', array $attrs = []): string {
-	$srcPath = ltrim($srcPath, '/');
-	$url = function_exists('t2025_theme_asset_url') ? t2025_theme_asset_url($srcPath) : '';
-	if ($url === '') return '';
+function t2025_img(string $pathUnderImages, string $alt = '', array $attrs = []): string {
+	$pathUnderImages = ltrim($pathUnderImages, '/');
+	$url = function_exists('t2025_theme_image_url') ? t2025_theme_image_url($pathUnderImages) : '';
+	if ($url === '') {
+		// フォールバック：images配下のsrcパスを直接組み立てる
+		$srcPath = 'src/assets/images/' . $pathUnderImages;
+		$url = function_exists('t2025_theme_asset_url') ? t2025_theme_asset_url($srcPath) : '';
+	}
+	if ($url === '') {
+		return '';
+	}
 
 	$attrs = array_merge([
 		'src' => $url,
@@ -65,10 +70,10 @@ function t2025_img(string $srcPath, string $alt = '', array $attrs = []): string
 		'decoding' => 'async',
 	], $attrs);
 
-	// Add width/height when possible and not explicitly provided.
+	// width/height が未指定で、取得可能な場合のみ付与する
 	$needsSize = empty($attrs['width']) || empty($attrs['height']);
 	if ($needsSize) {
-		$path = t2025_theme_asset_file_path($srcPath);
+		$path = t2025_theme_image_file_path($pathUnderImages);
 		if ($path !== '') {
 			$ext = strtolower((string) pathinfo($path, PATHINFO_EXTENSION));
 			$isRaster = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'], true);
@@ -86,7 +91,8 @@ function t2025_img(string $srcPath, string $alt = '', array $attrs = []): string
 	foreach ($attrs as $k => $v) {
 		if ($v === null) continue;
 		if ($v === false) continue;
-		if ($v === '') continue;
+		// alt は空でも必ず出力（alt="" を担保）
+		if ($v === '' && (string) $k !== 'alt') continue;
 		$html .= ' ' . esc_attr((string) $k) . '="' . esc_attr((string) $v) . '"';
 	}
 	$html .= '>';
@@ -95,54 +101,126 @@ function t2025_img(string $srcPath, string $alt = '', array $attrs = []): string
 }
 
 /**
- * Build an <img> tag for a theme image under `src/assets/images/**`.
- *
- * Example:
- * - t2025_img_image('demo/dummy1.jpg', 'alt')
+ * @deprecated 互換用。今後は `t2025_img()` を使用してください。
  */
 function t2025_img_image(string $pathUnderImages, string $alt = '', array $attrs = []): string {
-	$pathUnderImages = ltrim($pathUnderImages, '/');
-	// Resolve URL via the helper if available (keeps logic centralized).
-	if (function_exists('t2025_theme_image_url')) {
-		$url = t2025_theme_image_url($pathUnderImages);
-		if ($url === '') return '';
+	return t2025_img($pathUnderImages, $alt, $attrs);
+}
 
-		$attrs = array_merge([
-			'src' => $url,
-			'alt' => $alt,
-			'loading' => 'lazy',
-			'decoding' => 'async',
-		], $attrs);
+/**
+ * HTML属性配列を ` key="value"` 形式の文字列へ変換する
+ *
+ * - null / false は出力しない
+ * - true / '' は値なし属性として出力する
+ *
+ * @param array<string, mixed> $attrs
+ */
+function t2025_build_html_attrs(array $attrs): string {
+	$out = '';
+	foreach ($attrs as $k => $v) {
+		if ($v === null || $v === false) continue;
+		if ($k === '' || !is_string($k)) continue;
 
-		$needsSize = empty($attrs['width']) || empty($attrs['height']);
-		if ($needsSize) {
-			$path = t2025_theme_image_file_path($pathUnderImages);
-			if ($path !== '') {
-				$ext = strtolower((string) pathinfo($path, PATHINFO_EXTENSION));
-				$isRaster = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'], true);
-				if ($isRaster) {
-					$size = @getimagesize($path);
-					if (is_array($size) && !empty($size[0]) && !empty($size[1])) {
-						if (empty($attrs['width'])) $attrs['width'] = (int) $size[0];
-						if (empty($attrs['height'])) $attrs['height'] = (int) $size[1];
-					}
-				}
-			}
+		// alt は空でも alt="" を担保（boolean属性扱いにしない）
+		if ($k === 'alt' && $v === '') {
+			$out .= ' alt=""';
+			continue;
 		}
 
-		$html = '<img';
-		foreach ($attrs as $k => $v) {
-			if ($v === null) continue;
-			if ($v === false) continue;
-			if ($v === '') continue;
-			$html .= ' ' . esc_attr((string) $k) . '="' . esc_attr((string) $v) . '"';
+		if ($v === true || $v === '') {
+			$out .= ' ' . esc_attr($k);
+			continue;
 		}
-		$html .= '>';
-		return $html;
+
+		$out .= ' ' . esc_attr($k) . '="' . esc_attr((string) $v) . '"';
+	}
+	return $out;
+}
+
+/**
+ * PC/SP 画像を <picture> で出し分けして出力する（dev/prod を吸収）
+ *
+ * 例:
+ * - echo t2025_picture_img('common/sub-mv.jpg', 'common/sub-mv_sp.jpg', '...', ['loading' => 'eager']);
+ *
+ * 注意:
+ * - width/height は <img> に付与するのが主目的です（<source> の width/height は仕様上必須ではありません）
+ *
+ * @param string      $pcPathUnderImages 'common/sub-mv.jpg' のように `src/assets/images/` 配下の相対パスを指定
+ * @param string|null $spPathUnderImages SP用。不要なら null
+ * @param string      $alt              alt テキスト
+ * @param array<string, mixed> $imgAttrs <img> に付与する追加属性（loading, fetchpriority, class など）
+ * @param string      $spMedia          SP判定 media
+ */
+function t2025_picture_img(
+	string $pcPathUnderImages,
+	?string $spPathUnderImages,
+	string $alt = '',
+	array $imgAttrs = [],
+	string $spMedia = '(max-width: 767px)'
+): string {
+	$pcPathUnderImages = ltrim($pcPathUnderImages, '/');
+	$spPathUnderImages = $spPathUnderImages !== null ? ltrim($spPathUnderImages, '/') : null;
+
+	if (!function_exists('t2025_theme_image_url') || !function_exists('t2025_theme_image_file_path')) {
+		return '';
 	}
 
-	// Fallback: delegate to t2025_img with full path.
-	return t2025_img('src/assets/images/' . $pathUnderImages, $alt, $attrs);
+	$pc_url = t2025_theme_image_url($pcPathUnderImages);
+	$pc_path = t2025_theme_image_file_path($pcPathUnderImages);
+	if ($pc_url === '' || $pc_path === '') return '';
+
+	$pc_dims = function_exists('t2025_get_image_dimensions')
+		? t2025_get_image_dimensions($pc_path)
+		: (function_exists('getimagesize') ? (function () use ($pc_path) {
+			$size = @getimagesize($pc_path);
+			return (is_array($size) && !empty($size[0]) && !empty($size[1]))
+				? ['width' => (int) $size[0], 'height' => (int) $size[1]]
+				: ['width' => null, 'height' => null];
+		})() : ['width' => null, 'height' => null]);
+
+	$imgAttrs = array_merge([
+		'src' => $pc_url,
+		'alt' => $alt,
+		'loading' => 'lazy',
+		'decoding' => 'async',
+	], $imgAttrs);
+
+	// width/height が未指定なら自動付与（取れた場合のみ）
+	if (empty($imgAttrs['width']) && !empty($pc_dims['width'])) $imgAttrs['width'] = (int) $pc_dims['width'];
+	if (empty($imgAttrs['height']) && !empty($pc_dims['height'])) $imgAttrs['height'] = (int) $pc_dims['height'];
+
+	$source_html = '';
+	if ($spPathUnderImages !== null && $spPathUnderImages !== '') {
+		$sp_url = t2025_theme_image_url($spPathUnderImages);
+		$sp_path = t2025_theme_image_file_path($spPathUnderImages);
+
+		if ($sp_url !== '' && $sp_path !== '') {
+			$sp_dims = function_exists('t2025_get_image_dimensions')
+				? t2025_get_image_dimensions($sp_path)
+				: (function_exists('getimagesize') ? (function () use ($sp_path) {
+					$size = @getimagesize($sp_path);
+					return (is_array($size) && !empty($size[0]) && !empty($size[1]))
+						? ['width' => (int) $size[0], 'height' => (int) $size[1]]
+						: ['width' => null, 'height' => null];
+				})() : ['width' => null, 'height' => null]);
+
+			$source_attrs = [
+				'srcset' => $sp_url,
+				'media' => $spMedia,
+			];
+			// 要望に合わせて <source> にも付与（不要なら削ってOK）
+			if (!empty($sp_dims['width'])) $source_attrs['width'] = (int) $sp_dims['width'];
+			if (!empty($sp_dims['height'])) $source_attrs['height'] = (int) $sp_dims['height'];
+
+			$source_html = '<source' . t2025_build_html_attrs($source_attrs) . '>';
+		}
+	}
+
+	return '<picture>'
+		. $source_html
+		. '<img' . t2025_build_html_attrs($imgAttrs) . '>'
+		. '</picture>';
 }
 
 

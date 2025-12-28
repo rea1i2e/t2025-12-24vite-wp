@@ -53,7 +53,7 @@
 - [ ] 既存phpファイルの引き継ぎ（**functions-lib** の取捨選択と統合）
   - すでに移植済み: 旧テンプレ互換のヘルパー（`functions-lib/func-legacy.php`）、テンプレ（`front-page.php` など）、components（`components/*`）
   - 未移植: CPT/ショートコード/セキュリティ/recaptcha 等（旧テーマ: `functions-lib/*.php`）
-- [x] 画像の `width` / `height` 属性（テーマ同梱画像は `t2025_img()` で付与。WPメディアは `wp_get_attachment_image()` を優先）
+- [x] 画像の `width` / `height` 属性（テーマ同梱画像は `t2025_img('demo/dummy1.jpg')` のように指定して付与。WPメディアは `wp_get_attachment_image()` を優先）
 - [x] 画像の `loading` 属性（default: `lazy`。LCP候補は `eager` + `fetchpriority="high"` を使用）
 - [ ] 自動デプロイ
   - [ ] GitHub Actionsの設定（できればコマンドで再現できる形）
