@@ -17,7 +17,8 @@ declare(strict_types=1);
  * - ty_picture_img('demo/dummy3.jpg', 'demo/dummy2.jpg', 'dummy3.jpg')
  *
  * ▼ URLだけ欲しい（src/srcsetなどに入れる）
- * - ty_theme_image_url('demo/dummy1.jpg')  ※定義は func-vite.php
+ *   ※定義は func-vite.php
+ * - ty_theme_image_url('demo/dummy1.jpg')
  * - ty_theme_asset_url('src/assets/images/demo/dummy1.jpg') ※定義は func-vite.php
  *
  * 補足:

@@ -18,8 +18,8 @@ declare(strict_types=1);
  *   ※img, pictureタグの出力は、func-images.phpで扱う
  * 
  * ▼ JS/CSS の enqueue（通常は func-vite-assets.php で自動実行）
- *   ty_enqueue_vite_script_entry('src/assets/js/main.js', 't2025');
- *   ty_enqueue_vite_style_entry('src/assets/sass/style.scss', 't2025');
+ *   ty_enqueue_vite_script_entry('src/assets/js/main.js', 'ty');
+ *   ty_enqueue_vite_style_entry('src/assets/sass/style.scss', 'ty');
  */
 
 if (!defined('TY_VITE_DEV_SERVER')) {
@@ -175,7 +175,7 @@ function ty_theme_image_url(string $pathUnderImages): string
 }
 
 // Vite クライアントを enqueue（dev のみ）
-function ty_enqueue_vite_client(string $handle = 't2025'): void
+function ty_enqueue_vite_client(string $handle = 'ty'): void
 {
 	if (!ty_vite_is_dev()) return;
 
@@ -191,7 +191,7 @@ function ty_enqueue_vite_client(string $handle = 't2025'): void
 }
 
 // Vite のモジュールエントリ（JS）を enqueue（dev/prod）
-function ty_enqueue_vite_script_entry(string $entry, string $handle = 't2025'): void
+function ty_enqueue_vite_script_entry(string $entry, string $handle = 'ty'): void
 {
 	if (ty_vite_is_dev()) {
 		ty_enqueue_vite_client($handle);
@@ -244,13 +244,13 @@ function ty_enqueue_vite_script_entry(string $entry, string $handle = 't2025'): 
 		$dist_url . '/' . ltrim($entry_data['file'], '/'),
 		[],
 		null,
-		['in_footer' => true]
+		['in_footer' => false]
 	);
 	wp_script_add_data($handle . '-script', 'type', 'module');
 }
 
 // Vite のスタイルエントリ（CSS）を enqueue（dev/prod）
-function ty_enqueue_vite_style_entry(string $entry, string $handle = 't2025'): void
+function ty_enqueue_vite_style_entry(string $entry, string $handle = 'ty'): void
 {
 	if (ty_vite_is_dev()) {
 		ty_enqueue_vite_client($handle);
