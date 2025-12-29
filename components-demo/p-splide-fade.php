@@ -1,0 +1,20 @@
+<?php
+declare(strict_types=1);
+
+$splideFadeImages = [
+	['file' => 'demo/nagasaki1.jpg', 'alt' => '長崎1'],
+	['file' => 'demo/nagasaki2.jpg', 'alt' => '長崎2'],
+	['file' => 'demo/nagasaki3.jpg', 'alt' => '長崎3'],
+];
+?>
+<div class="p-splide-fade splide" id="js-splide-fade">
+	<div class="p-splide-fade__slider-track splide__track">
+		<ul class="p-splide-fade__slider-list splide__list">
+			<?php foreach ($splideFadeImages as $item) : ?>
+				<li class="p-splide-fade__slider-item splide__slide">
+          <?php echo ty_img($item['file'], $item['alt'], ['loading' => 'eager', 'fetchpriority' => 'high']); ?>
+				</li>
+			<?php endforeach; ?>
+		</ul>
+	</div>
+</div>

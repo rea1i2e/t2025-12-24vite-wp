@@ -138,7 +138,9 @@ function envNumber(name, defaultValue) {
 export default defineConfig({
   root: ".",
   base: "",
-  publicDir: "src/public",
+  // WordPress 側で参照する favicon 等はテーマ直下で管理するため、
+  // Vite の publicDir コピーは使用しない（dist/ に複製されるのを避ける）
+  publicDir: false,
   server: {
     host: true,
     port: 5173,

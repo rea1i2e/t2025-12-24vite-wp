@@ -9,7 +9,7 @@
  * ▼ リンクとして出力（追加属性あり）
  *   get_template_part('components/c-button', null, [
  *     'text' => '資料ダウンロード',
- *     'href' => get_page_path('/download/'),
+ *     'href' => ty_get_page('/download/'),
  *     'attributes' => [
  *       'data-slidein-mask' => 'white',
  *       'aria-label' => '資料ダウンロードページへ',

@@ -6,6 +6,7 @@ declare(strict_types=1);
  * アセット読み込み（Vite）
  * ・開発中: Vite dev serverから読み込み
  * ・本番: 指定したパスをキーに、dist/.vite/manifest.jsonからパスを取得して読み込み
+ * ※開発中、本番の判定とパスの解決はfunc-vite.phpで行う
  */
 
 function ty_enqueue_assets(): void {

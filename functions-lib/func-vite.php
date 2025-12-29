@@ -3,18 +3,30 @@
 declare(strict_types=1);
 
 /**
- * Vite ヘルパー（WordPress の enqueue 用）
+ * Vite ヘルパー
  *
- * - 開発時（dev）: Vite dev server から読み込む（HMR）
- * - 本番時（prod）: dist の manifest.json を参照して読み込む
+ * =========================================
+ * 使い方（例）
+ * =========================================
+ *
+ * ▼ フォントのURL解決（preload用など）
+ *   ty_vite_asset_url('src/assets/fonts/NotoSansJP-VF.woff2')
+ *
+ * ▼ 画像のURL解決
+ *   ty_theme_image_url('demo/dummy1.jpg')
+ *   ※開発中、本番の判定とパスの解決はこのファイルで行う
+ *   ※img, pictureタグの出力は、func-images.phpで扱う
+ * 
+ * ▼ JS/CSS の enqueue（通常は func-vite-assets.php で自動実行）
+ *   ty_enqueue_vite_script_entry('src/assets/js/main.js', 't2025');
+ *   ty_enqueue_vite_style_entry('src/assets/sass/style.scss', 't2025');
  */
-
 
 if (!defined('TY_VITE_DEV_SERVER')) {
 	define('TY_VITE_DEV_SERVER', is_ssl() ? 'https://localhost:5173' : 'http://localhost:5173');
 }
 
-// 開発中かどうかを判定する
+// 開発中かどうかを判定
 function ty_vite_is_dev(): bool
 {
 	$dev_server = defined('TY_VITE_DEV_SERVER') ? (string) TY_VITE_DEV_SERVER : '';
@@ -47,12 +59,55 @@ function ty_vite_dist_path(): string
 // Vite の manifest.json の実ファイルパスを返す（出力先の差分を吸収）
 function ty_vite_manifest_path(): string
 {
-	// Vite はデフォルトで dist/.vite/manifest.json に manifest を出力する
 	$path = ty_vite_dist_path() . '/.vite/manifest.json';
 	if (file_exists($path)) return $path;
-
-	// 旧設定等で dist/manifest.json に出力される場合のフォールバック
 	return ty_vite_dist_path() . '/manifest.json';
+}
+
+// Vite の manifest.json を読み込み、エントリキー -> メタ情報配列を返す（1リクエスト内キャッシュ）
+function ty_vite_manifest_map(): array
+{
+	static $cache = null;
+	if (is_array($cache)) return $cache;
+
+	$manifest_path = ty_vite_manifest_path();
+	if (!file_exists($manifest_path)) {
+		$cache = [];
+		return $cache;
+	}
+
+	$raw = file_get_contents($manifest_path);
+	if ($raw === false) {
+		$cache = [];
+		return $cache;
+	}
+
+	$manifest = json_decode($raw, true);
+	if (!is_array($manifest)) {
+		$cache = [];
+		return $cache;
+	}
+
+	$cache = $manifest;
+	return $cache;
+}
+
+// manifest.json を使って任意アセットのURLを解決する（dev/prod を吸収）
+function ty_vite_asset_url(string $entry): string
+{
+	$entry = ltrim($entry, '/');
+
+	if (ty_vite_is_dev()) {
+		return ty_vite_dev_server() . '/' . $entry;
+	}
+
+	$manifest = ty_vite_manifest_map();
+	if (!isset($manifest[$entry]) || !is_array($manifest[$entry])) return '';
+
+	$data = $manifest[$entry];
+	if (!isset($data['file']) || !is_string($data['file'])) return '';
+
+	return ty_vite_dist_url() . '/' . ltrim($data['file'], '/');
 }
 
 // theme-assets.json の実ファイルパスを返す
@@ -61,11 +116,7 @@ function ty_vite_theme_assets_path(): string
 	return ty_vite_dist_path() . '/theme-assets.json';
 }
 
-/**
- * theme-assets.json を読み込み、srcパス -> dist相対パス のマッピング配列を返す（1リクエスト内キャッシュ）
- *
- * @return array<string, string>
- */
+// theme-assets.json を読み込み、srcパス -> dist相対パス のマッピング配列を返す（1リクエスト内キャッシュ）
 function ty_vite_theme_assets_map(): array
 {
 	static $cache = null;
@@ -89,7 +140,6 @@ function ty_vite_theme_assets_map(): array
 		return $cache;
 	}
 
-	// string => string のみを残す
 	$out = [];
 	foreach ($map as $k => $v) {
 		if (!is_string($k) || !is_string($v)) continue;
@@ -100,13 +150,7 @@ function ty_vite_theme_assets_map(): array
 	return $cache;
 }
 
-/**
- * テーマアセットの URL を解決する
- *
- * PHP 側でビルド後のファイル名（ハッシュ付き）を知る必要がある場合のための関数です。
- *
- * @param string $srcPath 例: 'src/assets/images/demo/dummy1.jpg'
- */
+// テーマアセットの URL を解決する（PHP 側でビルド後のファイル名を知る必要がある場合用）
 function ty_theme_asset_url(string $srcPath): string
 {
 	$srcPath = ltrim($srcPath, '/');
@@ -123,25 +167,14 @@ function ty_theme_asset_url(string $srcPath): string
 	return ty_vite_dist_url() . '/' . ltrim($map[$srcPath], '/');
 }
 
-/**
- * `src/assets/images/**` 配下のテーマ画像 URL を解決する
- *
- * 例:
- * - ty_theme_image_url('demo/dummy1.jpg')
- *
- * @param string $pathUnderImages 例: 'demo/dummy1.jpg'
- */
+// `src/assets/images/**` 配下のテーマ画像 URL を解決する
 function ty_theme_image_url(string $pathUnderImages): string
 {
 	$pathUnderImages = ltrim($pathUnderImages, '/');
 	return ty_theme_asset_url('src/assets/images/' . $pathUnderImages);
 }
 
-/**
- * Vite クライアントを enqueue（dev のみ）
- *
- * @param string $handle 例: 't2025'
- */
+// Vite クライアントを enqueue（dev のみ）
 function ty_enqueue_vite_client(string $handle = 't2025'): void
 {
 	if (!ty_vite_is_dev()) return;
@@ -157,12 +190,7 @@ function ty_enqueue_vite_client(string $handle = 't2025'): void
 	wp_script_add_data($handle . '-vite-client', 'type', 'module');
 }
 
-/**
- * Vite のモジュールエントリ（JS）を enqueue（dev/prod）
- *
- * @param string $entry  例: 'src/assets/js/main.js'
- * @param string $handle 例: 't2025'
- */
+// Vite のモジュールエントリ（JS）を enqueue（dev/prod）
 function ty_enqueue_vite_script_entry(string $entry, string $handle = 't2025'): void
 {
 	if (ty_vite_is_dev()) {
@@ -221,12 +249,7 @@ function ty_enqueue_vite_script_entry(string $entry, string $handle = 't2025'): 
 	wp_script_add_data($handle . '-script', 'type', 'module');
 }
 
-/**
- * Vite のスタイルエントリ（CSS）を enqueue（dev/prod）
- *
- * @param string $entry  例: 'src/assets/sass/style.scss'
- * @param string $handle 例: 't2025'
- */
+// Vite のスタイルエントリ（CSS）を enqueue（dev/prod）
 function ty_enqueue_vite_style_entry(string $entry, string $handle = 't2025'): void
 {
 	if (ty_vite_is_dev()) {

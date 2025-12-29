@@ -1,5 +1,6 @@
 <?php get_header(); ?>
 <main class="p-main-top">
+  <?php get_template_part('components/top-mv'); ?>
   <section class="p-demo l-demo" id="demo">
     <div class="p-demo__inner l-inner">
       <div class="p-demo__heading">

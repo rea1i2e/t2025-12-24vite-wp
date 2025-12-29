@@ -17,7 +17,7 @@
           if ($is_external) {
             $item_url = esc_url($slug);
           } else {
-            $item_url = ($slug === 'top') ? get_page_path() : get_page_path($slug);
+            $item_url = ($slug === 'top') ? ty_get_page() : ty_get_page($slug);
           }
 
           // 現在ページ判定
@@ -67,7 +67,7 @@
                   if ($child_is_external) {
                     $child_url = esc_url($child_slug);
                   } else {
-                    $child_url = ($child_slug === 'top') ? get_page_path() : get_page_path($child_slug);
+                    $child_url = ($child_slug === 'top') ? ty_get_page() : ty_get_page($child_slug);
                   }
 
                   $child_is_current = '';

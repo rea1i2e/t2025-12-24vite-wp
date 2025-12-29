@@ -5,9 +5,24 @@ declare(strict_types=1);
 /**
  * 画像ヘルパー
  *
- * - `ty_theme_asset_url()` でテーマアセットURLを解決（dev/prod を吸収）
- * - 可能であれば width/height を付与して CLS を抑制
- * - loading/decoding のデフォルト値を用意
+ * =========================================
+ * 使い方（どれを使う？）
+ * =========================================
+ *
+ * ▼ `<img>` を出したい（推奨）
+ * - ty_img('demo/dummy1.jpg', 'dummy1.jpg')
+ * - ty_img('demo/dummy1.jpg', 'dummy1.jpg', ['loading' => 'eager', 'fetchpriority' => 'high'])
+ *
+ * ▼ `<picture>` でPC/SPを出し分けしたい
+ * - ty_picture_img('demo/dummy3.jpg', 'demo/dummy2.jpg', 'dummy3.jpg')
+ *
+ * ▼ URLだけ欲しい（src/srcsetなどに入れる）
+ * - ty_theme_image_url('demo/dummy1.jpg')  ※定義は func-vite.php
+ * - ty_theme_asset_url('src/assets/images/demo/dummy1.jpg') ※定義は func-vite.php
+ *
+ * 補足:
+ * - 可能であれば width/height を自動付与して CLS を抑制します（ラスタ画像のみ）
+ * - 画像URLは Vite dev/prod 差を吸収します（theme-assets.json / dev server）
  */
 
 /**
@@ -42,15 +57,7 @@ function ty_theme_image_file_path(string $pathUnderImages): string {
 	return ty_theme_asset_file_path('src/assets/images/' . $pathUnderImages);
 }
 
-/**
- * `src/assets/images/**` 配下のテーマ画像から <img> タグを組み立てる（推奨）
- *
- * 例:
- * - ty_img('demo/dummy1.jpg', 'alt')
- *
- * @param string $pathUnderImages 例: 'demo/dummy1.jpg'
- * @param array<string, mixed> $attrs 追加属性（class, loading, decoding, fetchpriority など）
- */
+// `src/assets/images/**` 配下のテーマ画像から <img> タグを組み立てる（推奨）
 function ty_img(string $pathUnderImages, string $alt = '', array $attrs = []): string {
 	$pathUnderImages = ltrim($pathUnderImages, '/');
 	$url = function_exists('ty_theme_image_url') ? ty_theme_image_url($pathUnderImages) : '';
@@ -67,7 +74,7 @@ function ty_img(string $pathUnderImages, string $alt = '', array $attrs = []): s
 		'src' => $url,
 		'alt' => $alt,
 		'loading' => 'lazy',
-		'decoding' => 'async',
+		// 'decoding' => 'async',
 	], $attrs);
 
 	// width/height が未指定で、取得可能な場合のみ付与する
@@ -107,14 +114,7 @@ function ty_img_image(string $pathUnderImages, string $alt = '', array $attrs = 
 	return ty_img($pathUnderImages, $alt, $attrs);
 }
 
-/**
- * HTML属性配列を ` key="value"` 形式の文字列へ変換する
- *
- * - null / false は出力しない
- * - true / '' は値なし属性として出力する
- *
- * @param array<string, mixed> $attrs
- */
+// HTML属性配列を ` key="value"` 形式の文字列へ変換する
 function ty_build_html_attrs(array $attrs): string {
 	$out = '';
 	foreach ($attrs as $k => $v) {
@@ -137,21 +137,7 @@ function ty_build_html_attrs(array $attrs): string {
 	return $out;
 }
 
-/**
- * PC/SP 画像を <picture> で出し分けして出力する（dev/prod を吸収）
- *
- * 例:
- * - echo ty_picture_img('common/sub-mv.jpg', 'common/sub-mv_sp.jpg', '...', ['loading' => 'eager']);
- *
- * 注意:
- * - width/height は <img> に付与するのが主目的です（<source> の width/height は仕様上必須ではありません）
- *
- * @param string      $pcPathUnderImages 'common/sub-mv.jpg' のように `src/assets/images/` 配下の相対パスを指定
- * @param string|null $spPathUnderImages SP用。不要なら null
- * @param string      $alt              alt テキスト
- * @param array<string, mixed> $imgAttrs <img> に付与する追加属性（loading, fetchpriority, class など）
- * @param string      $spMedia          SP判定 media
- */
+// PC/SP 画像を <picture> で出し分けして出力する（dev/prod を吸収）
 function ty_picture_img(
 	string $pcPathUnderImages,
 	?string $spPathUnderImages,
@@ -183,7 +169,7 @@ function ty_picture_img(
 		'src' => $pc_url,
 		'alt' => $alt,
 		'loading' => 'lazy',
-		'decoding' => 'async',
+		// 'decoding' => 'async',
 	], $imgAttrs);
 
 	// width/height が未指定なら自動付与（取れた場合のみ）

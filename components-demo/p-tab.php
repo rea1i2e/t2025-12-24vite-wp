@@ -22,25 +22,25 @@ $tab_groups = [
 
 <?php foreach ($tab_groups as $group) : ?>
 	<?php $tabs = (isset($group['tabs']) && is_array($group['tabs'])) ? $group['tabs'] : []; ?>
-	<div class="p-tab js-tab">
-		<ul class="p-tab__menu-items">
+<div class="p-tab js-tab">
+  <ul class="p-tab__menu-items">
 			<?php foreach ($tabs as $i => $tab) : ?>
 				<?php
 					$id = isset($tab['id']) ? (string) $tab['id'] : '';
 					$label = isset($tab['label']) ? (string) $tab['label'] : '';
 					$is_active = !empty($tab['active']);
 				?>
-				<li class="p-tab__menu-item">
+    <li class="p-tab__menu-item">
 					<button
 						type="button"
 						class="p-tab__button js-tab-trigger<?php echo $is_active ? ' is-active' : ''; ?>"
 						data-id="<?php echo esc_attr($id); ?>"
 					><?php echo esc_html($label); ?></button>
-				</li>
+    </li>
 			<?php endforeach; ?>
-		</ul>
+  </ul>
 
-		<div class="p-tab__contents">
+  <div class="p-tab__contents">
 			<?php foreach ($tabs as $i => $tab) : ?>
 				<?php
 					$id = isset($tab['id']) ? (string) $tab['id'] : '';
@@ -50,10 +50,10 @@ $tab_groups = [
 				?>
 				<div class="<?php echo esc_attr($content_class); ?>" id="<?php echo esc_attr($id); ?>">
 					<?php echo esc_html($content); ?>
-				</div>
+    </div>
 			<?php endforeach; ?>
-		</div>
-	</div>
+    </div>
+  </div>
 <?php endforeach; ?>
 
 

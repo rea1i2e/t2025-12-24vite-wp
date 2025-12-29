@@ -11,7 +11,7 @@
      <div class="p-404__button">
       <?php get_template_part('components/c-button', null, [
         'text' => 'トップへ戻る',
-        'href' => get_page_path(),
+        'href' => ty_get_page(),
       ]); ?>
      </div>
     </div>

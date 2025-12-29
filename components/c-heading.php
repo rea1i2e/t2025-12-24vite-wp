@@ -26,7 +26,7 @@
  *     'en_tag' => 'h3',
  *     'tag' => 'h2',
  *   ]);
- *
+ * 
  * @param array $args 引数配列
  *   - text_en (string, 必須): 英語テキスト（HTMLタグを含む可能性がある）
  *   - text_ja (string, 必須): 日本語テキスト

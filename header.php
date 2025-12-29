@@ -6,6 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="format-detection" content="telephone=no">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="shortcut icon" href="<?php ty_theme('/favicon.ico'); ?>">
+  <link rel="apple-touch-icon" href="<?php ty_theme('/apple-touch-icon.png'); ?>">
+  <link rel="preload" href="<?php echo ty_vite_asset_url('src/assets/fonts/NotoSansJP-VF.woff2'); ?>" as="font" type="font/woff2" crossorigin>
+  <?php if (is_front_page()) : $preload_image_url = ty_theme_image_url('demo/nagasaki1.jpg'); ?>
+    <link rel="preload" href="<?php echo $preload_image_url; ?>" as="image">
+  <?php endif; ?>
   <?php wp_head(); ?>
 </head>
 
@@ -15,8 +21,8 @@
     <div class="p-header__inner">
       <?php $tag = (is_front_page()) ? 'h1' : 'div'; ?>
       <<?php echo $tag; ?> class="p-header__logo">
-        <a class="p-header__logo-link" href="<?php page_path(); ?>">
-          <img src="<?php img_path('/common/logo.svg'); ?>" alt="">
+        <a class="p-header__logo-link" href="<?php ty_page(); ?>">
+          <?php echo ty_img('common/logo.svg', '', ['loading' => 'eager']); ?>
         </a>
       </<?php echo $tag; ?>>
       <button class="p-header__menu-button c-menu-button" id="js-menu" type="button" aria-controls="js-drawer" aria-expanded="false" aria-label="メニューを開閉する">
@@ -25,16 +31,17 @@
       <nav class="p-header__pc-nav">
         <ul class="p-header__pc-nav-items">
           <?php foreach (get_nav_items() as $item) : ?>
-            <?php if (in_array($item['slug'], ['privacy-policy', 'terms-of-use'])) continue; // 一部除外 ?>
+            <?php if (in_array($item['slug'], ['privacy-policy', 'terms-of-use'])) continue; // 一部除外 
+            ?>
             <?php
             // URL生成
             $item_url = '';
             if (isset($item['external']) && $item['external']) {
               $item_url = esc_url($item['slug']);
             } elseif ($item['slug'] === 'top') {
-              $item_url = get_page_path();
+              $item_url = ty_get_page();
             } else {
-              $item_url = get_page_path($item['slug']);
+              $item_url = ty_get_page($item['slug']);
             }
             // 現在のページがナビゲーションのリンク先と一致しているかどうかを判定
             if (is_front_page() && $item['slug'] === 'top') {
@@ -65,9 +72,9 @@
                       if (isset($child['external']) && $child['external']) {
                         $child_url = esc_url($child['slug']);
                       } elseif ($child['slug'] === 'top') {
-                        $child_url = get_page_path();
+                        $child_url = ty_get_page();
                       } else {
-                        $child_url = get_page_path($child['slug']);
+                        $child_url = ty_get_page($child['slug']);
                       }
                       // 子メニューの現在ページ判定
                       $child_is_current = '';
@@ -104,16 +111,17 @@
     <div class="p-drawer__inner l-inner">
       <ul class="p-drawer__nav-items p-toggle-nav-items" id="js-drawer-menu">
         <?php foreach (get_nav_items() as $item) : ?>
-          <?php if (in_array($item['slug'], ['site-policy'])) continue; // 一部除外 ?>
+          <?php if (in_array($item['slug'], ['site-policy'])) continue; // 一部除外 
+          ?>
           <?php
           // URL生成
           $item_url = '';
           if (isset($item['external']) && $item['external']) {
             $item_url = esc_url($item['slug']);
           } elseif ($item['slug'] === 'top') {
-            $item_url = get_page_path();
+            $item_url = ty_get_page();
           } else {
-            $item_url = get_page_path($item['slug']);
+            $item_url = ty_get_page($item['slug']);
           }
 
           // 現在のページがナビゲーションのリンク先と一致しているかどうかを判定
@@ -145,9 +153,9 @@
                   if (isset($child['external']) && $child['external']) {
                     $child_url = esc_url($child['slug']);
                   } elseif ($child['slug'] === 'top') {
-                    $child_url = get_page_path();
+                    $child_url = ty_get_page();
                   } else {
-                    $child_url = get_page_path($child['slug']);
+                    $child_url = ty_get_page($child['slug']);
                   }
 
                   // 子メニューの現在ページ判定
@@ -183,5 +191,3 @@
       </div>
     </div>
   </nav>
-
-
