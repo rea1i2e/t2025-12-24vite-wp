@@ -1,6 +1,6 @@
 <?php
 /**
- * works のカスタム投稿タイプを設定
+ * カスタム投稿タイプworksを設定
  */
 declare(strict_types=1);
 

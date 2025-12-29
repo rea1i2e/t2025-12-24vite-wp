@@ -1,8 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
 /**
- * 「投稿」ラベル名を返す（必要ならフィルタで差し替え可能）
+ * 投稿タイプ「投稿」のラベル名を変更
  */
 if (!function_exists('ty_post_label_name')) {
 	function ty_post_label_name(): string
