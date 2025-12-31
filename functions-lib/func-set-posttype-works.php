@@ -1,13 +1,17 @@
 <?php
+
 /**
- * カスタム投稿タイプworksを設定
+ * カスタム投稿works
+ * ・投稿タイプの設置
+ * ・タクソノミーの設置
+ * ・メインクエリの出力件数変更
  */
+
 declare(strict_types=1);
 
-if (!function_exists('ty_register_post_type_works')) {
-	add_action('init', 'ty_register_post_type_works');
+add_action('init', 'ty_register_post_type_works');
 
-	function ty_register_post_type_works(): void
+function ty_register_post_type_works(): void
 	{
 		$singular = '制作実績';
 		$plural = '制作実績'; // 複数形のラベル
@@ -74,5 +78,11 @@ if (!function_exists('ty_register_post_type_works')) {
 				'rewrite' => false, // URLリライトは不要
 			]
 		);
-	}
 }
+
+function ty_custom_main_query($query) : void
+{
+  if (is_admin() || !$query->is_main_query()) return;
+  if (is_post_type_archive('works')) $query->set('posts_per_page', 4);
+}
+add_action('pre_get_posts', 'ty_custom_main_query');
