@@ -93,13 +93,8 @@ function get_thumbnail_data($size = 'full', $fallback = true)
     // - PATH: ty_theme_image_file_path()（devはsrc/配下 / prodはdistを参照）
     $fallback_under_images = 'common/logo.svg';
 
-    $fallback_url = function_exists('ty_theme_image_url')
-        ? ty_theme_image_url($fallback_under_images)
-        : get_template_directory_uri() . '/src/assets/images/' . $fallback_under_images;
-
-    $fallback_path = function_exists('ty_theme_image_file_path')
-        ? ty_theme_image_file_path($fallback_under_images)
-        : get_template_directory() . '/src/assets/images/' . $fallback_under_images;
+    $fallback_url = ty_theme_image_url($fallback_under_images);
+    $fallback_path = ty_theme_image_file_path($fallback_under_images);
 
     $dims = ty_get_image_dimensions($fallback_path);
 

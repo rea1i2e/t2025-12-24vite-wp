@@ -29,6 +29,10 @@ function get_nav_items(): array {
 			'text' => 'お知らせ',
 		],
 		[
+			'slug' => 'works',
+			'text' => '制作実績',
+		],
+		[
 			'slug' => 'demo',
 			'text' => 'デモ一覧',
 			'children' => [

@@ -37,7 +37,6 @@ function ty_theme_asset_file_path(string $srcPath): string {
 	if (file_exists($devCandidate)) return $devCandidate;
 
 	// prod では、theme-assets.json のマッピングから dist 側の実ファイルへ解決する
-	if (!function_exists('ty_vite_theme_assets_map')) return '';
 	$map = ty_vite_theme_assets_map();
 	if (!isset($map[$srcPath]) || !is_string($map[$srcPath])) return '';
 
@@ -59,11 +58,11 @@ function ty_theme_image_file_path(string $pathUnderImages): string {
 // `src/assets/images/**` 配下のテーマ画像から <img> タグを組み立てる（推奨）
 function ty_img(string $pathUnderImages, string $alt = '', array $attrs = []): string {
 	$pathUnderImages = ltrim($pathUnderImages, '/');
-	$url = function_exists('ty_theme_image_url') ? ty_theme_image_url($pathUnderImages) : '';
+	$url = ty_theme_image_url($pathUnderImages);
 	if ($url === '') {
 		// フォールバック：images配下のsrcパスを直接組み立てる
 		$srcPath = 'src/assets/images/' . $pathUnderImages;
-		$url = function_exists('ty_theme_asset_url') ? ty_theme_asset_url($srcPath) : '';
+		$url = ty_theme_asset_url($srcPath);
 	}
 	if ($url === '') {
 		return '';
@@ -147,22 +146,11 @@ function ty_picture_img(
 	$pcPathUnderImages = ltrim($pcPathUnderImages, '/');
 	$spPathUnderImages = $spPathUnderImages !== null ? ltrim($spPathUnderImages, '/') : null;
 
-	if (!function_exists('ty_theme_image_url') || !function_exists('ty_theme_image_file_path')) {
-		return '';
-	}
-
 	$pc_url = ty_theme_image_url($pcPathUnderImages);
 	$pc_path = ty_theme_image_file_path($pcPathUnderImages);
 	if ($pc_url === '' || $pc_path === '') return '';
 
-	$pc_dims = function_exists('ty_get_image_dimensions')
-		? ty_get_image_dimensions($pc_path)
-		: (function_exists('getimagesize') ? (function () use ($pc_path) {
-			$size = @getimagesize($pc_path);
-			return (is_array($size) && !empty($size[0]) && !empty($size[1]))
-				? ['width' => (int) $size[0], 'height' => (int) $size[1]]
-				: ['width' => null, 'height' => null];
-		})() : ['width' => null, 'height' => null]);
+	$pc_dims = ty_get_image_dimensions($pc_path);
 
 	$imgAttrs = array_merge([
 		'src' => $pc_url,
@@ -181,14 +169,7 @@ function ty_picture_img(
 		$sp_path = ty_theme_image_file_path($spPathUnderImages);
 
 		if ($sp_url !== '' && $sp_path !== '') {
-			$sp_dims = function_exists('ty_get_image_dimensions')
-				? ty_get_image_dimensions($sp_path)
-				: (function_exists('getimagesize') ? (function () use ($sp_path) {
-					$size = @getimagesize($sp_path);
-					return (is_array($size) && !empty($size[0]) && !empty($size[1]))
-						? ['width' => (int) $size[0], 'height' => (int) $size[1]]
-						: ['width' => null, 'height' => null];
-				})() : ['width' => null, 'height' => null]);
+			$sp_dims = ty_get_image_dimensions($sp_path);
 
 			$source_attrs = [
 				'srcset' => $sp_url,

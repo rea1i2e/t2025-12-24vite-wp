@@ -68,7 +68,7 @@ $title_wrap_tag = ($title_ja_tag === 'p') ? 'div' : 'hgroup';
 
 // 画像URLを解決（URLが取れない場合は画像を出さない）
 $picture_html = '';
-if (!empty($sub_mv_args['image']['file']) && function_exists('ty_picture_img')) {
+if (!empty($sub_mv_args['image']['file'])) {
 	$pc_file = (string) $sub_mv_args['image']['file'];
 	$sp_file = !empty($sub_mv_args['image']['fileSp']) ? (string) $sub_mv_args['image']['fileSp'] : null;
 	$alt = (string) $sub_mv_args['image']['alt'];

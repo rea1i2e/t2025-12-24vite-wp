@@ -22,7 +22,7 @@ $baseDir = get_theme_file_path('functions-lib');
 
 // 依存関係があるものだけ、ここに列挙して先に読み込む（通常は空でOK）。
 $ordered = [
-	// 例: 'func-vite.php',
+	'func-vite.php',
 ];
 
 // 読み込み順を指定したファイルの読み込み
