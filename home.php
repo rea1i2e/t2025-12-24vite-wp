@@ -18,7 +18,7 @@
             <article class="p-archive-items__post" data-fadein>
               <a href="<?php the_permalink(); ?>" class="p-archive-items__link">
                 <figure class="p-archive-items__thumbnail">
-                  <?php display_thumbnail('full'); ?>
+                  <?php ty_display_thumbnail('full'); ?>
                 </figure>
                 <p class="p-archive-items__date">
                   <time class="" datetime="<?php echo get_the_date('Y-m-d'); ?>">

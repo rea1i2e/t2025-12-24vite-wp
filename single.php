@@ -11,7 +11,7 @@
             <div class="p-single__container-inner">
               <div class="p-single__head">
                 <figure class="p-single__thumbnail">
-                  <?php display_thumbnail('full', 'eager', false); ?>
+                  <?php ty_display_thumbnail('full', 'eager', false); ?>
                 </figure>
                 <div class="p-single__meta">
                   <time class="p-single__date" datetime="<?php echo esc_attr(get_the_date(DATE_W3C)); ?>">

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * サムネイル画像表示
  *
@@ -8,24 +10,22 @@
  * =========================================
  *
  * ▼ 基本（fullサイズ / lazy loading / no-imageあり）
- *   display_thumbnail();
+ *   ty_display_thumbnail();
  *
  * ▼ サイズ指定（mediumサイズ / lazy loading）
- *   display_thumbnail('medium');
+ *   ty_display_thumbnail('medium');
  *
  * ▼ eager loading（FV・ファーストビュー用）
- *   display_thumbnail('large', 'eager');
+ *   ty_display_thumbnail('large', 'eager');
  *
  * ▼ サムネイルが無い場合は何も出力しない
- *   display_thumbnail('medium', 'lazy', false);
+ *   ty_display_thumbnail('medium', 'lazy', false);
  *
  */
 
-
-
-function display_thumbnail($size = 'full', $loading = 'lazy', $fallback = true)
+function ty_display_thumbnail($size = 'full', $loading = 'lazy', $fallback = true)
 {
-    $t = get_thumbnail_data($size, $fallback);
+    $t = ty_get_thumbnail_data($size, $fallback);
 
     // サムネイルもフォールバックも無い場合は何も出さない
     if (!$t) {
@@ -58,7 +58,7 @@ function display_thumbnail($size = 'full', $loading = 'lazy', $fallback = true)
 }
 
 
-function get_thumbnail_data($size = 'full', $fallback = true)
+function ty_get_thumbnail_data($size = 'full', $fallback = true)
 {
     if (has_post_thumbnail()) {
         $thumbnail_id = get_post_thumbnail_id();

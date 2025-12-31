@@ -30,7 +30,7 @@
       </button>
       <nav class="p-header__pc-nav">
         <ul class="p-header__pc-nav-items">
-          <?php foreach (get_nav_items() as $item) : ?>
+          <?php foreach (ty_get_nav_items() as $item) : ?>
             <?php if (in_array($item['slug'], ['privacy-policy', 'terms-of-use'])) continue; // 一部除外 
             ?>
             <?php
@@ -110,7 +110,7 @@
   <nav class="p-drawer" id="js-drawer" aria-hidden="true">
     <div class="p-drawer__inner l-inner">
       <ul class="p-drawer__nav-items p-toggle-nav-items" id="js-drawer-menu">
-        <?php foreach (get_nav_items() as $item) : ?>
+        <?php foreach (ty_get_nav_items() as $item) : ?>
           <?php if (in_array($item['slug'], ['site-policy'])) continue; // 一部除外 
           ?>
           <?php

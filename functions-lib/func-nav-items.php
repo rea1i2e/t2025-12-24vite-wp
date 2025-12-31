@@ -8,7 +8,7 @@ declare(strict_types=1);
  * =========================================
  *
  * ▼ 単純にループしてリンクを出す（例: header/footer など）
- *   foreach (get_nav_items() as $item) {
+ *   foreach (ty_get_nav_items() as $item) {
  *     // $item['slug'], $item['text'] を使ってURL/表示名を組み立てる
  *   }
  *
@@ -18,7 +18,7 @@ declare(strict_types=1);
  *
  * @return array<int, array{slug:string,text:string,modifier?:string}>
  */
-function get_nav_items(): array {
+function ty_get_nav_items(): array {
 	return [
 		[
 			'slug' => 'top',

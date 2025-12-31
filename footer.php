@@ -2,7 +2,7 @@
   <div class="p-footer__inner l-inner">
     <nav class="p-footer__nav" aria-label="フッターナビゲーション">
       <ul class="p-footer__nav-list">
-        <?php foreach (get_nav_items() as $item) : ?>
+        <?php foreach (ty_get_nav_items() as $item) : ?>
           <?php if (($item['slug'] ?? '') === 'top') continue; // 一部除外 
           ?>
 
