@@ -80,9 +80,9 @@ function ty_register_post_type_works(): void
 		);
 }
 
-function ty_custom_main_query($query) : void
+function ty_custom_main_query_works($query) : void
 {
   if (is_admin() || !$query->is_main_query()) return;
   if (is_post_type_archive('works')) $query->set('posts_per_page', 4);
 }
-add_action('pre_get_posts', 'ty_custom_main_query');
+add_action('pre_get_posts', 'ty_custom_main_query_works');
