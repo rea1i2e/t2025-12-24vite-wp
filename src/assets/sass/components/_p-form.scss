@@ -10,12 +10,12 @@
   // --input-bg: var(--color-white);
   --select-icon-right: #{rem(8)};
   --select-icon-width: #{rem(16)};
-  --select-icon-color: rgb(176 176 176);
+  --select-icon-color: currentColor;
   --select-padding-inline: #{rem(4) calc( rem(4) + var(--select-icon-right) + var(--select-icon-width))};
-  --radio-size: #{rem(17)};
+  --radio-size: #{rem(20)};
   --radio-bg: var(--color-white);
   --radio-check-color: currentColor;
-  --checkbox-size: #{rem(17)};
+  --checkbox-size: #{rem(20)};
   --checkbox-bg: transparent;
   --checkbox-check-color: currentColor;
   --placeholder-color: #ccc; // selectの初期値文字色は、src/assets/js/_option-color.jsで制御
@@ -29,7 +29,6 @@
   display: grid;
   font-size: maxrem(16);
   @include mq() {
-    --dd-padding-block: #{rem(24)};
     grid-template-columns: auto 1fr;
     column-gap: rem(40);
     row-gap: rem(50);
@@ -46,20 +45,7 @@
 
 .p-form__dd {
   background-color: var(--color-white);
-  // padding-block: var(--dd-padding-block);
 }
-
-// .p-form__dd:first-of-type {
-//   @include mq() {
-//     padding-block-start: 0;
-//   }
-// }
-
-// .p-form__dd:last-of-type {
-//   @include mq() {
-//     padding-block-end: 0;
-//   }
-// }
 
 .p-form__dt + .p-form__dd {
   margin-top: rem(7);
@@ -134,7 +120,7 @@
   transform: translateY(-50%);
   width: var(--select-icon-width);
   aspect-ratio: 16/9;
-  // mask: url(/assets/images/arrow_down.png) no-repeat center / contain;
+  mask: url(../images/common/arrow_down.svg) no-repeat center / contain;
   content: "";
   background-color: var(--select-icon-color);
   pointer-events: none;
@@ -150,7 +136,7 @@
 }
 
 /* input(radio, checkbox以外のスタイル */
-.p-form input:not([type="radio" i]):not([type="checkbox" i]),
+.p-form input:not([type="radio" i]):not([type="checkbox" i]):not([type="submit" i]),
 .p-form textarea {
   width: 100%;
   padding-block: var(--text-padding-block);
@@ -220,6 +206,15 @@ label:has(input[type="radio" i]) {
 }
 
 /* チェックボックスのスタイル */
+.p-form__dd:has(input[type="checkbox" i]) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: rem(24);
+  @include mq() {
+    gap: rem(18);
+  }
+}
+
 .p-form label:has(input[type="checkbox" i]) {
   display: inline grid;
   grid-template-columns: auto auto;
@@ -241,14 +236,15 @@ label:has(input[type="radio" i]) {
 }
 
 .p-form input[type="checkbox" i]::before {
+  margin: auto;
   position: absolute;
   inset: 0;
   display: block;
-  width: 100%;
-  height: 100%;
+  width: 70%;
+  aspect-ratio: 17/13;
   content: "";
   opacity: 0;
-  // mask-image: url(../images/icon_check.svg);
+  mask-image: url(../images/common/check.svg);
   mask-repeat: no-repeat;
   mask-size: contain;
   background-color: var(--checkbox-check-color);
