@@ -1,7 +1,7 @@
-# 構成調査レポート（t2025-12-24vite-wp / WordPress版）
+# ファイル構成詳細
 
 対象リポジトリ: `t2025-12-24vite-wp`  
-主な目的: WordPress（クラシックテーマ）用に作り替えた現在の構成と「どのファイルでどう実現しているか」を根拠付きで整理する
+このドキュメントの目的: ファイルの構成と「どのファイルでどう実現しているか」を根拠付きで整理する
 
 ---
 
@@ -122,11 +122,146 @@ dist/ から実際のファイルを enqueue
 補足（`<img>` の画像）:
 - `<img>` はCSSの `url(...)` のように参照を辿れないため、`vite build` 時に `src/assets/images/**` を `dist/assets/images/**` へ出力し、`dist/theme-assets.json` を生成してPHPが解決する方式を採用
 
+### 3.6 デプロイ関連（GitHub Actions）
+
+**実現箇所**
+- `scripts/setup-secrets.sh`
+  - GitHub ActionsのシークレットをGitHub CLIで設定するスクリプト
+  - `.env.deploy` から環境変数を読み取り、`gh secret set` でリポジトリのシークレットとして設定
+
+**設定されるシークレット**
+- 必須: `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`, `FTP_SERVER_DIR`
+- オプション: `DISCORD_WEBHOOK`, `TEST_URL`
+
+**使用方法**
+```bash
+# 1. .env.deployファイルを作成（env.deploy.exampleからコピー）
+cp env.deploy.example .env.deploy
+
+# 2. .env.deployに必要な値を記入
+
+# 3. GitHub CLIでログイン（初回のみ）
+gh auth login
+
+# 4. スクリプトを実行
+./scripts/setup-secrets.sh
+```
+
+**前提条件**
+- GitHub CLI (`gh`) がインストールされていること
+- `gh auth login` で認証済みであること
+- `.env.deploy` ファイルが存在すること
+
+#### デプロイワークフロー
+
+**実現箇所**
+- `.github/workflows/deploy.yml`
+  - GitHub ActionsでFTP経由の自動デプロイを実行するワークフロー
+  - `main`/`master` ブランチへのpush、PRでトリガー
+
+**デプロイの流れ**
+1. **コードチェックアウト**: リポジトリのコードを取得
+2. **Node.js環境セットアップ**: Node.js 20をセットアップし、npmキャッシュを有効化
+3. **依存関係のインストール**: `npm ci` で依存関係をインストール
+4. **ビルド**: `npm run build` でViteビルドを実行（`dist/` に成果物を出力）
+5. **デプロイサマリー生成**: GitHub Actionsのサマリーにデプロイ情報を出力
+6. **FTPデプロイ**: `SamKirkland/FTP-Deploy-Action` を使用してFTPサーバーにアップロード
+7. **Discord通知**: デプロイ成功/失敗時にDiscordに通知（オプション）
+
+**デプロイ対象の環境**
+
+- **テスト環境（自動デプロイ）**
+  - トリガー: `main`/`master` ブランチへのpush
+  - 条件: 常に自動実行
+  - 通知: 成功時にDiscord通知（`DISCORD_WEBHOOK` が設定されている場合）
+
+- **PRテスト環境（自動デプロイ）**
+  - トリガー: `main`/`master` へのPR作成
+  - 条件: PRが作成された場合に自動実行
+  - 通知: 成功時にDiscord通知（`DISCORD_WEBHOOK` が設定されている場合）
+
+**デプロイ除外ファイル**
+以下のファイル/ディレクトリはデプロイ対象外:
+- `.git*`, `.github/`
+- `node_modules/`, `src/`, `scripts/`, `docs/`
+- `package.json`, `package-lock.json`
+- `vite.config.*`, `postcss.config.*`
+- `*.map`, `README.md`
+- `.DS_Store`, `Thumbs.db`
+
+**使用するシークレット**
+- `FTP_SERVER`: FTPサーバーのアドレス
+- `FTP_USERNAME`: FTPユーザー名
+- `FTP_PASSWORD`: FTPパスワード
+- `FTP_SERVER_DIR`: サーバー上のデプロイ先ディレクトリ（例: `/public_html/wp-content/themes/t2025-12-24vite-wp/`）
+- `DISCORD_WEBHOOK`: Discord通知用のWebhook URL（オプション）
+- `TEST_URL`: テスト環境のURL（オプション、サマリーや通知に表示）
+
 ---
 
-## 4. コーディング規約
+## 4. テンプレートファイル一覧
 
-### 4.1 関数の命名ルール
+| ページ | ページ種別 | テンプレートファイル | 説明 | 備考 |
+|--------|------------|---------------------|------|------|
+| トップページ | フロントページ | `front-page.php` | 各セクションで投稿を出力 |  |
+| 固定ページ（その他） | 固定ページ | `page.php` | デフォルト固定ページテンプレート | プライバシーポリシー |
+| 固定ページ（お問い合わせ） | 固定ページ | `page-contact.php` | お問い合わせページ |  |
+| カスタム投稿一覧 | カスタム投稿アーカイブ | `archive.php` | カスタム投稿一覧表示 | カスタム投稿タイプworksのアーカイブ |
+| コラム一覧 | デフォルト投稿アーカイブ | `home.php` | コラム一覧表示 |  |
+| 個別詳細ページ | お知らせ・コラム共通 | `single.php` |  |  |
+| 404エラーページ | エラーページ | `404.php` | ページが見つからない場合のエラーページ |  |
+| インデックスページ | フォールバック | `index.php` | その他のページのフォールバック |  |
+
+---
+
+## 5. カスタム投稿タイプ
+
+| 投稿タイプ | スラッグ | 表示名 | 詳細ページ | タクソノミー | 説明 |
+|------------|----------|--------|------------|------------|------|
+| デフォルト投稿 | `post` | お知らせ | あり | category, tag |  |
+| 制作実績 | `works` | 制作実績 | なし | works_category |  |
+
+---
+
+## 6. コンポーネントファイル
+
+| ファイル名 | 用途 | 説明 |
+|------------|------|------|
+| `header.php` | ヘッダー |  |
+| `footer.php` | フッター |  |
+| `components/c-button.php` | ボタンコンポーネント | ボタンの表示コンポーネント |
+| `components/c-heading.php` | 見出しコンポーネント | 見出しの表示コンポーネント |
+| `components/top-mv.php` | トップMV | トップページのメインビジュアル |
+| `components-demo/breadcrumb.php` | パンくずリスト | ナビゲーション用のパンくずリスト |
+| `components-demo/p-sns-items.php` | SNSアイテム | SNS関連の表示コンポーネント |
+
+---
+
+## 7. 機能ファイル（functions-lib）
+
+| ファイル名 | 機能 |
+|------------|------|
+| `func-ai1wm-exclude.php` | All-in-One WP Migrationでエクスポートする際に一部ファイルを除外 |
+| `func-base.php` | WordPressの基本的な機能を設定（テーマサポート、コメント無効化、絵文字無効化等） |
+| `func-images.php` | 画像関連のヘルパー関数（画像URL取得、画像表示等） |
+| `func-modify-youtube-oembed.php` | YouTube埋め込み時のパラメータ調整 |
+| `func-nav-items.php` | ナビメニューを一元管理 |
+| `func-new-post.php` | 投稿が指定した日数以内であるか判定 |
+| `func-no-auto-generate.php` | 意図せず自動生成されるページの表示を防ぐ（404エラーにする） |
+| `func-recaptcha.php` | 必要なページでのみreCAPTCHAスクリプトを読み込む |
+| `func-security.php` | セキュリティ対策（WordPressバージョン情報の削除） |
+| `func-set-posttype-post.php` | デフォルト投稿タイプ（post）の設定 |
+| `func-set-posttype-works.php` | カスタム投稿タイプ「works」の設定 |
+| `func-thumbnail.php` | サムネイル画像の表示とデータ取得関数 |
+| `func-url.php` | パス定義のヘルパー関数（img_path、page_path等） |
+| `func-vite-assets.php` | Viteアセットの読み込み（enqueue実装） |
+| `func-vite.php` | Vite連携（dev/prod判定 + URL解決） |
+
+---
+
+## 8. コーディング規約
+
+### 8.1 関数の命名ルール
 
 テーマ内で定義するPHP関数には、**`ty_` プレフィックス**を付与します。
 
@@ -142,7 +277,7 @@ function ty_custom_main_query_works($query): void { ... }
 ```
 
 
-### 4.2 `function_exists` の使用ルール
+### 8.2 `function_exists` の使用ルール
 
 `function_exists` は以下の場合のみ使用します。
 
@@ -221,11 +356,14 @@ function ty_theme_asset_file_path(string $srcPath): string {
 
 ---
 
-## 5. ディレクトリ構成（要点）
+## 9. ディレクトリ構成（要点）
 
 - `header.php` / `footer.php` / `index.php` / `functions.php`: WPクラシックテーマ
 - `functions-lib/func-vite.php`: Vite連携（dev/prod判定 + URL解決）
 - `functions-lib/func-vite-assets.php`: アセット読み込み（enqueue実装）
+- `functions-lib/func-security.php`: セキュリティ対策（WordPressバージョン情報の削除）
+- `scripts/setup-secrets.sh`: GitHub Actionsシークレット設定スクリプト
+- `.github/workflows/deploy.yml`: GitHub Actionsデプロイワークフロー（FTP経由）
 - `src/assets/`
   - `sass/`: 自作Sass
   - `js/`: 自作JS
@@ -236,7 +374,7 @@ function ty_theme_asset_file_path(string $srcPath): string {
 
 ---
 
-## 6. 変更・拡張ポイント（短く）
+## 10. 変更・拡張ポイント（短く）
 
 - **テンプレ追加**: `front-page.php`, `page.php`, `single.php` 等を追加してWPの表示導線を整備
 - **メニュー実装**: `wp_nav_menu` を使わない前提で、ナビの中身をどう供給するか決める（静的/カスタム/ブロック等）
@@ -244,10 +382,12 @@ function ty_theme_asset_file_path(string $srcPath): string {
 
 ---
 
-## 7. 付録（関連ファイル早見）
+## 11. 付録（関連ファイル早見）
 
 - Vite設定: `vite.config.js`
 - Vite連携: `functions.php`, `functions-lib/func-vite.php`, `functions-lib/func-vite-assets.php`
+- セキュリティ: `functions-lib/func-security.php`
+- デプロイ: `scripts/setup-secrets.sh`, `.env.deploy`, `.github/workflows/deploy.yml`
 - Sass入口: `src/assets/sass/style.scss`
 - JS入口: `src/assets/js/main.js`
 - 移行ログ: `docs/migration-log.md`

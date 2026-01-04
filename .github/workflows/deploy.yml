@@ -5,13 +5,6 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch:
-    inputs:
-      deploy_to_production:
-        description: '本番環境にデプロイする'
-        required: false
-        default: false
-        type: boolean
 
 jobs:
   deploy:
@@ -48,8 +41,6 @@ jobs:
           echo "**🌐 テスト環境:** ${{ secrets.TEST_URL }}" >> $GITHUB_STEP_SUMMARY
         elif [ "${{ github.event_name }}" = "pull_request" ]; then
           echo "**🌐 PRテスト環境:** ${{ secrets.TEST_URL }}" >> $GITHUB_STEP_SUMMARY
-        elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.deploy_to_production }}" = "true" ]; then
-          echo "**🌐 本番環境:** 本番環境" >> $GITHUB_STEP_SUMMARY
         fi
         
         echo "" >> $GITHUB_STEP_SUMMARY
@@ -81,32 +72,6 @@ jobs:
         local-dir: ./
         # Example: /public_html/wp-content/themes/t2025-12-24vite-wp/
         # Set this in repo secrets.
-        server-dir: ${{ secrets.FTP_SERVER_DIR }}
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/node_modules/**
-          **/.github/**
-          **/docs/**
-          **/src/**
-          **/scripts/**
-          **/*.map
-          **/package.json
-          **/package-lock.json
-          **/vite.config.*
-          **/postcss.config.*
-          **/README.md
-          **/.DS_Store
-          **/Thumbs.db
-          
-    - name: Deploy to Production
-      if: github.event_name == 'workflow_dispatch' && inputs.deploy_to_production == true
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./
         server-dir: ${{ secrets.FTP_SERVER_DIR }}
         exclude: |
           **/.git*
@@ -171,27 +136,6 @@ jobs:
           • [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
           
-    - name: Send Discord Notification - Production Deploy
-      if: success() && github.event_name == 'workflow_dispatch' && inputs.deploy_to_production == true
-      uses: Ilshidur/action-discord@master
-      env:
-        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-      with:
-        args: |
-          🚀 **本番環境デプロイ完了**
-          
-          **ブランチ:** ${{ github.ref_name }}
-          **コミット:** ${{ github.sha }}
-          **実行者:** ${{ github.actor }}
-          **メッセージ:** ${{ github.event.head_commit.message }}
-          
-          **本番URL:** 本番環境
-          
-          **🔍 変更確認:**
-          • [本番環境を開く](https://example.com)
-          • [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-          • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-          
     - name: Send Discord Notification - PR Test Deploy
       if: success() && github.event_name == 'pull_request'
       uses: Ilshidur/action-discord@master
@@ -236,4 +180,3 @@ jobs:
           **🌐 環境URL:**
           ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && format('• テスト環境: {0}', secrets.TEST_URL) || '' }}
           ${{ github.event_name == 'pull_request' && format('• PRテスト環境: {0}', secrets.TEST_URL) || '' }}
-          ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_to_production == true && '• 本番環境: 本番環境' || '' }}
