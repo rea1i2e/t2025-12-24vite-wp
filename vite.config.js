@@ -1,3 +1,6 @@
+/**
+ * 依存パッケージのインポート
+ */
 import { defineConfig } from "vite";
 import sassGlobImports from "vite-plugin-sass-glob-import";
 import fs from "node:fs";
@@ -13,10 +16,16 @@ import imageminWebp from "imagemin-webp";
 import gif2webpCjs from 'imagemin-gif2webp';
 const imageminGif2webp = gif2webpCjs;
 
-
+/**
+ * パスと証明書ディレクトリの設定
+ */
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const certDir = path.resolve(__dirname, ".certs");
 
+/**
+ * HTTPS設定の取得
+ * 環境変数またはデフォルトの証明書ファイルからHTTPS設定を読み込む
+ */
 function getHttpsConfig() {
   const keyPath =
     process.env.VITE_HTTPS_KEY || path.join(certDir, "localhost-key.pem");
@@ -30,8 +39,8 @@ function getHttpsConfig() {
 }
 
 /**
- * Full reload the browser when PHP templates change (WordPress).
- * Note: PHP cannot be hot-replaced; we trigger a browser reload instead.
+ * PHPテンプレートが変更されたときにブラウザをフルリロード（WordPress用）
+ * 注意: PHPはホットリプレースできないため、代わりにブラウザのリロードをトリガーする
  */
 function wpPhpFullReload() {
   return {
@@ -50,10 +59,17 @@ function wpPhpFullReload() {
   };
 }
 
+/**
+ * パスをPOSIX形式（スラッシュ区切り）に変換
+ * Windowsのバックスラッシュをスラッシュに統一
+ */
 function toPosixPath(p) {
   return p.replaceAll("\\", "/");
 }
 
+/**
+ * ディレクトリを再帰的に走査してファイル一覧を取得
+ */
 function listFilesRecursive(dir) {
   const out = [];
   if (!fs.existsSync(dir)) return out;
@@ -66,9 +82,9 @@ function listFilesRecursive(dir) {
 }
 
 /**
- * Emit theme images to dist as hashed assets, and write a map for PHP to resolve.
- * - source key: "src/assets/images/<relpath>"
- * - output value: "<dist-relative-path>" (e.g. "assets/images/foo-xxxx.jpg")
+ * テーマ画像をハッシュ付きアセットとしてdistに出力し、PHPが解決するためのマップを書き込む
+ * - ソースキー: "src/assets/images/<relpath>"
+ * - 出力値: "<dist-relative-path>" (例: "assets/images/foo-xxxx.jpg")
  */
 function wpThemeImagesManifest() {
   const imagesRoot = path.resolve(__dirname, "src/assets/images");
@@ -98,7 +114,7 @@ function wpThemeImagesManifest() {
         const source = fs.readFileSync(abs);
         const fileId = this.emitFile({
           type: "asset",
-          // Keep original subdirectory info in the name so output can preserve dirs.
+          // 元のサブディレクトリ情報を名前で保持し、出力時にディレクトリ構造を維持する
           name: rel,
           source,
         });
@@ -111,8 +127,8 @@ function wpThemeImagesManifest() {
         map[key] = toPosixPath(this.getFileName(id));
       }
 
-      // Write a simple JSON map for PHP to resolve <img src> in production.
-      // (Avoid writing under ".vite/" to reduce conflicts with Vite's manifest plugin.)
+      // 本番環境でPHPが<img src>を解決するためのシンプルなJSONマップを書き込む
+      // (Viteのmanifestプラグインとの競合を避けるため、".vite/"配下には書き込まない)
       this.emitFile({
         type: "asset",
         fileName: "theme-assets.json",
@@ -122,12 +138,20 @@ function wpThemeImagesManifest() {
   };
 }
 
+/**
+ * 環境変数をブール値として取得
+ * "1", "true", "yes", "on" を true として扱う
+ */
 function envBool(name, defaultValue = false) {
   const v = process.env[name];
   if (v == null || v === "") return defaultValue;
   return ["1", "true", "yes", "on"].includes(String(v).toLowerCase());
 }
 
+/**
+ * 環境変数を数値として取得
+ * 無効な値の場合はデフォルト値を返す
+ */
 function envNumber(name, defaultValue) {
   const v = process.env[name];
   if (v == null || v === "") return defaultValue;
@@ -135,12 +159,23 @@ function envNumber(name, defaultValue) {
   return Number.isFinite(n) ? n : defaultValue;
 }
 
+/**
+ * Vite設定
+ */
 export default defineConfig({
+  /**
+   * 基本設定
+   * WordPress 側で参照する favicon 等はテーマ直下で管理するため、
+   * Vite の publicDir コピーは使用しない（dist/ に複製されるのを避ける）
+   */
   root: ".",
   base: "",
-  // WordPress 側で参照する favicon 等はテーマ直下で管理するため、
-  // Vite の publicDir コピーは使用しない（dist/ に複製されるのを避ける）
   publicDir: false,
+  
+  /**
+   * 開発サーバー設定
+   * HMR（Hot Module Replacement）対応のため、HTTPS設定とCORS設定を有効化
+   */
   server: {
     host: true,
     port: 5173,
@@ -157,6 +192,11 @@ export default defineConfig({
       : {}),
     open: false
   },
+  
+  /**
+   * ビルド設定
+   * エントリーポイント（JS/CSS）の指定と、出力ファイル名のハッシュ付与設定
+   */
   build: {
     outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,
@@ -172,8 +212,8 @@ export default defineConfig({
           const isImage = /\.(png|jpe?g|gif|svg|webp|avif)$/i.test(n);
 
           if (isImage) {
-            // Preserve subdirectories under src/assets/images/** when possible.
-            // Example: "demo/dummy1.jpg" -> "assets/images/demo/dummy1-[hash].jpg"
+            // 可能な限りsrc/assets/images/**配下のサブディレクトリを維持する
+            // 例: "demo/dummy1.jpg" -> "assets/images/demo/dummy1-[hash].jpg"
             const dir = path.posix.dirname(n);
             const ext = path.posix.extname(n);
             const base = path.posix.basename(n, ext);
@@ -189,6 +229,11 @@ export default defineConfig({
       }
     }
   },
+  
+  /**
+   * プラグイン設定
+   * WordPress用のカスタムプラグインと画像最適化プラグインを登録
+   */
   plugins: [
     wpPhpFullReload(),
     wpThemeImagesManifest(),
@@ -216,7 +261,7 @@ export default defineConfig({
               },
               formatFilePath: (file) =>
                 file.replace(/\.(jpe?g|png|gif)$/i, ".webp"),
-              // 'optimized' | number (bytes). This project uses 'optimized' by default.
+              // 'optimized' | number (bytes). このプロジェクトではデフォルトで'optimized'を使用
               skipIfLargerThan: envBool("VITE_WEBP_SKIP_IF_LARGER", true) ? "optimized" : 0,
             },
           }
