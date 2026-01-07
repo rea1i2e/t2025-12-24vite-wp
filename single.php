@@ -10,9 +10,11 @@
           <div class="p-single__container">
             <div class="p-single__container-inner">
               <div class="p-single__head">
-                <figure class="p-single__thumbnail">
-                  <?php ty_display_thumbnail('full', 'eager', false); ?>
-                </figure>
+                <?php if (has_post_thumbnail()) : ?>
+                  <figure class="p-single__thumbnail">
+                    <?php ty_display_thumbnail('full', 'eager'); ?>
+                  </figure>
+                <?php endif; ?>
                 <div class="p-single__meta">
                   <time class="p-single__date" datetime="<?php echo esc_attr(get_the_date(DATE_W3C)); ?>">
                     <?php echo get_the_date('Y.m.d'); ?>

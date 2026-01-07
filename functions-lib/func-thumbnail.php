@@ -21,6 +21,15 @@ declare(strict_types=1);
  * ▼ サムネイルが無い場合は何も出力しない
  *   ty_display_thumbnail('medium', 'lazy', false);
  *
+ * ▼ サムネイルがない場合に要素ごと出力しない（推奨）
+ *   <?php if (has_post_thumbnail()) : ?>
+ *     <figure class="p-single__thumbnail">
+ *       <?php ty_display_thumbnail('full', 'eager'); ?>
+ *     </figure>
+ *   <?php endif; ?>
+ *   注意: has_post_thumbnail()の判定は呼び出し側で行う。
+ *         ty_display_thumbnail()内では判定しない。
+ *
  */
 
 function ty_display_thumbnail($size = 'full', $loading = 'lazy', $fallback = true)
