@@ -18,9 +18,6 @@ declare(strict_types=1);
  * ▼ eager loading（FV・ファーストビュー用）
  *   ty_display_thumbnail('large', 'eager');
  *
- * ▼ サムネイルが無い場合は何も出力しない
- *   ty_display_thumbnail('medium', 'lazy', false);
- *
  * ▼ サムネイルがない場合に要素ごと出力しない（推奨）
  *   <?php if (has_post_thumbnail()) : ?>
  *     <figure class="p-single__thumbnail">
