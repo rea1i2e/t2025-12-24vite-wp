@@ -11,7 +11,6 @@ if (function_exists('bcn_display') && !is_front_page()) : ?>
     </div>
   </div>
 <?php endif; ?>
-
 <?php
 /**
  * パンくずリスト ※All-in-One SEOの場合

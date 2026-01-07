@@ -11,7 +11,6 @@
   ]); ?>
   <div class="p-archive">
     <div class="p-archive__inner l-inner">
-      <?php get_template_part('components/breadcrumb') ?>
       <div class="p-archive__items p-archive-items">
         <?php if (have_posts()) : ?>
           <?php while (have_posts()) : the_post(); ?>
@@ -30,7 +29,7 @@
             </article>
           <?php endwhile; ?>
           <div class="p-archive-items__pagenavi">
-            <?php get_template_part('components/p-pagenavi'); ?>
+          <?php get_template_part('components-demo/p-pagenavi'); ?>
           </div>
         <?php else : ?>
           <p class="p-archive-items__no-post c-no-post">

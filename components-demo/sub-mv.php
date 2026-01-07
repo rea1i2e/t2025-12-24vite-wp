@@ -97,4 +97,4 @@ $has_image = ($picture_html !== '');
     </figure>
   <?php endif; ?>
 </div>
-<?php get_template_part('components/breadcrumb'); ?>
+<?php get_template_part('components-demo/breadcrumb'); ?>
