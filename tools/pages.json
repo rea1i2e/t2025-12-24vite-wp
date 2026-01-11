@@ -1,0 +1,10 @@
+[
+  { "title": "Home", "slug": "top", "parent_slug": "", "status": "publish", "content": "" },
+
+  { "title": "デモ一覧", "slug": "demo", "parent_slug": "", "status": "publish", "content": "" },
+  { "title": "スライダー（Splide）", "slug": "demo-splide", "parent_slug": "demo", "status": "publish", "content": "" },
+  { "title": "モーダル（dialog）", "slug": "demo-dialog", "parent_slug": "demo", "status": "publish", "content": "" },
+  { "title": "タブ切り替え（tab）", "slug": "demo-tab", "parent_slug": "demo", "status": "publish", "content": "" },
+  { "title": "アコーディオン（accordion）", "slug": "demo-accordion", "parent_slug": "demo", "status": "publish", "content": "" }
+]
+
