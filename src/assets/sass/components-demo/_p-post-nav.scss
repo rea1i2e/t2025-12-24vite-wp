@@ -5,11 +5,9 @@
   align-items: center;
   justify-content: space-between;
   gap: rem(20);
-  margin-block-start: rem(60);
   padding-block-start: rem(40);
   border-top: 1px solid currentColor;
   @include mq() {
-    margin-block-start: rem(80);
     padding-block-start: rem(60);
   }
 }

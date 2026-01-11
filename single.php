@@ -10,6 +10,9 @@
                 <?php ty_display_thumbnail('full', 'eager'); ?>
               </figure>
             <?php endif; ?>
+            <h1 class="p-single__title">
+              タイトル：<?php the_title() ?>
+            </h1>
             <div class="p-single__meta">
               <time class="p-single__date" datetime="<?php echo esc_attr(get_the_date(DATE_W3C)); ?>">
                 公開日：<?php echo get_the_date('Y.m.d'); ?>
@@ -28,15 +31,13 @@
                 </div>
               <?php endif; ?>
             </div>
-            <h1 class="p-single__title">
-              タイトル：<?php the_title() ?>
-            </h1>
           </div>
           <div class="p-single__content p-content">
             <?php the_content() ?>
           </div>
-
-          <?php get_template_part('components-demo/p-post-nav'); ?>
+          <div class="p-single__post-nav">
+            <?php get_template_part('components-demo/p-post-nav'); ?>
+          </div>
     </div>
   </div>
 <?php endwhile; ?>
