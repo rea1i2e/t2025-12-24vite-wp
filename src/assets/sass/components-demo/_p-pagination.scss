@@ -1,0 +1,45 @@
+@use '../global' as *;
+
+.p-pagination {
+  --page-number-border: 1px solid currentColor;
+}
+
+.p-pagination .navigation {
+}
+
+.p-pagination .nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: rem(8);
+  flex-wrap: wrap;
+}
+
+.p-pagination .page-numbers {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: rem(40);
+  height: rem(40);
+  padding-inline: rem(12);
+  border: var(--page-number-border);
+}
+
+.p-pagination .page-numbers.current {
+  background-color: var(--color-theme);
+  color: var(--color-white);
+  cursor: default;
+  pointer-events: none;
+}
+
+.p-pagination .page-numbers.dots {
+  border: none;
+  cursor: default;
+  pointer-events: none;
+}
+
+.p-pagination .page-numbers.prev,
+.p-pagination .page-numbers.next {
+  border: none;
+}
+

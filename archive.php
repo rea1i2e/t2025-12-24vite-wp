@@ -28,8 +28,8 @@
               </a>
             </article>
           <?php endwhile; ?>
-          <div class="p-archive-items__pagenavi">
-            <?php get_template_part('components-demo/p-pagenavi'); ?>
+          <div class="p-archive-items__pagination">
+            <?php get_template_part('components-demo/p-pagination'); ?>
           </div>
         <?php else : ?>
           <p class="p-archive-items__no-post c-no-post">

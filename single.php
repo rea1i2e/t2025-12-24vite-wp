@@ -20,7 +20,7 @@
               <?php
               $terms = get_the_terms(get_the_ID(), 'category');
               if ($terms && !is_wp_error($terms)) : ?>
-                <div class="p-single__terms">ターム：
+                <div class="p-single__terms">
                   <?php foreach ($terms as $term) : ?>
                     <p class="p-single__term">
                       <a href="<?php echo esc_url(get_term_link($term)); ?>" class="p-single__term-link">

@@ -50,8 +50,16 @@
   overflow: hidden;
 }
 
-.p-archive-items__pagenavi {
+.p-archive-items__pagination {
+  margin-block-start: rem(40);
+  @include mq() {
+    margin-block-start: rem(40);
+  }
 }
 
 .p-archive-items__no-post {
+  margin-block-start: rem(40);
+  @include mq() {
+    margin-block-start: rem(40);
+  }
 }

@@ -11,8 +11,8 @@
   ]); ?>
   <div class="p-archive">
     <div class="p-archive__inner l-inner">
-      <div class="p-archive__items p-archive-items">
-        <?php if (have_posts()) : ?>
+      <?php if (have_posts()) : ?>
+        <div class="p-archive__items p-archive-items">
           <?php while (have_posts()) : the_post(); ?>
             <article class="p-archive-items__post" data-fadein>
               <a href="<?php the_permalink(); ?>" class="p-archive-items__link">
@@ -28,15 +28,15 @@
               </a>
             </article>
           <?php endwhile; ?>
-          <div class="p-archive-items__pagenavi">
-          <?php get_template_part('components-demo/p-pagenavi'); ?>
-          </div>
-        <?php else : ?>
-          <p class="p-archive-items__no-post c-no-post">
-            新着情報はありません。
-          </p>
-        <?php endif; ?>
-      </div>
+        </div>
+        <div class="p-archive-items__pagination">
+          <?php get_template_part('components-demo/p-pagination'); ?>
+        </div>
+      <?php else : ?>
+        <p class="p-archive-items__no-post c-no-post">
+          新着情報はありません。
+        </p>
+      <?php endif; ?>
     </div>
   </div>
 </main>
