@@ -67,9 +67,67 @@ dist/ から実際のファイルを enqueue
 
 ## コーディング規約の要点
 
+### PHP
+
 - **関数名**: テーマ内のPHP関数には `ty_` プレフィックスを付与
 - **function_exists**: プラグイン関数のチェックのみ使用（子テーマ想定なし、同一テーマ内関数への依存チェックは不要）
 - **ファイル読み込み順序**: `functions.php` の `$ordered` 配列で依存関係を管理
+
+### CSS/Sass
+
+- **marginの使用**: 原則として `margin-block-start` のみを使用する
+  - `margin-block-end` や `margin-block` は使用しない
+  - `margin-inline-start: 0;` はリセットCSSで既に指定されているため、明示的に書く必要はない
+  - 要素間の間隔は次の要素の `margin-block-start` で制御する
+  - 例: `.element { margin-block-start: rem(20); }`
+
+- **コンポーネントの外側余白**: コンポーネント自体には外側の余白（margin）をつけない
+  - コンポーネントは再利用可能な部品のため、外側の余白は親要素で制御する
+  - 使用する側で親要素を追加し、そこに余白をつける
+  - 例:
+    ```scss
+    // コンポーネント（components-demo/_p-post-nav.scss）
+    .p-post-nav {
+      display: flex;
+      // marginはつけない
+    }
+    
+    // 使用する側（components/_p-single.scss）
+    .p-single__post-nav {
+      margin-block-start: rem(60);
+      @include mq() {
+        margin-block-start: rem(80);
+      }
+    }
+    ```
+
+- **入れ子（ネスト）の使い方**: 基本的にフラットな構造を維持する
+  - **BEMのクラス名は入れ子にしない**: `.p-component__element` は全てトップレベルで記述
+  - **子要素（タグ名）もフラットに記述**: `.p-component__element img` のようにスペース区切りで記述（入れ子にしない）
+  - **メディアクエリは入れ子で記述**: `@include mq() { ... }` は入れ子で使用
+  - **複数のセレクタはカンマで区切る**: `.element1, .element2 { ... }` のようにフラットに記述
+  - **複雑なセレクタもフラットに記述**: `.parent:has(.child) .target` のようにスペース区切りで記述
+  - 例（正）: 
+    ```scss
+    .p-single__thumbnail {
+      margin-block-start: rem(20);
+      @include mq() {
+        margin-block-start: rem(30);
+      }
+    }
+    .p-single__thumbnail img {
+      width: 100%;
+    }
+    ```
+  - 例（誤）:
+    ```scss
+    .p-single__thumbnail {
+      margin-block-start: rem(20);
+      img {
+        width: 100%;
+      }
+    }
+    ```
 
 詳細は [docs/architecture.md](docs/architecture.md) を参照してください。
 
