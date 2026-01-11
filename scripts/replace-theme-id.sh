@@ -23,15 +23,19 @@ echo "プロジェクトID一括置換を実行します"
 echo "置換: ${OLD_ID} → ${NEW_ID}"
 echo ""
 
-# 置換対象ファイル（MDファイルは除外）
+# 置換対象ファイル
+# コマンド例が含まれるMDファイルも対象に含める
 files=(
   "package.json"
   "package-lock.json"
   "style.css"
   "tools/import-pages.php"
   "tools/import-pages.sh"
-  "docs/deploy.md"
   "env.deploy.example"
+  "docs/development.md"
+  "docs/overview.md"
+  "docs/setup.md"
+  "tools/README.md"
 )
 
 # 置換実行
@@ -54,6 +58,13 @@ done
 echo ""
 echo "完了: ${replaced_count} ファイルを置換しました"
 echo ""
-echo "注意: MDファイル（README.md、docs/*.md、tools/README.md）は置換していません"
-echo "      これらはテンプレートとして ${OLD_ID} のまま残しています"
+echo "注意: 以下のMDファイルはテンプレートとして ${OLD_ID} のまま残しています"
+echo "      - README.md"
+echo "      - docs/deploy.md"
+echo "      - docs/architecture.md"
+echo "      - docs/decisions/README.md"
+echo "      - docs/troubleshooting.md"
+echo ""
+echo "      コマンド例が含まれるMDファイル（docs/development.md、docs/overview.md、"
+echo "      docs/setup.md、tools/README.md）は置換しました"
 

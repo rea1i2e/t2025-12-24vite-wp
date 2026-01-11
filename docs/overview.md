@@ -35,7 +35,7 @@
      - `package.json` の `name`、URL（`preview`、`test` など）
      - `style.css` の `Theme Name`
      - `tools/` 配下のパス参照
-     - デプロイ先パス（`docs/deploy.md`、`env.deploy.example` の例）
+     - デプロイ先パス（`env.deploy.example` の例）
    - スクリプトを使用：
      ```bash
      bash scripts/replace-theme-id.sh 案件id
@@ -44,15 +44,23 @@
      ```bash
      bash scripts/replace-theme-id.sh 2026-01-11yn
      ```
-   - 対象ファイル（MDファイルは除外）：
+   - 対象ファイル：
      - `package.json`（name、URL）
      - `package-lock.json`
      - `style.css`（Theme Name）
      - `tools/import-pages.php`（パス）
      - `tools/import-pages.sh`（パス）
-     - `docs/deploy.md`（デプロイ先パスの例）
      - `env.deploy.example`（`FTP_SERVER_DIR`、`TEST_URL`）
-   - 注意: MDファイル（`README.md`、`docs/*.md`、`tools/README.md`）は置換しません（テンプレートとして残します）
+     - `docs/development.md`（コマンド例）
+     - `docs/overview.md`（コマンド例）
+     - `docs/setup.md`（ディレクトリ名）
+     - `tools/README.md`（コマンド例）
+   - 注意: 以下のMDファイルはテンプレートとして残します（置換しません）
+     - `README.md`
+     - `docs/deploy.md`
+     - `docs/architecture.md`
+     - `docs/decisions/README.md`
+     - `docs/troubleshooting.md`
    - **個別に変更しても問題ない項目**：
      - `style.css` の `Theme Name`: WordPress管理画面に表示されるテーマ名なので、案件名などに変更しても問題ありません
    - **テーマディレクトリ名を変更する場合の注意**：
