@@ -1,0 +1,39 @@
+@use '../global' as *;
+
+.p-post-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: rem(20);
+  margin-block-start: rem(60);
+  padding-block-start: rem(40);
+  border-top: 1px solid currentColor;
+  @include mq() {
+    margin-block-start: rem(80);
+    padding-block-start: rem(60);
+  }
+}
+
+.p-post-nav__prev,
+.p-post-nav__next {
+  flex: 0 0 auto;
+}
+
+.p-post-nav__list {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.p-post-nav__prev a,
+.p-post-nav__list a,
+.p-post-nav__next a {
+  // ホバースタイル
+}
+
+.p-post-nav__prev a:not([href]),
+.p-post-nav__next a:not([href]) {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+}
+
