@@ -1,0 +1,212 @@
+@use "../global" as *;
+/* the_contentで出力した要素のスタイル
+## プロパティごと
+- margin-block
+- font-family
+- font-size
+- font-wight
+- letter-spacing
+- line-height
+## 要素ごと
+- h
+- ul
+- ol
+- a
+- table
+ */
+
+/* 要素間の余白 */
+.p-content h2 {
+  margin-block: rem(80) rem(32);
+  @include mq() {
+    margin-block: rem(48) rem(20);
+  }
+}
+
+.p-content :is(h3, h4, p) {
+  margin-block: rem(24);
+  @include mq() {
+    margin-block: rem(20);
+  }
+}
+
+.p-content :is(ul, ol) {
+  margin-block: rem(34) rem(24);
+  @include mq() {
+    margin-block: rem(22) rem(16);
+  }
+}
+
+.p-content .wp-block-button {
+  margin-block: rem(24) rem(56);
+  @include mq() {
+    margin-block: rem(20) rem(32);
+  }
+}
+
+/* font-family */
+.p-content :is(h2, h3) {
+}
+
+/* font-size */
+.p-content h2 {
+  font-size: maxrem(24);
+  @include mq() {
+    font-size: maxrem(21);
+  }
+}
+
+.p-content h3 {
+  font-size: maxrem(20);
+  @include mq() {
+    font-size: maxrem(18);
+  }
+}
+
+.p-content h4 {
+  font-size: maxrem(18);
+  @include mq() {
+    font-size: maxrem(16);
+  }
+}
+
+.p-content :is(ul, ol, p) {
+  font-size: maxrem(16);
+  @include mq() {
+    font-size: maxrem(14);
+  }
+}
+
+/* font-weight */
+.p-content :is(h2, h3, h4) {
+  font-weight: 600;
+}
+
+.p-content :is(ul, ol, p) {
+  font-weight: 400;
+}
+
+/* letter-spacing */
+.p-content :is(h2, h3) {
+}
+
+/* line-height */
+.p-content :is(p, ul, ol) {
+  line-height: 2;
+}
+
+/* その他スタイル
+ * ・h, ul, ol, p, a
+ */
+.p-content h2 {
+  padding-bottom: rem(10);
+  border-bottom: 1px solid;
+  color: var(--color-theme);
+}
+
+
+.p-content h3 {
+  --heading-deco-size: #{rem(16)};
+  --heading-deco-gap: #{rem(10)};
+  position: relative;
+  padding-inline-start: calc(var(--heading-deco-size) + var(--heading-deco-gap));
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: flex-start;
+  color: var(--color-theme);
+}
+
+.p-content h3::before {
+  position: absolute;
+  inset-block-start: calc((1lh - var(--heading-deco-size)) / 2);
+  inset-inline-start: 0;
+  inline-size: var(--heading-deco-size);
+  block-size: var(--heading-deco-size);
+  aspect-ratio: 1;
+  background-color: var(--color-theme);
+  content: "";
+}
+
+.p-content h4 {
+  color: var(--color-theme);
+}
+
+.p-content ul {
+  --_marker-size: #{rem(8)};
+  --_marker-color: var(--color-theme);
+  --_row-gap: #{rem(8)};
+  --_column-gap: #{rem(10)};
+  
+  display: grid;
+  gap: var(--_row-gap);
+}
+
+.p-content ul li {
+  position: relative;
+  padding-inline-start: calc(var(--_marker-size) + var(--_column-gap));
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: flex-start;
+}
+
+.p-content ul li::before {
+  position: absolute;
+  inset-block-start: calc((1lh - var(--_marker-size)) / 2);
+  inset-inline-start: 0;
+  inline-size: var(--_marker-size);
+  block-size: var(--_marker-size);
+  aspect-ratio: 1;
+  background-color: var(--_marker-color, currentColor);
+  border-radius: 50%;
+  content: "";
+}
+
+.p-content ol {
+  list-style: decimal;
+  padding-inline-start: 1em;
+}
+
+.p-content ol li {
+
+}
+
+.p-content ol li::marker {
+  color: var(--color-theme);
+}
+
+
+.p-content a:not(.wp-block-button *) {
+  color: var(--color-theme);
+  text-decoration: underline;
+  text-underline-offset: rem(2);
+}
+
+.p-content a[href^="tel:"] {
+  text-decoration: none;
+  @include mq() {
+    text-decoration: underline;
+  }
+}
+
+.p-content img {
+  width: auto;
+}
+
+.p-content figure.aligncenter,
+.p-content img.aligncenter {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.p-content figure.alignright,
+.p-content img.alignright {
+  margin-left: auto;
+}
+
+.p-content .wp-block-button {
+  margin-inline: auto;
+}
+
+.p-content table {
+
+}
