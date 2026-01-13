@@ -21,6 +21,10 @@ declare(strict_types=1);
  *
  * ▼ サイト内URL（文字列で取得）
  *   $url = ty_get_page('contact'); // /contact/
+ *
+ * ▼ スパム対策用メールアドレス保護用のHTMLを出力
+ *   ty_email_protection('info', 'example.com'); // リンクあり
+ *   ty_email_protection('info', 'example.com', false); // リンクなし（文字列）
  */
 
 // テーマファイルURLを出力（テーマ直下からの相対パス）
@@ -55,3 +59,10 @@ function ty_get_page(string $page = ''): string {
 	return esc_url(home_url($page));
 }
 
+// メールアドレス保護用のHTMLを出力 
+function ty_email_protection($user, $domain, $link = true) {
+  $link_attr = $link ? 'true' : 'false';
+  $email_display = $user . '[at]' . $domain;
+  
+  echo '<span class="js-email-protection" data-email-user="' . esc_attr($user) . '" data-email-domain="' . esc_attr($domain) . '" data-link="' . esc_attr($link_attr) . '"></span><noscript>' . esc_html($email_display) . '</noscript>';
+}
