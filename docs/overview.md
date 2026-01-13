@@ -82,6 +82,24 @@
    - Local の Site Shell で `wp eval-file wp-content/themes/t2025-12-24vite-wp/tools/import-pages.php wp-content/themes/t2025-12-24vite-wp/tools/pages.json upsert` を実行
    - 詳細は [tools/README.md](../tools/README.md) を参照
 
+7. **フォントの登録**
+   1. デザインデータから使用フォントを確認
+   2. 必要なフォントファイルをダウンロード
+   3. フォントファイルを圧縮（woff2形式推奨）
+   4. `src/assets/fonts/` に配置
+   5. `src/assets/sass/base/_root.scss` の `@font-face` を編集
+   6. `header.php` の `preload` リンクを追加（必要に応じて）
+
+8. **カスタムプロパティ・Sass変数の登録**
+   1. `src/assets/sass/global/_setting.scss` でSass変数を定義
+      - `$inner-sp`、`$inner-pc`（コンテンツ幅）
+      - `$padding-sp`、`$padding-pc`（パディング）
+      - その他のレイアウト値
+   2. `src/assets/sass/base/_root.scss` の `:root` 内でカスタムプロパティを定義
+      - 色（`--color-theme`、`--color-accent` など）
+      - サイズ（`--header-height` など）
+      - その他のデザイン値
+
 ## 技術スタック
 
 - **WordPress**: バージョン

@@ -145,4 +145,8 @@ components/          # PHPコンポーネント（再利用可能な部品）
 - **Vite連携の仕組みを変更しない**: dev/prod判定とmanifest読み込みの仕組みは必須
 - **関数名のプレフィックス**: `ty_` を必ず付与（WordPress/プラグインとの衝突回避）
 - **画像パスの解決**: CSS内はViteが解決、HTML内は `ty_theme_image_url()` を使用
+- **スクリプトの実行方法**: 実行権限を付与せず、`bash`コマンドで実行する方法を推奨
+  - 理由: クロスプラットフォーム対応、Git管理の簡素化、初回セットアップの削減
+  - 例: `bash scripts/font-compress.sh input.ttf output.woff2`
+  - 各スクリプトのREADMEでは`bash`コマンドのみを記載し、実行権限付与の方法は記載しない
 
