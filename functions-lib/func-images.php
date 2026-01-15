@@ -8,11 +8,11 @@ declare(strict_types=1);
  * =========================================
  *
  * ▼ `<img>` を出したい（推奨）
- * - ty_img('demo/dummy1.jpg', 'dummy1.jpg')
- * - ty_img('demo/dummy1.jpg', 'dummy1.jpg', ['loading' => 'eager', 'fetchpriority' => 'high'])
+ * - ty_img('demo/dummy1.jpg', 'altテキスト')
+ * - ty_img('demo/dummy1.jpg', 'altテキスト', ['loading' => 'eager', 'fetchpriority' => 'high'])
  *
  * ▼ `<picture>` でPC/SPを出し分けしたい
- * - ty_picture_img('demo/dummy3.jpg', 'demo/dummy2.jpg', 'dummy3.jpg')
+ * - ty_picture_img('demo/dummy3.jpg', 'demo/dummy2.jpg', 'altテキスト')
  *
  * ▼ URLだけ欲しい（src/srcsetなどに入れる）
  *   ※定義は func-vite.php
