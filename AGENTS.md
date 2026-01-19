@@ -1,6 +1,8 @@
 # AIエージェント向けプロジェクト理解ガイド
 
-このドキュメントは、AIエージェントがこのプロジェクトを理解し、適切なコード変更や提案を行うためのガイドです。
+このドキュメントは、AIエージェント（Cursor / ChatGPT）がこのプロジェクトを理解し、適切なコード変更や提案を行うためのガイドです。
+
+**人間が読む場合は、[docs/01-development/README.md](docs/01-development/README.md) を参照してください。**
 
 ## 技術スタック
 
@@ -10,6 +12,8 @@
 - **PostCSS**: CSS後処理（autoprefixer、メディアクエリソート）
 
 ## アーキテクチャ概要
+
+詳細は [docs/01-development/architecture.md](docs/01-development/architecture.md) を参照してください。
 
 ### 開発環境（dev）のフロー
 
@@ -52,6 +56,8 @@ dist/ から実際のファイルを enqueue
   - prod: `dist/.vite/manifest.json` を参照
 - **アセット読み込み**: `functions-lib/func-vite-assets.php` で `wp_enqueue_style/script` を実装
 
+詳細は [docs/01-development/architecture.md](docs/01-development/architecture.md) の「Vite連携の詳細」を参照してください。
+
 ### アセット管理
 
 - **画像（CSS内）**: `src/assets/images/**` を Sass の `url(...)` 経由で参照
@@ -65,71 +71,36 @@ dist/ から実際のファイルを enqueue
 - **ビルド成果物のみデプロイ**: `dist/`, `*.php`, `style.css` など
 - **自動デプロイ**: GitHub ActionsでFTP経由のデプロイを実行
 
-## コーディング規約の要点
+## コーディング規約
 
-### PHP
+詳細は [docs/01-development/coding-standards.md](docs/01-development/coding-standards.md) を参照してください。
 
-- **関数名**: テーマ内のPHP関数には `ty_` プレフィックスを付与
-- **function_exists**: プラグイン関数のチェックのみ使用（子テーマ想定なし、同一テーマ内関数への依存チェックは不要）
-- **ファイル読み込み順序**: `functions.php` の `$ordered` 配列で依存関係を管理
+### 要点
 
-### CSS/Sass
+- **PHP関数名**: `ty_` プレフィックスを必ず付与
+- **PHP配列**: `array()` ではなく `[]` を使用
+- **PHPデータ取得とHTML**: 可能な限り分けて記述
+- **Sass margin**: `margin-block-start` のみを使用
+- **Sass入れ子**: 基本的にフラットな構造を維持（BEMクラス名は入れ子にしない）
 
-- **marginの使用**: 原則として `margin-block-start` のみを使用する
-  - `margin-block-end` や `margin-block` は使用しない
-  - `margin-inline-start: 0;` はリセットCSSで既に指定されているため、明示的に書く必要はない
-  - 要素間の間隔は次の要素の `margin-block-start` で制御する
-  - 例: `.element { margin-block-start: rem(20); }`
+## 設計判断（MUST/SHOULD/MAY）
 
-- **コンポーネントの外側余白**: コンポーネント自体には外側の余白（margin）をつけない
-  - コンポーネントは再利用可能な部品のため、外側の余白は親要素で制御する
-  - 使用する側で親要素を追加し、そこに余白をつける
-  - 例:
-    ```scss
-    // コンポーネント（components-demo/_p-post-nav.scss）
-    .p-post-nav {
-      display: flex;
-      // marginはつけない
-    }
-    
-    // 使用する側（components/_p-single.scss）
-    .p-single__post-nav {
-      margin-block-start: rem(60);
-      @include mq() {
-        margin-block-start: rem(80);
-      }
-    }
-    ```
+詳細は [docs/01-development/architecture.md](docs/01-development/architecture.md) を参照してください。
 
-- **入れ子（ネスト）の使い方**: 基本的にフラットな構造を維持する
-  - **BEMのクラス名は入れ子にしない**: `.p-component__element` は全てトップレベルで記述
-  - **子要素（タグ名）もフラットに記述**: `.p-component__element img` のようにスペース区切りで記述（入れ子にしない）
-  - **メディアクエリは入れ子で記述**: `@include mq() { ... }` は入れ子で使用
-  - **複数のセレクタはカンマで区切る**: `.element1, .element2 { ... }` のようにフラットに記述
-  - **複雑なセレクタもフラットに記述**: `.parent:has(.child) .target` のようにスペース区切りで記述
-  - 例（正）: 
-    ```scss
-    .p-single__thumbnail {
-      margin-block-start: rem(20);
-      @include mq() {
-        margin-block-start: rem(30);
-      }
-    }
-    .p-single__thumbnail img {
-      width: 100%;
-    }
-    ```
-  - 例（誤）:
-    ```scss
-    .p-single__thumbnail {
-      margin-block-start: rem(20);
-      img {
-        width: 100%;
-      }
-    }
-    ```
+### MUST（変えてはいけないルール）
 
-詳細は [docs/architecture.md](docs/architecture.md) を参照してください。
+- **Vite連携の仕組み**: dev/prod判定とmanifest読み込みの仕組みは必須
+- **関数名のプレフィックス**: `ty_` を必ず付与（WordPress/プラグインとの衝突回避）
+
+### SHOULD（推奨ルール）
+
+- **ディレクトリ構成**: `functions-lib/`, `components/`, `src/assets/`, `dist/` の使用を推奨
+- **画像の扱い**: CSS内はViteが解決、HTML内は `ty_theme_image_url()` を使用
+
+### MAY（状況次第で変えていい判断）
+
+- **画像最適化**: 環境変数で制御可能
+- **カスタム投稿タイプ**: 案件に応じて追加可能
 
 ## ディレクトリ構成の要点
 
@@ -149,4 +120,10 @@ components/          # PHPコンポーネント（再利用可能な部品）
   - 理由: クロスプラットフォーム対応、Git管理の簡素化、初回セットアップの削減
   - 例: `bash scripts/font-compress.sh input.ttf output.woff2`
   - 各スクリプトのREADMEでは`bash`コマンドのみを記載し、実行権限付与の方法は記載しない
+
+## 参考ドキュメント
+
+- **設計判断・守るルール**: [docs/01-development/architecture.md](docs/01-development/architecture.md)
+- **コーディング規約**: [docs/01-development/coding-standards.md](docs/01-development/coding-standards.md)
+- **開発ガイド**: [docs/01-development/development.md](docs/01-development/development.md)
 
