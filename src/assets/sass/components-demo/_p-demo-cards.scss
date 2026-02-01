@@ -54,10 +54,13 @@
 }
 
 .p-demo-cards__title {
+  margin-bottom: rem(8);
   font-size: rem(18);
   font-weight: bold;
-  margin-bottom: rem(8);
-  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; /* 制限したい行数が3の場合 */
+  overflow: hidden;
 }
 
 .p-demo-cards__description {
@@ -65,4 +68,12 @@
   color: #666;
   line-height: 1.6;
   flex: 1;
+}
+
+.p-demo-cards__load-more {
+  margin-block-start: rem(40);
+  text-align: center;
+  @include mq() {
+    margin-block-start: rem(60);
+  }
 }

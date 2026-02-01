@@ -25,5 +25,9 @@ import './_option-color.js';
 import './_checkFormValidity.js';
 import './_flatpickr.js';
 
-/* スパム対策 */
+/* メールアドレス保護（スパム対策） */
 import './_email-protection.js';
+
+
+/* アーカイブページの「もっと見る」機能 */
+import './_archive-load-more.js';

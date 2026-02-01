@@ -12,29 +12,28 @@
   <div class="p-archive">
     <div class="p-archive__inner l-inner">
       <div class="p-archive__items p-archive-items">
-        <?php if (have_posts()) : ?>
-          <?php while (have_posts()) : the_post(); ?>
-            <article class="p-archive-items__post" data-fadein>
-              <a href="<?php the_permalink(); ?>" class="p-archive-items__link">
-                <figure class="p-archive-items__thumbnail">
-                  <?php ty_display_thumbnail('full'); ?>
-                </figure>
-                <p class="p-archive-items__date">
-                  <time class="" datetime="<?php echo get_the_date('Y-m-d'); ?>">
-                    <?php echo get_the_date('Y / m / d'); ?>
-                  </time>
-                </p>
-                <h2 class="p-archive-items__title"><?php the_title(); ?></h2>
-              </a>
-            </article>
-          <?php endwhile; ?>
-          <div class="p-archive-items__pagination">
-            <?php get_template_part('components-demo/p-pagination'); ?>
+        <div class="p-demo-cards">
+          <?php 
+          global $wp_query;
+          $max_pages = $wp_query->max_num_pages;
+          ?>
+          <?php if (have_posts()) : ?>
+            <?php while (have_posts()) : the_post(); ?>
+              <?php get_template_part('components-demo/p-archive-card-item'); ?>
+            <?php endwhile; ?>
+          <?php else : ?>
+            <p class="p-archive-items__no-post c-no-post">
+              新着情報はありません。
+            </p>
+          <?php endif; ?>
+        </div>
+        
+        <?php if (isset($max_pages) && $max_pages > 1) : ?>
+          <div class="p-demo-cards__load-more">
+            <button id="js-load-more" class="c-button" type="button">
+              もっと見る
+            </button>
           </div>
-        <?php else : ?>
-          <p class="p-archive-items__no-post c-no-post">
-            新着情報はありません。
-          </p>
         <?php endif; ?>
       </div>
     </div>

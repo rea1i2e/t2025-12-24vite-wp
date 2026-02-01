@@ -1,0 +1,10 @@
+@use '../global' as *;
+
+:is(div, figure):has(> .u-no-image) {
+  background-color: #ccc;
+}
+
+img.u-no-image[class="u-no-image"] {
+  padding: 10% 20%;
+  object-fit: contain;
+}
