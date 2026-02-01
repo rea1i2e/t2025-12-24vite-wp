@@ -7,10 +7,10 @@ const initArchiveLoadMore = () => {
   const container = document.querySelector('.p-demo-cards');
 
   // デバッグ: 要素の存在確認
-  console.log('[Archive Load More] 初期化開始');
-  console.log('[Archive Load More] loadMoreBtn:', loadMoreBtn);
-  console.log('[Archive Load More] container:', container);
-  console.log('[Archive Load More] window.archiveAjax:', window.archiveAjax);
+  // console.log('[Archive Load More] 初期化開始');
+  // console.log('[Archive Load More] loadMoreBtn:', loadMoreBtn);
+  // console.log('[Archive Load More] container:', container);
+  // console.log('[Archive Load More] window.archiveAjax:', window.archiveAjax);
   
   if (!loadMoreBtn) {
     console.warn('[Archive Load More] ボタンが見つかりません: #js-load-more');
