@@ -32,8 +32,6 @@
         <ul class="p-header__pc-nav-items">
           <?php foreach (ty_get_nav_items() as $item) : ?>
             <?php if (in_array($item['slug'], ['privacy-policy', 'terms-of-use'])) continue; // 一部除外 
-            ?>
-            <?php
             // URL生成
             $item_url = '';
             if (isset($item['external']) && $item['external']) {
