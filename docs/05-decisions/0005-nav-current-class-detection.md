@@ -15,7 +15,7 @@
 
 **PHP（サーバー側）での判定を採用する。**
 
-実装は `functions-lib/func-nav-items.php` の `ty_get_nav_item_current_class()` に集約し、`ty_get_nav_item_link($item)` 経由で `current_class` を返す現状の方式を維持する。
+実装は `functions-lib/func-nav-items.php` の `ty_get_nav_item_current_class()` に集約し、`ty_get_nav_item_data($item)` 経由で `current_class` を返す現状の方式を維持する。
 
 ## 理由
 
@@ -30,9 +30,9 @@ JavaScript 方式は「PHP に依存しない」「静的サイトにも流用�
 ## 結果
 
 - ナビのカレント判定は `ty_get_nav_item_current_class(string $slug)` で行う。
-- テンプレート（header.php / footer.php）では `ty_get_nav_item_link($item)` の `current_class` を利用する。
+- テンプレート（header.php / footer.php）では `ty_get_nav_item_data($item)` の `current_class` を利用する。
 - カレント判定の変更・拡張は `func-nav-items.php` 内に集約する。
 
 ## 関連ADR
 
-- [0002-nav-item-url-helper.md](0002-nav-item-url-helper.md) — ナビ項目の URL 取得方法（`ty_get_page()` を直接使用する方針）。本 ADR はカレント判定に限定し、リンク用データは `ty_get_nav_item_link()` でまとめて取得する現行設計を前提としている。
+- [0002-nav-item-url-helper.md](0002-nav-item-url-helper.md) — ナビ項目の URL 取得方法（`ty_get_page()` を直接使用する方針）。本 ADR はカレント判定に限定し、リンク用データは `ty_get_nav_item_data()` でまとめて取得する現行設計を前提としている。

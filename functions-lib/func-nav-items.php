@@ -10,7 +10,7 @@ declare(strict_types=1);
  * ▼ 単純にループしてリンクを出す（例: header/footer など）
  *   foreach (ty_get_nav_items() as $item) {
  *     // $item['slug'], $item['text'] を使ってURL/表示名を組み立てる
- *     // リンク用データは ty_get_nav_item_link($item) で取得（url, current_class, target_attr）
+ *     // 表示用データは ty_get_nav_item_data($item, '接頭辞') で取得（url, current_class, target_attr, data_section_id_attr, modifier_class）
  *   }
  *
  * ▼ 子階層（children）がある場合
@@ -23,6 +23,7 @@ declare(strict_types=1);
  *
  * - slug（必須）: サイト内の場合はページスラッグ。http:// または https:// で始まる場合は外部URLとして扱う。
  * - text（必須）: 表示ラベル。
+ * - section_id（任意）: スクロール連動カレント用。.js-section の id と一致させる。省略時は data-section-id を出さない。
  * - modifier（任意）: li 等に付与する修飾クラス用（例: 'contact' → p-footer__nav-item--contact）。
  * - target（任意）: リンクの target 属性。'_blank' の場合は rel="noopener noreferrer" も付与される。
  * - children（任意）: 子メニュー項目の配列。各要素も slug, text 必須。
@@ -30,26 +31,36 @@ declare(strict_types=1);
  * ▼ 記述例
  *   ['slug' => 'top', 'text' => 'トップ']
  *   ['slug' => 'news', 'text' => 'お知らせ']
+ *   ['slug' => 'about', 'text' => '会社概要', 'section_id' => 'intro']
  *   ['slug' => 'https://example.com', 'text' => '外部サイト', 'target' => '_blank']
  *   ['slug' => 'contact', 'text' => 'お問い合わせ', 'modifier' => 'contact']
- *   ['slug' => 'parent', 'text' => '親', 'children' => [['slug' => 'child', 'text' => '子']]]
+ *   ['slug' => 'parent', 'text' => '親', 'children' => [['slug' => 'child', 'text' => '子', 'section_id' => 'child']]]
  *
  * ▼ 除外する場合の記述例（ヘッダー等で一部項目を出さないとき）
  *   foreach (ty_get_nav_items() as $item) {
  *     if (in_array($item['slug'], ['privacy-policy', 'terms-of-use'])) continue;
- *     $link = ty_get_nav_item_link($item);
- *     // ...
+ *     $item_data = ty_get_nav_item_data($item, 'p-header__pc-nav-item');
+ *     // $item_data['url'], $item_data['current_class'], $item_data['target_attr'], $item_data['data_section_id_attr'], $item_data['modifier_class']
  *   }
  *
- * @return array<int, array{slug:string,text:string,modifier?:string,target?:string,children?:array}>
+ * @return array<int, array{slug:string,text:string,section_id?:string,modifier?:string,target?:string,children?:array}>
  */
 
 function ty_get_nav_items(): array {
 	return [
-		[
-			'slug' => 'top',
-			'text' => 'トップ',
-		],
+			[
+				'slug' => 'top',
+				'text' => 'トップ',
+			],
+			[
+				'slug' => 'about',
+				'text' => '会社概要',
+			],
+			[
+				'slug' => 'about/#access',
+				'text' => 'アクセス（会社概要）',
+				'section_id' => 'access',
+			],
 		[
 			'slug' => 'news',
 			'text' => 'お知らせ',
@@ -67,17 +78,24 @@ function ty_get_nav_items(): array {
 					'text' => 'スライダー（Splide）',
 				],
 				[
-					'slug' => 'demo-dialog',
+					'slug' => 'top/#demo-dialog',
 					'text' => 'モーダル（dialog）',
+					'section_id' => 'demo-dialog',
 				],
 				[
-					'slug' => 'demo-tab',
+					'slug' => 'top/#demo-tab',
 					'text' => 'タブ切り替え（tab）',
+					'section_id' => 'demo-tab',
 				],
 				[
 					'slug' => 'demo-accordion',
 					'text' => 'アコーディオン（accordion）',
-				]
+				],
+				[
+					'slug' => 'top/#demo-image',
+					'text' => 'imgタグの出力',
+					'section_id' => 'demo-image',
+				],
 			]
 		],
 		[
@@ -153,17 +171,26 @@ function ty_get_nav_item_target_attr(string $target = ''): string {
 }
 
 /**
- * ナビ項目のリンク用データをまとめて取得する。
- * @param array{slug: string, target?: string} $item ナビ項目（slug 必須、target 任意）
- * @return array{url: string, current_class: string, target_attr: string}
+ * ナビ項目の表示用データ（URL・カレントクラス・属性など）をまとめて取得する。
+ * @param array{slug: string, target?: string, section_id?: string, modifier?: string} $item ナビ項目（slug 必須）
+ * @param string $modifier_prefix 修飾クラス用の接頭辞（例: 'p-header__pc-nav-item'）。空のときは modifier_class は ''。
+ * @return array{url: string, current_class: string, target_attr: string, data_section_id_attr: string, modifier_class: string}
  */
-function ty_get_nav_item_link(array $item): array {
+function ty_get_nav_item_data(array $item, string $modifier_prefix = ''): array {
 	$slug = (string) ($item['slug'] ?? '');
 	$target = (string) ($item['target'] ?? '');
+	$section_id = (string) ($item['section_id'] ?? '');
+	$modifier = (string) ($item['modifier'] ?? '');
+
+	$data_section_id_attr = $section_id !== '' ? ' data-section-id="' . esc_attr($section_id) . '"' : '';
+	$modifier_class = ($modifier_prefix !== '' && $modifier !== '') ? ' ' . $modifier_prefix . '--' . $modifier : '';
+
 	return [
 		'url' => ty_get_nav_item_url($slug),
 		'current_class' => ty_get_nav_item_current_class($slug),
 		'target_attr' => ty_get_nav_item_target_attr($target),
+		'data_section_id_attr' => $data_section_id_attr,
+		'modifier_class' => $modifier_class,
 	];
 }
 

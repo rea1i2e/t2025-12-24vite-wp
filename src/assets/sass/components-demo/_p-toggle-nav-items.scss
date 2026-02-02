@@ -9,8 +9,10 @@
 .p-toggle-nav-items__item--contact {
 }
 
-// state（現在ページ）
-.p-toggle-nav-items__item.is-current {
+// state（現在ページ・スクロール連動カレント）
+.p-toggle-nav-items__item.is-current,
+.p-toggle-nav-items__item.is-current-section {
+  background-color: var(--color-current);
 }
 
 .p-toggle-nav-items__link {
@@ -45,7 +47,8 @@
 .p-toggle-nav-items__sub-item {
 }
 
-.p-toggle-nav-items__sub-item.is-current {
+.p-toggle-nav-items__sub-item.is-current,
+.p-toggle-nav-items__sub-item.is-current-section {
 }
 
 .p-toggle-nav-items__sub-link {

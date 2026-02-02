@@ -67,10 +67,12 @@
   gap: rem(8);
   height: 100%;
   padding-inline: rem(16);
+  // transition: background-color 3s ease-in-out; // ページ読み込み直後、セクションのカレント表示がちらつく
   @include mq() {
   }
 }
 
+/* サブメニューがある要素のスタイル */
 .p-header__pc-nav-item:has(.p-header__pc-nav-submenu) .p-header__pc-nav-link {
   background-color: pink;
 }
@@ -82,9 +84,10 @@
   content: "";
 }
 
-
-.p-header__pc-nav-item.is-current .p-header__pc-nav-link {
-  background-color: skyblue;
+/* カレント表示のスタイル */
+.p-header__pc-nav-item.is-current .p-header__pc-nav-link:not(.p-header__pc-nav-items:has(.is-current-section) * ),
+.p-header__pc-nav-item.is-current-section .p-header__pc-nav-link {
+  background-color: var(--color-current);
 }
 
 // Dropdown (children)
@@ -121,8 +124,8 @@
 .p-header__pc-nav-submenu-item {
 }
 
-.p-header__pc-nav-submenu-item.is-current {
-
+.p-header__pc-nav-submenu-item.is-current,
+.p-header__pc-nav-submenu-item.is-current-section {
 }
 
 .p-header__pc-nav-submenu-link {
@@ -133,8 +136,9 @@
   white-space: nowrap;
 }
 
-.p-header__pc-nav-submenu-item.is-current .p-header__pc-nav-submenu-link {
-  background-color: skyblue;
+.p-header__pc-nav-submenu-item.is-current .p-header__pc-nav-submenu-link,
+.p-header__pc-nav-submenu-item.is-current-section .p-header__pc-nav-submenu-link {
+  background-color: var(--color-current);
 }
 
 .p-header__pc-nav-submenu-link:hover,

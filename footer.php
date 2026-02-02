@@ -11,20 +11,19 @@
           $text = (string) ($item['text'] ?? '');
           if ($slug === '' || $text === '') continue;
 
-          $link = ty_get_nav_item_link($item);
+          $item_data = ty_get_nav_item_data($item, 'p-footer__nav-item');
           $has_children = !empty($item['children']) && is_array($item['children']);
-          $modifier = !empty($item['modifier']) ? (string) $item['modifier'] : '';
 
           $li_classes = array_filter([
             'p-footer__nav-item',
-            $modifier !== '' ? 'p-footer__nav-item--' . $modifier : '',
-            $link['current_class'],
+            trim($item_data['modifier_class']),
+            $item_data['current_class'],
           ]);
           ?>
 
-          <li class="<?php echo esc_attr(implode(' ', $li_classes)); ?>">
+          <li class="<?php echo esc_attr(implode(' ', $li_classes)); ?>"<?php echo $item_data['data_section_id_attr']; ?>>
             <?php if ($has_children) : ?>
-              <a class="p-footer__nav-link" href="<?php echo $link['url']; ?>" <?php echo $link['target_attr']; ?>>
+              <a class="p-footer__nav-link" href="<?php echo $item_data['url']; ?>" <?php echo $item_data['target_attr']; ?>>
                 <?php echo esc_html($text); ?>
               </a>
 
@@ -36,18 +35,18 @@
                   $child_text = (string) ($child['text'] ?? '');
                   if ($child_slug === '' || $child_text === '') continue;
 
-                  $link = ty_get_nav_item_link($child);
+                  $child_data = ty_get_nav_item_data($child, 'p-footer__nav-sub-item');
                   ?>
 
-                  <li class="p-footer__nav-sub-item <?php echo esc_attr($link['current_class']); ?>">
-                    <a class="p-footer__nav-sub-link" href="<?php echo $link['url']; ?>" <?php echo $link['target_attr']; ?>>
+                  <li class="p-footer__nav-sub-item<?php echo $child_data['modifier_class']; ?> <?php echo esc_attr($child_data['current_class']); ?>"<?php echo $child_data['data_section_id_attr']; ?>>
+                    <a class="p-footer__nav-sub-link" href="<?php echo $child_data['url']; ?>" <?php echo $child_data['target_attr']; ?>>
                       <?php echo esc_html($child_text); ?>
                     </a>
                   </li>
                 <?php endforeach; ?>
               </ul>
             <?php else : ?>
-              <a class="p-footer__nav-link" href="<?php echo $link['url']; ?>" <?php echo $link['target_attr']; ?>>
+              <a class="p-footer__nav-link" href="<?php echo $item_data['url']; ?>" <?php echo $item_data['target_attr']; ?>>
                 <?php echo esc_html($text); ?>
               </a>
             <?php endif; ?>
