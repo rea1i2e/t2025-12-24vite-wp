@@ -85,6 +85,12 @@
 - **Husky**: 必要に応じて追加可能です（現状は使用していません）
 - **Linter/Formatter**: 案件に応じて追加可能です
 
+### 管理画面メニュー
+
+- **非表示・トップレベル表示**: `functions-lib/func-admin-menu.php` で配列（`$ty_admin_menu_remove_slugs`, `$ty_admin_page_menu_slugs`）により制御します。
+- **`edit.php` を非表示にする場合**: 「投稿」メニューが消えるため、`func-set-posttype-post.php` のラベル変更（お知らせ）は見た目に効かなくなります。お知らせとして残す場合は非表示リストに `edit.php` を入れないこと。
+- 意思決定の背景は [0006-admin-menu-customization.md](../05-decisions/0006-admin-menu-customization.md) を参照。
+
 ## 詳細情報
 
 ### ファイル構成詳細
@@ -115,6 +121,7 @@
 
 | ファイル名 | 機能 |
 |------------|------|
+| `func-admin-menu.php` | 管理画面メニューのカスタマイズ（非表示にするメニュー・トップレベルに表示する固定ページを配列で管理） |
 | `func-ai1wm-exclude.php` | All-in-One WP Migrationでエクスポートする際に一部ファイルを除外 |
 | `func-base.php` | WordPressの基本的な機能を設定（テーマサポート、コメント無効化、絵文字無効化等） |
 | `func-images.php` | 画像関連のヘルパー関数（画像URL取得、画像表示等） |
