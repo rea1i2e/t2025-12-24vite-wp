@@ -3,13 +3,11 @@
     <nav class="p-footer__nav" aria-label="フッターナビゲーション">
       <ul class="p-footer__nav-list">
         <?php foreach (ty_get_nav_items() as $item) : ?>
-          <?php if (($item['slug'] ?? '') === 'top') continue; // 一部除外 
-          ?>
+          <?php if (($item['slug'] ?? '') === 'top') continue; // 一部除外 ?>
 
           <?php
-          $slug = (string) ($item['slug'] ?? '');
-          $text = (string) ($item['text'] ?? '');
-          if ($slug === '' || $text === '') continue;
+          // ナビ定義（func-nav-items.php）で slug/text 必須としているため、ここでは存在チェックのみ簡潔に扱う
+          if (($item['text'] ?? '') === '') continue;
 
           $item_data = ty_get_nav_item_data($item, 'p-footer__nav-item');
           $has_children = !empty($item['children']) && is_array($item['children']);
@@ -19,6 +17,8 @@
             trim($item_data['modifier_class']),
             $item_data['current_class'],
           ]);
+
+          $text = (string) $item['text'];
           ?>
 
           <li class="<?php echo esc_attr(implode(' ', $li_classes)); ?>"<?php echo $item_data['data_section_id_attr']; ?>>
@@ -30,12 +30,9 @@
               <ul class="p-footer__nav-sub-list">
                 <?php foreach ($item['children'] as $child) : ?>
                   <?php
-                  if (!is_array($child)) continue;
-                  $child_slug = (string) ($child['slug'] ?? '');
-                  $child_text = (string) ($child['text'] ?? '');
-                  if ($child_slug === '' || $child_text === '') continue;
-
                   $child_data = ty_get_nav_item_data($child, 'p-footer__nav-sub-item');
+                  if (($child['text'] ?? '') === '') continue;
+                  $child_text = (string) $child['text'];
                   ?>
 
                   <li class="p-footer__nav-sub-item<?php echo $child_data['modifier_class']; ?> <?php echo esc_attr($child_data['current_class']); ?>"<?php echo $child_data['data_section_id_attr']; ?>>
