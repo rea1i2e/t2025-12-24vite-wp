@@ -121,9 +121,53 @@ components/          # PHPコンポーネント（再利用可能な部品）
   - 例: `bash scripts/font-compress.sh input.ttf output.woff2`
   - 各スクリプトのREADMEでは`bash`コマンドのみを記載し、実行権限付与の方法は記載しない
 
+## ドキュメント化の基準
+
+変更時に「ドキュメントを残すか」を一貫して判断するための基準です。軽微な修正はドキュメントを増やさず、再発防止・合意形成・保守に効く変更だけ記録を残します。
+
+### ドキュメントを残さなくてよい変更（例）
+
+- 余白・フォントサイズ・色など、単発のスタイル調整（デザインの微修正）
+- 既存テンプレート内の文言・ラベルの修正（構造やルールは変えない）
+- typo 修正、コメントの追記・削除
+- 既存ルールに沿った単純なマークアップ追加（新ルールや例外を設けない場合）
+
+### ドキュメントを残すべき変更（例）
+
+- **functions.php / functions-lib**: 新規 `require`、フック追加・削除、enqueue の変更
+- **アセット読み込み**: エントリ追加、Vite 以外の読み込み方法の導入、読み込み順・条件の変更
+- **Vite 設定**: `vite.config.*` の変更、エントリ・alias・プラグインの追加・変更
+- **ルール・規約の変更**: コーディング規約・命名・ディレクトリ役割の変更（例: margin ルール、`ty_` の扱い）
+- **依存の追加・削除・バージョン方針**: `package.json` / Composer の依存変更とその理由
+- **セキュリティ**: エスケープ方針、権限チェック、入力検証の変更
+- **パフォーマンス**: キャッシュ・遅延読み込み・最適化の方針変更
+- **デプロイ・環境**: デプロイ手順・環境変数・ビルド手順の変更
+
+### 迷ったときの判定フロー（チェックリスト）
+
+1. **「なぜそうしたか」を後から説明する必要がありそうか？** →  Yes なら記録を検討
+2. **同じ判断が別メンバーやAIで繰り返されそうか？** → Yes なら記録を検討
+3. **functions.php / アセット読み込み / Vite 設定に触れているか？** → Yes なら記録を検討
+4. **チームで合意すべきルールや方針を変えているか？** → Yes なら記録を検討
+5. **単発の見た目・文言の調整だけで、ルールは変えていないか？** → Yes ならドキュメントは不要でよい
+6. **上記で迷う場合は「残す」を選ぶ**（過不足は後で整理できる）
+
+### 残す場合の行き先ガイド
+
+| 内容 | 行き先 |
+|------|--------|
+| **なぜこの判断をしたか**（技術判断・トレードオフの記録） | [docs/05-decisions/](docs/05-decisions/)（ADR） |
+| **案件固有の仕様・制約**（このサイトだけのルール・仕様） | [docs/04-project-specific/overview.md](docs/04-project-specific/overview.md) |
+| **設計・アーキテクチャのルール**（テンプレート全体に効くルール） | [docs/01-development/architecture.md](docs/01-development/architecture.md) |
+| **ハマりどころ・対処方法**（トラブルと解決手順） | [docs/03-troubleshooting/troubleshooting.md](docs/03-troubleshooting/troubleshooting.md) |
+| **移行・環境差分・履歴**（環境変更・移行手順の記録） | [docs/06-reference/migration-log.md](docs/06-reference/migration-log.md) |
+
+### ADR を書くときの運用
+
+ADR を追加する場合は、**[docs/05-decisions/README.md](docs/05-decisions/README.md)** に記載の **「ADR作成用プロンプト（毎回使用）」** を参照し、そのプロンプトを使って 1 件分の ADR を生成すること。ファイル名・見出しのルールも同 README に従う。
+
 ## 参考ドキュメント
 
 - **設計判断・守るルール**: [docs/01-development/architecture.md](docs/01-development/architecture.md)
 - **コーディング規約**: [docs/01-development/coding-standards.md](docs/01-development/coding-standards.md)
 - **開発ガイド**: [docs/01-development/development.md](docs/01-development/development.md)
-
