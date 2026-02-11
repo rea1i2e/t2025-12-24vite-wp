@@ -6,7 +6,8 @@
 
 - **[architecture.md](architecture.md)**: 設計判断・守るルール（MUST/SHOULD/MAY）
   - プロジェクトの設計判断と守るべきルール
-  - Vite連携の詳細、ファイル構成など
+  - Vite連携の詳細など
+  - ファイル構成の一覧は [overview.md](../04-project-specific/overview.md) に記載
 
 - **[coding-standards.md](coding-standards.md)**: コーディング規約
   - PHP、Sass、JavaScriptのコーディング規約
