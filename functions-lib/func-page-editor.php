@@ -17,9 +17,10 @@ declare(strict_types=1);
 
 /** @var string[] 本文を表示しないページテンプレート（ファイル名） */
 $ty_page_editor_no_content_templates = [
+	'page-news.php', // 投稿一覧
+	// 'page-top.php',  // トップページ（スラッグ: top）
 	'page-about.php',
 	'page-contact.php',
-	'page-news.php', // 投稿一覧
 ];
 
 /**
