@@ -20,7 +20,7 @@ $ty_admin_menu_remove_slugs = [
 
 $ty_admin_page_menu_slugs = [
 	'top', // 固定ページスラッグで指定（必要に応じて 'parent/child' 形式も指定可）
-	// 'about', 
+	// 'about',
 ];
 
 add_action('admin_menu', function () use ($ty_admin_menu_remove_slugs, $ty_admin_page_menu_slugs) {
@@ -54,4 +54,17 @@ add_action('admin_menu', function () use ($ty_admin_menu_remove_slugs, $ty_admin
 			8
 		);
 	}
-});
+}, 10, 0);
+
+// 壊れた形式のメニュー項目を除去（プラグイン等が [1][2][4] を欠いた項目を追加していると menu.php でエラーになるため）
+add_action('admin_menu', function (): void {
+	global $menu;
+	if (!is_array($menu)) {
+		return;
+	}
+	foreach ($menu as $id => $item) {
+		if (!is_array($item) || !isset($item[1], $item[2], $item[4])) {
+			unset($menu[$id]);
+		}
+	}
+}, 999);

@@ -50,3 +50,4 @@ function ty_change_post_menu_labels(): void
 
 add_action('init', 'ty_change_post_object_labels');
 add_action('admin_menu', 'ty_change_post_menu_labels');
+

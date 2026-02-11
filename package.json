@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "open http://t2025-12-24vite-wp.local",
+    "local:admin": "open http://t2025-12-24vite-wp.local/wp-admin/",
     "build:preview": "npm run build && npm run preview",
     "clean": "rm -rf dist src/.vite src/.img",
     "clean:all": "rm -rf dist src/.vite src/.img node_modules package-lock.json",
