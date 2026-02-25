@@ -14,7 +14,7 @@ declare(strict_types=1);
  */
 
 $ty_admin_menu_remove_slugs = [
-	'edit.php',          // デフォルト投稿
+	// 'edit.php',          // デフォルト投稿
 	'edit-comments.php', // コメント
 ];
 
