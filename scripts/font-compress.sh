@@ -1,6 +1,7 @@
 #!/bin/bash
 # フォント圧縮コマンド（全グリフ）
 # 使用方法: ./scripts/font-compress.sh 入力フォントファイル名.ttf 出力ファイル名.woff2
+# 使用例: ./scripts/font-compress.sh ./scripts/SourceSans3-VariableFont_wght.ttf ./src/assets/fonts/SourceSans3-VariableFont_wght.woff2
 
 if [ $# -lt 2 ]; then
   echo "使用方法: $0 <入力フォントファイル> <出力ファイル名>"

@@ -27,7 +27,7 @@ bash scripts/font-compress.sh 入力フォントファイル.ttf 出力ファイ
 
 **例:**
 ```bash
-bash scripts/font-compress.sh SourceSans3-VariableFont_wght.ttf SourceSans3-VariableFont_wght.woff2
+bash scripts/font-compress.sh ./scripts/SourceSans3-VariableFont_wght.ttf ./src/assets/fonts/SourceSans3-VariableFont_wght.woff2
 ```
 
 ### 2. サブセット化（特定の文字のみ）する場合
@@ -35,12 +35,12 @@ bash scripts/font-compress.sh SourceSans3-VariableFont_wght.ttf SourceSans3-Vari
 使用する文字列を指定して、必要なグリフのみを含むフォントファイルを生成します。ファイルサイズを削減できます。
 
 ```bash
-bash scripts/font-compress-subset.sh 入力フォントファイル.ttf 出力ファイル名.woff2 "使用する文字列"
+bash ./scripts/font-compress-subset.sh 入力フォントファイル.ttf 出力ファイル名.woff2 "使用する文字列"
 ```
 
 **例:**
 ```bash
-bash scripts/font-compress-subset.sh Inter-VariableFont_opsz,wght.ttf Inter-Subset.woff2 "Q&A"
+bash ./scripts/font-compress-subset.sh ./scripts/Inter-VariableFont_opsz,wght.ttf ./src/assets/fonts/Inter-Subset.woff2 "Q&A"
 ```
 
 ## 出力ファイルの配置

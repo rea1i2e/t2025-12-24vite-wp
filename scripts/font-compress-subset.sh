@@ -1,10 +1,11 @@
 #!/bin/bash
 # フォント圧縮コマンド（サブセット化）
 # 使用方法: ./scripts/font-compress-subset.sh 入力フォントファイル名.ttf 出力ファイル名.woff2 "使用する文字列"
+# 使用例: ./scripts/font-compress-subset.sh ./scripts/Inter-VariableFont_opsz,wght.ttf ./src/assets/fonts/Inter-Subset.woff2 "Q&A"
 
 if [ $# -lt 3 ]; then
   echo "使用方法: $0 <入力フォントファイル> <出力ファイル名> <使用する文字列>"
-  echo "例: $0 Inter-VariableFont_opsz,wght.ttf Inter-Subset.woff2 \"Q&A\""
+  echo "例: $0 scripts/Inter-VariableFont_opsz,wght.ttf src/assets/fonts/Inter-Subset.woff2 \"Q&A\""
   exit 1
 fi
 
