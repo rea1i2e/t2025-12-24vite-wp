@@ -200,6 +200,7 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,
+    // assetsInlineLimit: 0, // svgをインライン化させない場合はコメントアウト解除
     manifest: true,
     rollupOptions: {
       input: {
