@@ -26,20 +26,19 @@ declare(strict_types=1);
  *   ],
  * ]);
  *
- * ▼ 画像あり（PC/SP 切り替え）
+ * ▼ 画像あり（PC/SP は命名規則で自動: file が name.png なら SP は name_sp.png）
  * get_template_part('components-demo/sub-mv', null, [
  *   'tag' => 'h1',
  *   'title_ja' => '',
  *   'title_en' => '',
  *   'image' => [
- *     'file'   => 'common/sub-mv.jpg',
- *     'fileSp' => 'common/sub-mv_sp.jpg', // なくてもOK（null/空なら <source> を出さない）
- *     'alt'    => '',
+ *     'file' => 'common/sub-mv.jpg',
+ *     'alt'  => '',
  *   ],
  * ]);
  *
  * 補足:
- * - 画像は `ty_picture_img()` で出力します（dev/prod のURL解決・width/height付与などを吸収）
+ * - 画像は `ty_get_picture_img()` で取得し echo（変数に格納してから出力するため）。そのまま出したい場合は `ty_picture_img()`
  */
 
 // デフォルト値を設定
@@ -49,7 +48,6 @@ $default_args = [
 	'title_en' => '',
 	'image' => [
 		'file' => null,
-		'fileSp' => null,
 		'alt' => '',
 	],
 ];
@@ -70,14 +68,9 @@ $title_wrap_tag = ($title_ja_tag === 'p') ? 'div' : 'hgroup';
 $picture_html = '';
 if (!empty($sub_mv_args['image']['file'])) {
 	$pc_file = (string) $sub_mv_args['image']['file'];
-	$sp_file = !empty($sub_mv_args['image']['fileSp']) ? (string) $sub_mv_args['image']['fileSp'] : null;
 	$alt = (string) $sub_mv_args['image']['alt'];
 
-	// 既存の出力に寄せて、loading/decoding は付与しない（必要ならここで指定）
-	$picture_html = ty_picture_img($pc_file, $sp_file, $alt, [
-		'loading' => 'eager',
-		'fetchpriority' => 'high',
-	]);
+	$picture_html = ty_get_picture_img($pc_file, $alt, true, 'fetchpriority="high"');
 }
 
 $has_image = ($picture_html !== '');

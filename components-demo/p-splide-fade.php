@@ -12,7 +12,7 @@ $splideFadeImages = [
 		<ul class="p-splide-fade__slider-list splide__list">
 			<?php foreach ($splideFadeImages as $item) : ?>
 				<li class="p-splide-fade__slider-item splide__slide">
-          <?php echo ty_img($item['file'], $item['alt'], ['loading' => 'eager', 'fetchpriority' => 'high']); ?>
+          <?php ty_img($item['file'], $item['alt'], true, 'fetchpriority="high"'); ?>
 				</li>
 			<?php endforeach; ?>
 		</ul>

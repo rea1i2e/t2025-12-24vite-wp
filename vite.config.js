@@ -6,6 +6,7 @@ import sassGlobImports from "vite-plugin-sass-glob-import";
 import fs from "node:fs";
 import path, { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import imageSize from "image-size";
 import viteImagemin from "@vheemstra/vite-plugin-imagemin";
 import imageminMozjpeg from "imagemin-mozjpeg";
 import imageminPngquant from "imagemin-pngquant";
@@ -82,9 +83,44 @@ function listFilesRecursive(dir) {
 }
 
 /**
+ * 画像ファイルから width/height を取得する（ビルド時のみ。PHP の getimagesize 代替）
+ * - ラスタ: image-size。SVG: ファイル読み + width/height/viewBox の正規表現パース。
+ */
+function getImageDimensions(absPath) {
+  const ext = path.extname(absPath).toLowerCase();
+  if (ext === ".svg") {
+    try {
+      const svg = fs.readFileSync(absPath, "utf8");
+      let width = null;
+      let height = null;
+      const wMatch = svg.match(/\bwidth="([\d.]+)(px)?"/i);
+      const hMatch = svg.match(/\bheight="([\d.]+)(px)?"/i);
+      if (wMatch) width = Math.floor(Number(wMatch[1]));
+      if (hMatch) height = Math.floor(Number(hMatch[1]));
+      if ((!width || !height) && svg) {
+        const vbMatch = svg.match(/\bviewBox="[\d.\-]+\s+[\d.\-]+\s+([\d.]+)\s+([\d.]+)"/i);
+        if (vbMatch) {
+          if (!width) width = Math.floor(Number(vbMatch[1]));
+          if (!height) height = Math.floor(Number(vbMatch[2]));
+        }
+      }
+      if (width != null && height != null) return { width, height };
+    } catch (_) {}
+    return null;
+  }
+  try {
+    const result = imageSize(absPath);
+    if (result && result.width != null && result.height != null) {
+      return { width: result.width, height: result.height };
+    }
+  } catch (_) {}
+  return null;
+}
+
+/**
  * テーマ画像をハッシュ付きアセットとしてdistに出力し、PHPが解決するためのマップを書き込む
  * - ソースキー: "src/assets/images/<relpath>"
- * - 出力値: "<dist-relative-path>" (例: "assets/images/foo-xxxx.jpg")
+ * - 出力値: { file, width?, height? }（寸法はビルド時に取得し、ランタイムの getimagesize を不要にする）
  */
 function wpThemeImagesManifest() {
   const imagesRoot = path.resolve(__dirname, "src/assets/images");
@@ -99,6 +135,7 @@ function wpThemeImagesManifest() {
   ]);
 
   const idByKey = new Map();
+  const dimsByKey = new Map();
 
   return {
     name: "wp-theme-images-manifest",
@@ -111,10 +148,11 @@ function wpThemeImagesManifest() {
       for (const abs of files) {
         const rel = toPosixPath(path.relative(imagesRoot, abs));
         const key = `src/assets/images/${rel}`;
+        const dims = getImageDimensions(abs);
+        if (dims) dimsByKey.set(key, dims);
         const source = fs.readFileSync(abs);
         const fileId = this.emitFile({
           type: "asset",
-          // 元のサブディレクトリ情報を名前で保持し、出力時にディレクトリ構造を維持する
           name: rel,
           source,
         });
@@ -124,11 +162,16 @@ function wpThemeImagesManifest() {
     generateBundle(_, bundle) {
       const map = {};
       for (const [key, id] of idByKey.entries()) {
-        map[key] = toPosixPath(this.getFileName(id));
+        const file = toPosixPath(this.getFileName(id));
+        const dims = dimsByKey.get(key);
+        map[key] = {
+          file,
+          ...(dims && dims.width != null && dims.height != null
+            ? { width: dims.width, height: dims.height }
+            : {}),
+        };
       }
 
-      // 本番環境でPHPが<img src>を解決するためのシンプルなJSONマップを書き込む
-      // (Viteのmanifestプラグインとの競合を避けるため、".vite/"配下には書き込まない)
       this.emitFile({
         type: "asset",
         fileName: "theme-assets.json",

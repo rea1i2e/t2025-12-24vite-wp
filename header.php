@@ -22,7 +22,7 @@
       <?php $tag = (is_front_page()) ? 'h1' : 'div'; ?>
       <<?php echo $tag; ?> class="p-header__logo">
         <a class="p-header__logo-link" href="<?php ty_page(); ?>">
-          <?php echo ty_img('common/logo.svg', '', ['loading' => 'eager']); ?>
+          <?php ty_img('common/logo.svg', '', true); ?>
         </a>
       </<?php echo $tag; ?>>
       <button class="p-header__menu-button c-menu-button" id="js-menu" type="button" aria-controls="js-drawer" aria-expanded="false" aria-label="メニューを開閉する">

@@ -18,6 +18,7 @@
   "devDependencies": {
     "@vheemstra/vite-plugin-imagemin": "^2.2.1",
     "autoprefixer": "^10.4.21",
+    "image-size": "^1.1.1",
     "imagemin-gif2webp": "^3.0.0",
     "imagemin-gifsicle": "^7.0.0",
     "imagemin-mozjpeg": "^10.0.0",

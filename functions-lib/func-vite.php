@@ -116,7 +116,7 @@ function ty_vite_theme_assets_path(): string
 	return ty_vite_dist_path() . '/theme-assets.json';
 }
 
-// theme-assets.json を読み込み、srcパス -> dist相対パス のマッピング配列を返す（1リクエスト内キャッシュ）
+// theme-assets.json を読み込み、srcパス -> エントリ（文字列または array file, width?, height?）のマッピングを返す（1リクエスト内キャッシュ）
 function ty_vite_theme_assets_map(): array
 {
 	static $cache = null;
@@ -142,12 +142,30 @@ function ty_vite_theme_assets_map(): array
 
 	$out = [];
 	foreach ($map as $k => $v) {
-		if (!is_string($k) || !is_string($v)) continue;
-		$out[$k] = $v;
+		if (!is_string($k)) continue;
+		// 値は文字列（従来の dist 相対パス）または配列 { file, width?, height? } のいずれか
+		if (is_string($v) || (is_array($v) && isset($v['file']) && is_string($v['file']))) {
+			$out[$k] = $v;
+		}
 	}
 
 	$cache = $out;
 	return $cache;
+}
+
+// theme-assets マップから dist 相対パス（文字列）を返す。エントリが無いか不正なら空文字。
+function ty_vite_theme_asset_dist_rel(string $srcPath): string
+{
+	$srcPath = ltrim($srcPath, '/');
+	$map = ty_vite_theme_assets_map();
+	if (!isset($map[$srcPath])) return '';
+
+	$v = $map[$srcPath];
+	if (is_string($v)) return $v;
+	if (is_array($v) && isset($v['file']) && is_string($v['file'])) {
+		return $v['file'];
+	}
+	return '';
 }
 
 // テーマアセットの URL を解決する（PHP 側でビルド後のファイル名を知る必要がある場合用）
@@ -159,12 +177,10 @@ function ty_theme_asset_url(string $srcPath): string
 		return ty_vite_dev_server() . '/' . $srcPath;
 	}
 
-	$map = ty_vite_theme_assets_map();
-	if (!isset($map[$srcPath]) || !is_string($map[$srcPath])) {
-		return '';
-	}
+	$rel = ty_vite_theme_asset_dist_rel($srcPath);
+	if ($rel === '') return '';
 
-	return ty_vite_dist_url() . '/' . ltrim($map[$srcPath], '/');
+	return ty_vite_dist_url() . '/' . ltrim($rel, '/');
 }
 
 // `src/assets/images/**` 配下のテーマ画像 URL を解決する
@@ -172,6 +188,21 @@ function ty_theme_image_url(string $pathUnderImages): string
 {
 	$pathUnderImages = ltrim($pathUnderImages, '/');
 	return ty_theme_asset_url('src/assets/images/' . $pathUnderImages);
+}
+
+// theme-assets.json に含まれる画像寸法を返す。無い場合は width/height を null で返す（getimagesize フォールバック用）
+function ty_theme_image_dimensions(string $pathUnderImages): array
+{
+	$pathUnderImages = ltrim($pathUnderImages, '/');
+	$key = 'src/assets/images/' . $pathUnderImages;
+	$map = ty_vite_theme_assets_map();
+	if (!isset($map[$key]) || !is_array($map[$key])) {
+		return ['width' => null, 'height' => null];
+	}
+	$v = $map[$key];
+	$w = isset($v['width']) && is_numeric($v['width']) ? (int) $v['width'] : null;
+	$h = isset($v['height']) && is_numeric($v['height']) ? (int) $v['height'] : null;
+	return ['width' => $w, 'height' => $h];
 }
 
 // Vite クライアントを enqueue（dev のみ）

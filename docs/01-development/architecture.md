@@ -152,3 +152,4 @@ dist/ から実際のファイルを enqueue
 
 補足（`<img>` の画像）:
 - `<img>` はCSSの `url(...)` のように参照を辿れないため、`vite build` 時に `src/assets/images/**` を `dist/assets/images/**` へ出力し、`dist/theme-assets.json` を生成してPHPが解決する方式を採用
+- **画像の width/height**: ビルド時に Vite の `wpThemeImagesManifest` プラグイン（vite.config.js）が `image-size`（ラスター画像）または SVG の viewBox 等パースで寸法を取得し、`dist/theme-assets.json` に保存する。表示時は `ty_theme_image_dimensions()`（func-vite.php）がその JSON を参照し、エントリが無い場合（未ビルド・開発時など）のみ `getimagesize()` にフォールバックする
