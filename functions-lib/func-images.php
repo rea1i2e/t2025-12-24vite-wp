@@ -163,10 +163,10 @@ function ty_build_html_attrs(array $attrs): string {
 
 /**
  * PC/SP 画像を <picture> で出し分けした HTML 文字列を返す（取得のみ）
- * SP 用パスは第2引数省略時は PC パスから自動導出（name.png → name_sp.png）。拡張子を変える場合などは第2引数で指定。
+ * SP 用パスは null/空のとき PC パスから自動導出（name.png → name_sp.png）。
  *
  * @param string      $pcPathUnderImages PC用画像の images 配下パス
- * @param string|null $spPathUnderImages SP用画像の images 配下パス（null/空なら name_sp.ext で自動導出）
+ * @param string|null $spPathOrAlt       SP用画像の images 配下パス（null/空なら自動導出）
  * @param string      $alt              alt 属性
  * @param bool        $eager             true のとき loading="eager"
  * @param string      $extraAttrs       <img> へのその他属性を文字列で（例: 'fetchpriority="high"'）
@@ -174,15 +174,15 @@ function ty_build_html_attrs(array $attrs): string {
  */
 function ty_get_picture_img(
 	string $pcPathUnderImages,
-	?string $spPathUnderImages = null,
+	?string $spPathOrAlt = null,
 	string $alt = '',
 	bool $eager = false,
 	string $extraAttrs = '',
 	string $spMedia = '(max-width: 767px)'
 ): string {
 	$pcPathUnderImages = ltrim($pcPathUnderImages, '/');
-	$spPathUnderImages = ($spPathUnderImages !== null && $spPathUnderImages !== '')
-		? ltrim($spPathUnderImages, '/')
+	$spPathUnderImages = ($spPathOrAlt !== null && $spPathOrAlt !== '')
+		? ltrim($spPathOrAlt, '/')
 		: ty_theme_image_sp_path($pcPathUnderImages);
 
 	$pc_url = ty_theme_image_url($pcPathUnderImages);
@@ -236,15 +236,20 @@ function ty_get_picture_img(
 
 /**
  * ty_get_picture_img() の結果をそのまま出力する。テンプレートではこちらを主に使用。
+ * 2引数で呼んだときは (pcPath, alt)、3引数以上は (pcPath, spPath, alt, ...)。
  */
 function ty_picture_img(
 	string $pcPathUnderImages,
-	?string $spPathUnderImages = null,
+	?string $spPathOrAlt = null,
 	string $alt = '',
 	bool $eager = false,
 	string $extraAttrs = '',
 	string $spMedia = '(max-width: 767px)'
 ): void {
-	echo ty_get_picture_img($pcPathUnderImages, $spPathUnderImages, $alt, $eager, $extraAttrs, $spMedia);
+	if (func_num_args() < 3) {
+		echo ty_get_picture_img($pcPathUnderImages, null, (string) $spPathOrAlt, $eager, $extraAttrs, $spMedia);
+	} else {
+		echo ty_get_picture_img($pcPathUnderImages, $spPathOrAlt, $alt, $eager, $extraAttrs, $spMedia);
+	}
 }
 
