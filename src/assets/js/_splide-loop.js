@@ -25,4 +25,5 @@ const splideLoopElement = document.querySelector("#js-splide-loop");
 if (splideLoopElement) {
   const splideLoopInstance = new Splide(splideLoopElement, splideLoopOptions);
   splideLoopInstance.mount({ AutoScroll });
+  // splideLoopInstance.mount(); // 一時停止用
 }
