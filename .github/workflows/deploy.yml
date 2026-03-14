@@ -1,5 +1,28 @@
 name: Deploy Theme to FTP
 
+# FTP デプロイの除外リスト（env で1箇所定義）
+env:
+  FTP_EXCLUDE: |
+    **/.git*
+    **/.git*/**
+    **/node_modules/**
+    **/.github/**
+    **/docs/**
+    **/src/**
+    **/scripts/**
+    **/*.map
+    **/package.json
+    **/package-lock.json
+    **/vite.config.*
+    **/postcss.config.*
+    **/README.md
+    **/.DS_Store
+    **/Thumbs.db
+    **/.cursorrules
+    **/AGENTS.md
+    **/.husky/**
+    **/tools/**
+
 on:
   push:
     branches: [ main, master ]
@@ -70,25 +93,10 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         # Deploy the entire theme directory (excluding dev-only files).
         local-dir: ./
-        # Example: /public_html/wp-content/themes/t2025-12-24vite-wp/
+        # Example: /wp-content/themes/t2025-12-24vite-wp/
         # Set this in repo secrets.
         server-dir: ${{ secrets.FTP_SERVER_DIR }}
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/node_modules/**
-          **/.github/**
-          **/docs/**
-          **/src/**
-          **/scripts/**
-          **/*.map
-          **/package.json
-          **/package-lock.json
-          **/vite.config.*
-          **/postcss.config.*
-          **/README.md
-          **/.DS_Store
-          **/Thumbs.db
+        exclude: ${{ env.FTP_EXCLUDE }}
           
     - name: Deploy to Test Environment (PR)
       if: github.event_name == 'pull_request'
@@ -99,22 +107,7 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./
         server-dir: ${{ secrets.FTP_SERVER_DIR }}
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/node_modules/**
-          **/.github/**
-          **/docs/**
-          **/src/**
-          **/scripts/**
-          **/*.map
-          **/package.json
-          **/package-lock.json
-          **/vite.config.*
-          **/postcss.config.*
-          **/README.md
-          **/.DS_Store
-          **/Thumbs.db
+        exclude: ${{ env.FTP_EXCLUDE }}
           
     - name: Send Discord Notification - Test Deploy
       if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
