@@ -22,6 +22,8 @@ env:
     **/AGENTS.md
     **/.husky/**
     **/tools/**
+    **/.env*
+    **/env.deploy.example
 
 on:
   push:
@@ -60,7 +62,7 @@ jobs:
         echo "**イベント:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
-        if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.ref }}" = "refs/heads/master" ]; then
+        if [ "${{ github.event_name }}" = "push" ] && { [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.ref }}" = "refs/heads/master" ]; }; then
           echo "**🌐 テスト環境:** ${{ secrets.TEST_URL }}" >> $GITHUB_STEP_SUMMARY
         elif [ "${{ github.event_name }}" = "pull_request" ]; then
           echo "**🌐 PRテスト環境:** ${{ secrets.TEST_URL }}" >> $GITHUB_STEP_SUMMARY
