@@ -153,7 +153,7 @@ function wpThemeImagesManifest() {
         const source = fs.readFileSync(abs);
         const fileId = this.emitFile({
           type: "asset",
-          name: rel.replace(/\//g, "_"),
+          name: path.posix.basename(rel),
           source,
         });
         idByKey.set(key, fileId);
