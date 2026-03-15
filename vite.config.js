@@ -262,6 +262,11 @@ export default defineConfig({
             return `assets/images/${base}-[hash]${ext}`;
           }
 
+          // フォントは assets/fonts/ に出力
+          if (/\.(woff2?|ttf|otf|eot)$/i.test(n)) {
+            return "assets/fonts/[name]-[hash][extname]";
+          }
+
           if (/\.css$/i.test(n)) return "assets/css/[name]-[hash][extname]";
           return "assets/[name]-[hash][extname]";
         },
