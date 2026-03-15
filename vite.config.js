@@ -153,7 +153,7 @@ function wpThemeImagesManifest() {
         const source = fs.readFileSync(abs);
         const fileId = this.emitFile({
           type: "asset",
-          name: rel,
+          name: rel.replace(/\//g, "_"),
           source,
         });
         idByKey.set(key, fileId);
@@ -256,13 +256,10 @@ export default defineConfig({
           const isImage = /\.(png|jpe?g|gif|svg|webp|avif)$/i.test(n);
 
           if (isImage) {
-            // 可能な限りsrc/assets/images/**配下のサブディレクトリを維持する
-            // 例: "demo/dummy1.jpg" -> "assets/images/demo/dummy1-[hash].jpg"
-            const dir = path.posix.dirname(n);
+            // 画像は assets/images/ にフラットに出力（同名・別ディレクトリは内容ハッシュで区別）
             const ext = path.posix.extname(n);
             const base = path.posix.basename(n, ext);
-            const subdir = dir === "." ? "" : `${dir}/`;
-            return `assets/images/${subdir}${base}-[hash]${ext}`;
+            return `assets/images/${base}-[hash]${ext}`;
           }
 
           if (/\.css$/i.test(n)) return "assets/css/[name]-[hash][extname]";
