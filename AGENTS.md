@@ -73,15 +73,15 @@ dist/ から実際のファイルを enqueue
 
 ## コーディング規約
 
+コーディングルール・作業手順・ナレッジは `/Users/yoshiaki/working/2026-03-20kn/AGENTS.md` を参照すること。
+実装中に迷ったときは、そのファイルの「実装時の参照先」から該当ファイルを `@` で指定して質問する。
+
 詳細は [docs/01-development/coding-standards.md](docs/01-development/coding-standards.md) を参照してください。
 
-### 要点
+### 要点（このテンプレート固有）
 
-- **PHP関数名**: `ty_` プレフィックスを必ず付与
-- **PHP配列**: `array()` ではなく `[]` を使用
-- **PHPデータ取得とHTML**: 可能な限り分けて記述
+- **PHP関数名**: `ty_` プレフィックスを必ず付与（WordPress/プラグインとの衝突回避）
 - **Sass margin**: `margin-block-start` のみを使用
-- **Sass入れ子**: 基本的にフラットな構造を維持（BEMクラス名は入れ子にしない）
 
 ## 設計判断（MUST/SHOULD/MAY）
 
