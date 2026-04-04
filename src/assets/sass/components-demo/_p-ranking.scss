@@ -1,0 +1,7 @@
+@use "../global" as *;
+
+.p-ranking__section {
+  & + & {
+    margin-block-start: rem(32);
+  }
+}
