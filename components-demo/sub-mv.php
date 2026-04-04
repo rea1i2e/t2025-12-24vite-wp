@@ -70,7 +70,7 @@ if (!empty($sub_mv_args['image']['file'])) {
 	$pc_file = (string) $sub_mv_args['image']['file'];
 	$alt = (string) $sub_mv_args['image']['alt'];
 
-	$picture_html = ty_get_picture_img($pc_file, $alt, true, 'fetchpriority="high"');
+	$picture_html = ty_get_picture_img($pc_file, null, $alt, true, 'fetchpriority="high"');
 }
 
 $has_image = ($picture_html !== '');
