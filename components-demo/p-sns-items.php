@@ -1,13 +1,13 @@
 <?php
 $sns_items = [
   [
-    'url' => 'https://www.facebook.com/',
+    'url' => SNS_FACEBOOK_URL,
     'img_src' => 'common/icon_facebook.png',
     'img_src_white' => 'common/icon_facebook_white.png',
     'alt' => 'Facebook',
   ],
   [
-    'url' => 'https://www.youtube.com/channel/',
+    'url' => SNS_YOUTUBE_URL,
     'img_src' => 'common/icon_youtube.png',
     'img_src_white' => 'common/icon_youtube_white.png',
     'alt' => 'YouTube',
