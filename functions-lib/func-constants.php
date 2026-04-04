@@ -10,6 +10,7 @@ const COMPANY_TEL     = '';
 
 // SNS
 const SNS_INSTAGRAM_URL = '';
-const SNS_X_URL         = '';
+const SNS_X_URL         = 'https://x.com/yoshiaki_12';
 const SNS_FACEBOOK_URL  = '';
+const SNS_YOUTUBE_URL   = '';
 const SNS_LINE_URL      = '';

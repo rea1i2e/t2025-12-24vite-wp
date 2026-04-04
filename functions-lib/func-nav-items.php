@@ -99,7 +99,7 @@ function ty_get_nav_items(): array {
 			]
 		],
 		[
-			'slug' => 'https://x.com/yoshiaki_12',
+			'slug' => SNS_X_URL,
 			'text' => 'X（外部リンク）',
 			'target' => '_blank',
 		],
