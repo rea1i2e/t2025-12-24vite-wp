@@ -23,6 +23,24 @@ npm run build
 
 詳細な導入手順は [docs/00-getting-started/quick-start.md](docs/00-getting-started/quick-start.md) を参照してください。
 
+### 導入時の注意事項
+
+この制作環境は **Git の利用を前提**としている。
+
+Git を使わない場合（ZIP のみ展開するなど、`.git` がない場合）、`npm install` の最後に `prepare` で husky が動き、**Git 前提の処理が失敗して `npm install` 全体が完了しない**ことがある。その結果、`vite: command not found` のように見えることがある。原因は「Vite が PATH にない」だけでなく、**`npm install` が途中で止まり `node_modules` が不完全**になっていることが多い（`husky` の失敗 → install 不完全 → `vite` が存在しない、という連鎖）。
+
+**husky** は Git の hooks を設定する仕組みで、本テーマでは `pre-commit` で `npm run build` が走るようにしている。これにより、コミット前に本番用の `dist/` がビルドされ、**FTP 手動アップロード時のビルド漏れ**を防ぐための安全装置として機能する。
+
+#### Git を使わない場合の回避
+
+[package.json](package.json) から次を削除する。
+
+- `scripts` の `"prepare": "husky"`
+- `devDependencies` の `"husky": "^9.1.7",`
+
+削除後に `npm install` をやり直す。
+
+
 ## リポジトリのクローン（テンプレートから）
 
 GitHub CLIを使って、テンプレートリポジトリから新規リポジトリを作成・クローンできます：
