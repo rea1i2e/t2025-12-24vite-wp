@@ -44,5 +44,6 @@
       </div>
     </div>
   </section>
+  <?php get_template_part('components-demo/p-rest-api'); ?>
 </main>
 <?php get_footer(); ?>
