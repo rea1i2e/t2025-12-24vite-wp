@@ -134,6 +134,8 @@ dist/ から実際のファイルを enqueue
   - 到達できる: **dev扱い**（Vite dev serverから `@vite/client` と `src/assets/**` を読み込む）
   - 到達できない: **prod扱い**（`dist/.vite/manifest.json` を参照して `dist/assets/**` をenqueue）
 
+同一マシン上で **別プロセスの Vite が同じ `TY_VITE_DEV_SERVER` で応答している場合も dev 扱い**になる。運用では **5173 をこのテーマ用に確保**し、衝突時は占有側を止める（詳細は [ADR 0009](../05-decisions/0009-vite-dev-port-5173-operation.md)、手順は [development.md](development.md) の「Vite dev server（ポート5173）の運用」と [troubleshooting.md](../03-troubleshooting/troubleshooting.md)）。
+
 ### 画像・フォントの扱い
 
 - 画像（背景画像等）: `src/assets/images/**` を Sass の `url(...)` 経由で参照し、Viteがビルド対象として解決

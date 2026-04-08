@@ -23,6 +23,8 @@ npm run build
 
 詳細な導入手順は [docs/00-getting-started/quick-start.md](docs/00-getting-started/quick-start.md) を参照してください。
 
+**Vite は既定で `localhost:5173`。** 他プロジェクトが同じポートを使うと dev 判定やアセット読み込みがずれることがあるため、衝突時は [docs/01-development/development.md](docs/01-development/development.md)（運用）と [docs/03-troubleshooting/troubleshooting.md](docs/03-troubleshooting/troubleshooting.md)（トラブル時）を参照。方針は [docs/05-decisions/0009-vite-dev-port-5173-operation.md](docs/05-decisions/0009-vite-dev-port-5173-operation.md)。
+
 ### 導入時の注意事項
 
 この制作環境は **Git の利用を前提**としている。

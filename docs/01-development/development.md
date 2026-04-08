@@ -9,6 +9,14 @@
 3. `src/` 以下を編集（Sass/JS/画像/フォント）
 4. ブラウザで自動反映を確認（HMR対応）
 
+### Vite dev server（ポート5173）の運用
+
+dev / prod の切り替えは `ty_vite_is_dev()` が **`TY_VITE_DEV_SERVER` の `/@vite/client` に到達できるか**で判定する（既定は `localhost:5173`）。**別プロジェクトの Vite が同じポートで動いていると、こちらも dev 扱いになる**ため、このテーマで開発するときは **5173 をこのテーマ用の Vite に専有**させる。
+
+- 他案件で 5173 を使っている場合は、**必要に応じて先にそちらを止める**（または該当の dev サーバーを終了する）。
+- ポートがどのプロセスか確認する例（macOS）: `lsof -nP -iTCP:5173 -sTCP:LISTEN`
+- 方針の記録: [docs/05-decisions/0009-vite-dev-port-5173-operation.md](../05-decisions/0009-vite-dev-port-5173-operation.md)
+
 ## スクリプト
 
 ### 開発サーバー

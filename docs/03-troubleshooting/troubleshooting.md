@@ -49,6 +49,22 @@
 2. `localhost:5173` に直接アクセスして確認
 3. ファイアウォール設定を確認
 
+### ポート5173が占有されている、または別プロジェクトのViteが動いている
+
+**症状**: `npm run dev` が **5173 で待受できない**（`EADDRINUSE` など）。または WordPress 上で **dev 用の読み込みになるが CSS/JS が期待と違う**・HMR がおかしい。
+
+**原因**: 同一マシンで **別の Vite（または別プロジェクト）がすでに 5173 を使用**している。`ty_vite_is_dev()` は「その URL の `/@vite/client` に応答があるか」だけを見るため、**別案件の dev サーバーでも dev 判定**になりうる。
+
+**解決方法**:
+
+1. 待受プロセスを確認する（macOS の例）:
+   ```bash
+   lsof -nP -iTCP:5173 -sTCP:LISTEN
+   ```
+2. **PID とコマンド名を確認**し、Vite / Node の該当プロセスであることを確かめてから終了する（不要なら該当ターミナルで `Ctrl+C`）。**内容が分からないプロセスを無闇に kill しない**こと。
+3. このテーマで開発する場合は、**5173 はこのリポジトリの `npm run dev` に空ける**運用とする（方針は [ADR 0009](../05-decisions/0009-vite-dev-port-5173-operation.md)）。
+4. 日々の手順は [development.md](../01-development/development.md) の「Vite dev server（ポート5173）の運用」を参照。
+
 ### HTTPS環境でMixed Contentエラー
 
 **症状**: HTTPSのWordPressページでCSS/JSが読み込まれない（Mixed Contentエラー）
