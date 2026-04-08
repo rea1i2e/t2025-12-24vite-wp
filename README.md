@@ -23,7 +23,14 @@ npm run build
 
 詳細な導入手順は [docs/00-getting-started/quick-start.md](docs/00-getting-started/quick-start.md) を参照してください。
 
-**Vite は既定で `localhost:5173`。** 他プロジェクトが同じポートを使うと dev 判定やアセット読み込みがずれることがあるため、衝突時は [docs/01-development/development.md](docs/01-development/development.md)（運用）と [docs/03-troubleshooting/troubleshooting.md](docs/03-troubleshooting/troubleshooting.md)（トラブル時）を参照。方針は [docs/05-decisions/0009-vite-dev-port-5173-operation.md](docs/05-decisions/0009-vite-dev-port-5173-operation.md)。
+**Vite は既定で `localhost:5173`。** 他プロジェクトが同じポートを使うと、dev 判定やアセット読み込みがずれることがある。必要なら **5173 を使っているプロセスを確認したうえで** 終了する（macOS の例）。
+
+```bash
+lsof -nP -iTCP:5173 -sTCP:LISTEN
+kill $(lsof -t -i :5173)
+```
+
+`kill $(lsof -t -i :5173)` は **ポート 5173 を掴んでいるプロセスすべて**にシグナルを送る。コマンド名や PID が Vite / Node の該当サーバーであることを、`lsof` の出力で確かめてから実行すること。
 
 ### 導入時の注意事項
 
