@@ -6,6 +6,50 @@
 
 ---
 
+## ローカル絶対パス（個人環境・Cursor 用）
+
+複製テンプレ運用で、エージェントが `@` 参照やファイル読み込みに使う。`npm run init` 等でデモを消した案件でも、JS（タブ・スライダー・モーダル等）の型録は静的テンプレ側を参照できる。共有マシン・リモートではパスが一致しない。テーマを Local 上で別名にした場合は下表の「本リポジトリ」を更新すること。
+
+| 役割 | パス |
+|------|------|
+| 本リポジトリ（この WordPress テーマ） | `/Users/yoshiaki/Local Sites/t2025-12-24vite-wp/app/public/wp-content/themes/t2025-12-24vite-wp` |
+| 静的 Vite テンプレ（EJS・デモ削除後の参照先） | `/Users/yoshiaki/working/t2025-10-01vite` |
+| ナレッジ用リポジトリ（コーディングルール・`stock/`） | `/Users/yoshiaki/working/2026-03-20kn` |
+
+### 案件ナレッジ（stock）
+
+- **実装・コミット**はこのリポジトリ（本テーマ）で行う。
+- **案件ナレッジの md** はナレッジ用リポの `stock/` にだけ追加・更新する。書式は [`/Users/yoshiaki/working/2026-03-20kn/formats/stock-format.md`](/Users/yoshiaki/working/2026-03-20kn/formats/stock-format.md) に従う。**このテーマ内に `stock/` や案件メモ専用の md を新設しない**。
+- Cursor では、必要に応じてナレッジ用リポをマルチルートで開くか、チャットにそのリポの `AGENTS.md` または `formats/stock-format.md` を添付する。
+
+### インタラクション実装時の型録参照（必須）
+
+ユーザーが **短い指示だけ**（例:「タブ切り替えを実装して」「スライダーを付けて」「モーダルにして」）で依頼した場合も、**このテーマ内に該当コードが無い・`npm run init` 後でデモが無いときは、実装・提案に着手する前に** 次の型録リポジトリを読むこと。
+
+- **型録のルート（絶対パス）**: `/Users/yoshiaki/working/t2025-10-01vite`
+- 以降、`{型録}` と表記する（上記パスを結合する）。
+
+**手順（この順で行う）**
+
+1. 下表から **JS・マークアップ（EJS）・Sass** の該当ファイルパスを特定し、`Read` 等で内容を把握する。
+2. マークアップの組み立て例が必要なら、デモページの `index.html` を読む（どの `_p-*.ejs` が載っているかの索引になる）。
+3. この WordPress テーマ向けに **PHP テンプレート・既存の BEM / `ty_` 規約・[docs/01-development/coding-standards.md](docs/01-development/coding-standards.md)** に合わせて移植する。EJS のままコピーしない。**コンテンツ文言の捏造は禁止**（汎用ラベルのみ・またはプレースホルダにし、ユーザーまたは既存データに任せる）。
+4. JS は型録の **`data-*` / `.js-*` クラス契約と同等の DOM 構造**を保てるならそのまま近い形で取り込み、テーマのエントリ（例: `main.js`）に import する必要があれば元テンプレの `src/assets/js/main.js` を参照する。
+
+**主要パーツと型録ファイル（`{型録}/` 以下）**
+
+| 機能 | JS（優先） | マークアップ（EJS） | Sass | デモページ（索引） |
+|------|------------|---------------------|------|-------------------|
+| タブ切り替え | `src/assets/js/demo/_tab.js` | `src/ejs/components-demo/_p-tab.ejs` | `src/assets/sass/demo-components/_p-tab.scss` | `src/demo/demo-tab/index.html` |
+| アコーディオン | `src/assets/js/demo/_accordion.js` | `src/ejs/components-demo/_p-accordions.ejs` | `src/assets/sass/demo-components/_p-accordions.scss` | `src/demo/demo-accordion/index.html` |
+| モーダル（`dialog` 系） | `src/assets/js/demo/_dialog-general.js`、`_dialog-youtube.js`、`_dialog-video.js`（共通: `_dialog-common.js`） | `src/ejs/components-demo/_p-dialog*.ejs`（トリガー・本体・動画用） | `_p-dialog.scss`、`_p-dialog-trigger.scss`、`_p-dialog-trigger-youtube.scss`、`_p-dialog-trigger-video.scss` | `src/demo/demo-dialog/index.html` |
+| モーダル（`dialog` 以外） | `src/assets/js/demo/_modal.js` | 上記と用途に応じて `components-demo` 内を検索 | 同上または近傍 | `src/demo/demo-dialog/index.html` を参考 |
+| スライダー（Splide） | `src/assets/js/demo/_splide-fade.js` ほか `_splide-loop.js`、`_splide-thumbnail.js`、`_splide-progress.js`、`_splide-posts.js` | 同名の `src/ejs/components-demo/_p-splide-*.ejs` | 同名の `src/assets/sass/demo-components/_p-splide-*.scss` | `src/demo/demo-splide/index.html` |
+
+表に無いパターン（トグル・フェードイン等）のときは、**`{型録}/src/assets/js/main.js` の `import './demo/...'` を一覧し**、対応する `src/ejs/components-demo/`・`src/assets/sass/demo-components/` を `grep` で辿る。
+
+---
+
 ## 技術スタック
 
 - **WordPress**: クラシックテーマ（PHPテンプレート）
