@@ -46,6 +46,11 @@
 | モーダル（`dialog` 以外） | `src/assets/js/demo/_modal.js` | 上記と用途に応じて `components-demo` 内を検索 | 同上または近傍 | `src/demo/demo-dialog/index.html` を参考 |
 | スライダー（Splide） | `src/assets/js/demo/_splide-fade.js` ほか `_splide-loop.js`、`_splide-thumbnail.js`、`_splide-progress.js`、`_splide-posts.js` | 同名の `src/ejs/components-demo/_p-splide-*.ejs` | 同名の `src/assets/sass/demo-components/_p-splide-*.scss` | `src/demo/demo-splide/index.html` |
 
+### アクセシビリティ仮基準（参照）
+
+- **正本**（配置場所）: `{型録}/docs/a11y-baseline.md`
+- **適用**は**静的サイトに限らない**（マークアップ・CSS・クライアントJS を扱う制作全般向けの内部ライン。WCAG 適合の宣言文書ではない）。本テーマの PHP・テンプレート・JS の**新規・修正**の際も参照してよい。
+
 表に無いパターン（トグル・フェードイン等）のときは、**`{型録}/src/assets/js/main.js` の `import './demo/...'` を一覧し**、対応する `src/ejs/components-demo/`・`src/assets/sass/demo-components/` を `grep` で辿る。
 
 ---
