@@ -1,6 +1,6 @@
 # コーディング規約
 
-汎用的なコーディングルール（HTML/CSS/Sass/JS/PHP共通）は、ナレッジリポジトリ（`/Users/yoshiaki/working/2026-03-20kn/`）の `coding-rules/` を参照してください。
+汎用的なコーディングルール（HTML/CSS/Sass/JS/PHP 共通）は、第二の脳（`/Users/yoshiaki/working/2026-04-23kn/`）の `wiki/coding-conventions.md` および子ページ（`wiki/coding-*.md`）を参照してください。旧 `2026-03-20kn` の `coding-rules/` は廃止とする。
 
 このドキュメントには、**このテンプレート固有のルール**のみを記載します。
 

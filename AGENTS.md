@@ -14,13 +14,13 @@
 |------|------|
 | 本リポジトリ（この WordPress テーマ） | `/Users/yoshiaki/Local Sites/t2025-12-24vite-wp/app/public/wp-content/themes/t2025-12-24vite-wp` |
 | 静的 Vite テンプレ（EJS・デモ削除後の参照先） | `/Users/yoshiaki/working/t2025-10-01vite` |
-| ナレッジ用リポジトリ（コーディングルール・`stock/`） | `/Users/yoshiaki/working/2026-03-20kn` |
+| ナレッジベース（第二の脳・コーディング規約の汎用正本・`wiki`） | `/Users/yoshiaki/working/2026-04-23kn` |
 
 ### 案件ナレッジ（stock）
 
 - **実装・コミット**はこのリポジトリ（本テーマ）で行う。
-- **案件ナレッジの md** はナレッジ用リポの `stock/` にだけ追加・更新する。書式は [`/Users/yoshiaki/working/2026-03-20kn/formats/stock-format.md`](/Users/yoshiaki/working/2026-03-20kn/formats/stock-format.md) に従う。**このテーマ内に `stock/` や案件メモ専用の md を新設しない**。
-- Cursor では、必要に応じてナレッジ用リポをマルチルートで開くか、チャットにそのリポの `AGENTS.md` または `formats/stock-format.md` を添付する。
+- **案件ナレッジの md** の置き方・書式の目安は、第二の脳の [`/Users/yoshiaki/working/2026-04-23kn/wiki/stock-format.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/stock-format.md) に従う（`wiki` 上に案件用ページを切る、または `raw/`・案件リポ等）。**このテーマ内に `stock/` や案件メモ専用の md を新設しない**。
+- Cursor では、必要に応じて第二の脳をマルチルートで開くか、チャットにその `AGENTS.md` または `wiki/stock-format.md` を添付する。
 
 ### インタラクション実装時の型録参照（必須）
 
@@ -48,8 +48,9 @@
 
 ### アクセシビリティ仮基準（参照）
 
-- **正本**（配置場所）: `{型録}/docs/a11y-baseline.md`
-- **適用**は**静的サイトに限らない**（マークアップ・CSS・クライアントJS を扱う制作全般向けの内部ライン。WCAG 適合の宣言文書ではない）。本テーマの PHP・テンプレート・JS の**新規・修正**の際も参照してよい。
+- **正本（共通）:** ナレッジベース `/Users/yoshiaki/working/2026-04-23kn/wiki/a11y-baseline.md`（**Must / Should / 運用 / チェックリスト**）。**基準の改訂はこの Wiki で行う。**
+- **本テーマの案内（stub）:** [docs/01-development/a11y-baseline.md](docs/01-development/a11y-baseline.md)（PHP・型録参照など**WordPress 固有**の補足のみ。）
+- **適用**は**静的サイトに限らない**（WCAG 適合の宣言文書ではない）。PHP・テンプレート・JS の**新規・修正**の際、Wiki 正本の **Must** を当該範囲で満たす。
 
 表に無いパターン（トグル・フェードイン等）のときは、**`{型録}/src/assets/js/main.js` の `import './demo/...'` を一覧し**、対応する `src/ejs/components-demo/`・`src/assets/sass/demo-components/` を `grep` で辿る。
 
@@ -68,15 +69,15 @@
 
 ### 汎用ルール（WordPress・静的コーディング共通）
 
-ナレッジリポジトリ `/Users/yoshiaki/working/2026-03-20kn/` の `coding-rules/` を参照すること。
+第二の脳（ナレッジベース）の `/Users/yoshiaki/working/2026-04-23kn/wiki/coding-conventions.md` を入口に、`wiki/coding-*.md` を参照すること。旧 `2026-03-20kn/coding-rules/` は**廃止**した。
 
-| ファイル | 内容 |
+| ページ | 内容 |
 |---|---|
-| [`coding-rules/common.md`](/Users/yoshiaki/working/2026-03-20kn/coding-rules/common.md) | 実装方針・設計・判断基準 |
-| [`coding-rules/php.md`](/Users/yoshiaki/working/2026-03-20kn/coding-rules/php.md) | PHP |
-| [`coding-rules/ejs-html.md`](/Users/yoshiaki/working/2026-03-20kn/coding-rules/ejs-html.md) | HTML構造・クラス命名・画像実装 |
-| [`coding-rules/sass.md`](/Users/yoshiaki/working/2026-03-20kn/coding-rules/sass.md) | Sass/SCSS |
-| [`coding-rules/javascript.md`](/Users/yoshiaki/working/2026-03-20kn/coding-rules/javascript.md) | JavaScript |
+| [`wiki/coding-common.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/coding-common.md) | 実装方針・判断基準 |
+| [`wiki/coding-php.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/coding-php.md) | PHP |
+| [`wiki/coding-ejs-html.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/coding-ejs-html.md) | HTML 構造・クラス名・考え方 |
+| [`wiki/coding-sass.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/coding-sass.md) | Sass/SCSS |
+| [`wiki/coding-javascript.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/coding-javascript.md) | JavaScript |
 
 ### このテンプレート固有のルール
 

@@ -18,6 +18,8 @@
   - npmスクリプトの使い方
   - ディレクトリ構成
 
+- **[a11y-baseline.md](a11y-baseline.md)**: アクセシビリティ仮基準（**本テーマ向け案内**。**正本**は第二の脳 `wiki/a11y-baseline.md`）
+
 ## 読む順番
 
 1. **[architecture.md](architecture.md)**: まず設計判断とルールを理解する
