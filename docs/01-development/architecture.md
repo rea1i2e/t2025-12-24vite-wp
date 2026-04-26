@@ -86,6 +86,21 @@
 
 テンプレートファイル・投稿タイプ・機能ファイルの一覧は [overview.md](../04-project-specific/overview.md) を参照してください。
 
+### リクエスト〜テンプレートの時系列
+
+WordPress コア一般の整理（レイヤー図・`functions.php` ローダー・`get_header` 周りの Mermaid）は、第二の脳（ナレッジベース）の [`wordpress-request-and-theme-lifecycle.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/wordpress-request-and-theme-lifecycle.md) を参照してください。
+
+**本テーマ内**で押さえるファイル（実装の正本）は次のとおりです。
+
+| 対象 | 内容 |
+|------|------|
+| `functions.php` のローダー | テーマ直下 `functions.php` — `$ordered` で `functions-lib/func-vite.php` を先に `require_once`、残りは `functions-lib/*.php` をファイル名昇順（`_` 始まり等は除外）。 |
+| アセットの enqueue | `functions-lib/func-vite-assets.php` の `add_action( 'wp_enqueue_scripts', 'ty_enqueue_assets' )`。コールバックの**実行**はフロントでは `header.php` から呼ばれる `wp_head()` 内（`do_action( 'wp_enqueue_scripts' )`）で行われる。 |
+| トップ表示の流れ（例） | `front-page.php` がエントリ → `get_header()` / `header.php` → `wp_head()` → メイン（`get_template_part` の呼び出し順が実行順）→ `get_footer()` / `footer.php` → `wp_footer()`。フォールバックは `index.php` など。 |
+| Vite 解決・dev 判定 | `functions-lib/func-vite.php`（`ty_vite_is_dev()` 等）。 |
+
+直後の「全体フロー（開発・本番）」は、上記の enqueue 以降の **Vite dev server / `dist` と manifest** の話として読むと、位置づけが揃います。
+
 ### 全体フロー（開発・本番）
 
 #### 開発環境（dev）のフロー
