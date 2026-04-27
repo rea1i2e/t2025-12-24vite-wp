@@ -32,9 +32,7 @@ files=(
   "tools/import-pages.php"
   "tools/import-pages.sh"
   "env.deploy.example"
-  "docs/development.md"
-  "docs/overview.md"
-  "docs/setup.md"
+  "docs/architecture.md"
   "tools/README.md"
 )
 
@@ -60,11 +58,5 @@ echo "完了: ${replaced_count} ファイルを置換しました"
 echo ""
 echo "注意: 以下のMDファイルはテンプレートとして ${OLD_ID} のまま残しています"
 echo "      - README.md"
-echo "      - docs/deploy.md"
-echo "      - docs/architecture.md"
-echo "      - docs/decisions/README.md"
-echo "      - docs/troubleshooting.md"
 echo ""
-echo "      コマンド例が含まれるMDファイル（docs/development.md、docs/overview.md、"
-echo "      docs/setup.md、tools/README.md）は置換しました"
-
+echo "      コマンド例が含まれるMDファイル（docs/architecture.md、tools/README.md）は置換しました"

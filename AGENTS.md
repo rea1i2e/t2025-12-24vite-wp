@@ -2,39 +2,50 @@
 
 このドキュメントは、AIエージェント（Cursor / ChatGPT）がこのプロジェクトを理解し、適切なコード変更や提案を行うためのガイドです。
 
-**人間が読む場合は、[docs/01-development/README.md](docs/01-development/README.md) を参照してください。**
+対象は **WordPress サイト制作用テンプレート**（略称 **WP テンプレ**）。呼称の正本はナレッジベースの [wiki/operated-repositories.md](/Users/yoshiaki/working/2026-04-23kn/wiki/operated-repositories.md#表記ルール3-リポジトリと型録)（表記ルール）。
+
+**人間が読む場合は、ルート [README.md](README.md) と [docs/architecture.md](docs/architecture.md) を参照してください。**
 
 ---
 
 ## ローカル絶対パス（個人環境・Cursor 用）
 
-複製テンプレ運用で、エージェントが `@` 参照やファイル読み込みに使う。`npm run init` 等でデモを消した案件でも、JS（タブ・スライダー・モーダル等）の型録は静的テンプレ側を参照できる。共有マシン・リモートではパスが一致しない。テーマを Local 上で別名にした場合は下表の「本リポジトリ」を更新すること。
+複製テンプレ運用で、エージェントが `@` 参照やファイル読み込みに使う。`npm run init` 等でデモを消した案件でも、JS（タブ・スライダー・モーダル等）の**型録**は**静的テンプレ**側を参照できる。共有マシン・リモートではパスが一致しない。テーマを Local 上で別名にした場合は下表の「WP テンプレ」を更新すること。
 
 | 役割 | パス |
 |------|------|
-| 本リポジトリ（この WordPress テーマ） | `/Users/yoshiaki/Local Sites/t2025-12-24vite-wp/app/public/wp-content/themes/t2025-12-24vite-wp` |
-| 静的 Vite テンプレ（EJS・デモ削除後の参照先） | `/Users/yoshiaki/working/t2025-10-01vite` |
-| ナレッジベース（第二の脳・コーディング規約の汎用正本・`wiki`） | `/Users/yoshiaki/working/2026-04-23kn` |
+| WP テンプレ（本リポジトリ・この WordPress テーマ） | `/Users/yoshiaki/Local Sites/t2025-12-24vite-wp/app/public/wp-content/themes/t2025-12-24vite-wp` |
+| 静的テンプレ（型録・EJS / デモの参照先。`{型録}` はこのルートを指す） | `/Users/yoshiaki/working/t2025-10-01vite` |
+| ナレッジベース（コーディング規約の汎用正本・`wiki`） | `/Users/yoshiaki/working/2026-04-23kn` |
 
 ### 案件ナレッジ（stock）
 
-- **実装・コミット**はこのリポジトリ（本テーマ）で行う。
-- **案件ナレッジの md** の置き方・書式の目安は、第二の脳の [`/Users/yoshiaki/working/2026-04-23kn/wiki/stock-format.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/stock-format.md) に従う（`wiki` 上に案件用ページを切る、または `raw/`・案件リポ等）。**このテーマ内に `stock/` や案件メモ専用の md を新設しない**。
-- Cursor では、必要に応じて第二の脳をマルチルートで開くか、チャットにその `AGENTS.md` または `wiki/stock-format.md` を添付する。
+- **実装・コミット**はこのリポジトリ（WP テンプレ）で行う。
+- **案件ナレッジの md** の置き方・書式の目安は、ナレッジベースの [`/Users/yoshiaki/working/2026-04-23kn/wiki/stock-format.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/stock-format.md) に従う（`wiki` 上に案件用ページを切る、または `raw/`・案件リポ等）。**このリポジトリ内に `stock/` や案件メモ専用の md を新設しない**。
+- Cursor では、必要に応じてナレッジベースをマルチルートで開くか、チャットにその `AGENTS.md` または `wiki/stock-format.md` を添付する。
+
+### 動画の Web 向け圧縮（エージェント）
+
+- **手順の Skill（正本）**: `/Users/yoshiaki/working/2026-04-23kn/.cursor/skills/video-compress-web/SKILL.md`（ナレッジをワークスペースに含めない場合は `~/.cursor/skills/` へ同内容を置いてもよい）
+- **実行環境**: `npm run inspect:video` / `compress:video` と `raw/videos/` は**静的テンプレ（型録）**に同梱。本テーマのみ開いているときは**型録のルート**で圧縮し、出力を `src/assets/videos/` 等へ取り込む
+- **技術手順の正本**: `{型録}/raw/videos/README-video-compress.md`（チャット依頼は型録の README「動画圧縮を AI に依頼するとき」を参照）
+- **索引**: ナレッジ `wiki/asset-compression-notes.md`
 
 ### インタラクション実装時の型録参照（必須）
 
-ユーザーが **短い指示だけ**（例:「タブ切り替えを実装して」「スライダーを付けて」「モーダルにして」）で依頼した場合も、**このテーマ内に該当コードが無い・`npm run init` 後でデモが無いときは、実装・提案に着手する前に** 次の型録リポジトリを読むこと。
+**`{型録}`** — **静的テンプレのルートディレクトリ**を指すプレースホルダ。ローカルでは下記の絶対パスと同一（環境ごとに異なる。定義は [operated-repositories.md](/Users/yoshiaki/working/2026-04-23kn/wiki/operated-repositories.md)）。
 
-- **型録のルート（絶対パス）**: `/Users/yoshiaki/working/t2025-10-01vite`
-- 以降、`{型録}` と表記する（上記パスを結合する）。
+ユーザーが **短い指示だけ**（例:「タブ切り替えを実装して」「スライダーを付けて」「モーダルにして」）で依頼した場合も、**WP テンプレ内に該当コードが無い・`npm run init` 後でデモが無いときは、実装・提案に着手する前に** **静的テンプレ（型録）** を読むこと。
+
+- **`{型録}` の例（ローカル絶対パス）**: `/Users/yoshiaki/working/t2025-10-01vite`
+- パス表記では `{型録}` と **静的テンプレのルート** を結合する（例: `{型録}/src/assets/js/demo/_tab.js`）。
 
 **手順（この順で行う）**
 
 1. 下表から **JS・マークアップ（EJS）・Sass** の該当ファイルパスを特定し、`Read` 等で内容を把握する。
 2. マークアップの組み立て例が必要なら、デモページの `index.html` を読む（どの `_p-*.ejs` が載っているかの索引になる）。
-3. この WordPress テーマ向けに **PHP テンプレート・既存の BEM / `ty_` 規約・[docs/01-development/coding-standards.md](docs/01-development/coding-standards.md)** に合わせて移植する。EJS のままコピーしない。**コンテンツ文言の捏造は禁止**（汎用ラベルのみ・またはプレースホルダにし、ユーザーまたは既存データに任せる）。
-4. JS は型録の **`data-*` / `.js-*` クラス契約と同等の DOM 構造**を保てるならそのまま近い形で取り込み、テーマのエントリ（例: `main.js`）に import する必要があれば元テンプレの `src/assets/js/main.js` を参照する。
+3. この WP テンプレ向けに **PHP テンプレート・既存の BEM / `ty_` 規約・[docs/architecture.md のコーディング規約節](docs/architecture.md#コーディング規約wp-テンプレ固有)** に合わせて移植する。EJS のままコピーしない。**コンテンツ文言の捏造は禁止**（汎用ラベルのみ・またはプレースホルダにし、ユーザーまたは既存データに任せる）。
+4. JS は静的テンプレ（型録）の **`data-*` / `.js-*` クラス契約と同等の DOM 構造**を保てるならそのまま近い形で取り込み、テーマのエントリ（例: `main.js`）に import する必要があれば `{型録}/src/assets/js/main.js` を参照する。
 
 **主要パーツと型録ファイル（`{型録}/` 以下）**
 
@@ -49,7 +60,7 @@
 ### アクセシビリティ仮基準（参照）
 
 - **正本（共通）:** ナレッジベース `/Users/yoshiaki/working/2026-04-23kn/wiki/a11y-baseline.md`（**Must / Should / 運用 / チェックリスト**）。**基準の改訂はこの Wiki で行う。**
-- **本テーマの案内（stub）:** [docs/01-development/a11y-baseline.md](docs/01-development/a11y-baseline.md)（PHP・型録参照など**WordPress 固有**の補足のみ。）
+- **WP テンプレでの実装の手がかり:** [docs/architecture.md](docs/architecture.md) 冒頭の A11y 補足、[コーディング規約（WP テンプレ固有）](docs/architecture.md#コーディング規約wp-テンプレ固有)、および本ファイルの「型録参照」（stub ファイルは置かない）。
 - **適用**は**静的サイトに限らない**（WCAG 適合の宣言文書ではない）。PHP・テンプレート・JS の**新規・修正**の際、Wiki 正本の **Must** を当該範囲で満たす。
 
 表に無いパターン（トグル・フェードイン等）のときは、**`{型録}/src/assets/js/main.js` の `import './demo/...'` を一覧し**、対応する `src/ejs/components-demo/`・`src/assets/sass/demo-components/` を `grep` で辿る。
@@ -69,7 +80,7 @@
 
 ### 汎用ルール（WordPress・静的コーディング共通）
 
-第二の脳（ナレッジベース）の `/Users/yoshiaki/working/2026-04-23kn/wiki/coding-conventions.md` を入口に、`wiki/coding-*.md` を参照すること。旧 `2026-03-20kn/coding-rules/` は**廃止**した。
+ナレッジベースの `/Users/yoshiaki/working/2026-04-23kn/wiki/coding-conventions.md` を入口に、`wiki/coding-*.md` を参照すること。旧 `2026-03-20kn/coding-rules/` は**廃止**した。
 
 | ページ | 内容 |
 |---|---|
@@ -79,16 +90,15 @@
 | [`wiki/coding-sass.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/coding-sass.md) | Sass/SCSS |
 | [`wiki/coding-javascript.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/coding-javascript.md) | JavaScript |
 
-### このテンプレート固有のルール
+### WP テンプレ固有のルール
 
-- **[docs/01-development/coding-standards.md](docs/01-development/coding-standards.md)**: テンプレート固有のコーディング規約（`ty_` プレフィックス・`kiso.css` 前提・プロパティ指定順など）
-- **[docs/01-development/architecture.md](docs/01-development/architecture.md)**: 設計判断・MUST/SHOULD/MAY
+- **[docs/architecture.md](docs/architecture.md)**: 設計判断・コーディング（WP 固有）・開発・デプロイ・トラブル等の**技術正本**
 
 ---
 
 ## アーキテクチャ概要
 
-詳細は [docs/01-development/architecture.md](docs/01-development/architecture.md) を参照してください。
+詳細は [docs/architecture.md](docs/architecture.md) を参照してください。
 
 ### 開発環境（dev）のフロー
 
@@ -140,39 +150,20 @@ dist/ から実際のファイルを enqueue
 
 ---
 
-## ドキュメント化の基準
+## ドキュメント（更新時）
 
-変更時に「ドキュメントを残すか」を一貫して判断するための基準です。軽微な修正はドキュメントを増やさず、再発防止・合意形成・保守に効く変更だけ記録を残します。
+**いつ・何を文書化するか、ADR の基準**はナレッジ [template-repository-docs.md](/Users/yoshiaki/working/2026-04-23kn/wiki/template-repository-docs.md) を参照。
 
-### ドキュメントを残さなくてよい変更（例）
-
-- 余白・フォントサイズ・色など、単発のスタイル調整
-- 既存テンプレート内の文言・ラベルの修正
-- typo修正、コメントの追記・削除
-- 既存ルールに沿った単純なマークアップ追加
-
-### ドキュメントを残すべき変更（例）
-
-- `functions.php` / `functions-lib`: 新規 `require`、フック追加・削除、enqueue の変更
-- アセット読み込み: エントリ追加、Vite以外の読み込み方法の導入
-- Vite設定: `vite.config.*` の変更
-- ルール・規約の変更
-- 依存の追加・削除・バージョン方針
-
-### 残す場合の行き先ガイド
+**このリポジトリでの行き先（WP テンプレ固有）**
 
 | 内容 | 行き先 |
 |------|--------|
-| なぜこの判断をしたか（技術判断・トレードオフ） | [docs/05-decisions/](docs/05-decisions/)（ADR） |
-| 案件固有の仕様・制約 | [docs/04-project-specific/overview.md](docs/04-project-specific/overview.md) |
-| 設計・アーキテクチャのルール | [docs/01-development/architecture.md](docs/01-development/architecture.md) |
-| ハマりどころ・対処方法 | [docs/03-troubleshooting/troubleshooting.md](docs/03-troubleshooting/troubleshooting.md) |
-| 移行・環境差分・履歴 | [docs/06-reference/migration-log.md](docs/06-reference/migration-log.md) |
+| 技術仕様・手順の追記 | [docs/architecture.md](docs/architecture.md) の該当節 |
+| 意思決定 | ナレッジ [wp-template-decision-records.md](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md)・[adr-workflow.md](/Users/yoshiaki/working/2026-04-23kn/wiki/adr-workflow.md)／新規 ADR は必要なら `docs/decisions/NNNN-topic.md` |
+| A11y の実装の手がかり | [docs/architecture.md](docs/architecture.md) 冒頭・コーディング規約節／Wiki 正本 `wiki/a11y-baseline.md` |
 
 ---
 
 ## 参考ドキュメント
 
-- **設計判断・守るルール**: [docs/01-development/architecture.md](docs/01-development/architecture.md)
-- **テンプレート固有のコーディング規約**: [docs/01-development/coding-standards.md](docs/01-development/coding-standards.md)
-- **開発ガイド**: [docs/01-development/development.md](docs/01-development/development.md)
+- **技術正本**: [docs/architecture.md](docs/architecture.md)
