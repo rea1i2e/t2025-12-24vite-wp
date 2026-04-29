@@ -32,6 +32,13 @@
 - **技術手順の正本**: `{型録}/raw/videos/README-video-compress.md`（チャット依頼は型録の README「動画圧縮を AI に依頼するとき」を参照）
 - **索引**: ナレッジ `wiki/asset-compression-notes.md`
 
+### Web フォントの設置・圧縮（エージェント）
+
+- **手順の Skill（正本）**: `/Users/yoshiaki/working/2026-04-23kn/.cursor/skills/font-setup-web/SKILL.md`（ナレッジをワークスペースに含めない場合は `~/.cursor/skills/` へ同内容を置いてもよい）
+- **方針の正本**: ナレッジ `wiki/web-fonts-guidelines.md`
+- **圧縮コマンドの正本**: 本テーマ **`raw/fonts/README-font-compress.md`**（静的テンプレと**同じディレクトリ構成・手順**。`font-compress.sh` / `font-compress-subset.sh`）
+- **反映先**: `src/assets/sass/base/_root.scss`、`header.php` の preload（`ty_vite_asset_url('src/assets/fonts/...')`）
+
 ### インタラクション実装時の型録参照（必須）
 
 **`{型録}`** — **静的テンプレのルートディレクトリ**を指すプレースホルダ。ローカルでは下記の絶対パスと同一（環境ごとに異なる。定義は [operated-repositories.md](/Users/yoshiaki/working/2026-04-23kn/wiki/operated-repositories.md)）。

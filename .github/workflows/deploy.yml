@@ -10,6 +10,7 @@ env:
     **/docs/**
     **/src/**
     **/scripts/**
+    **/raw/**
     **/*.map
     **/package.json
     **/package-lock.json

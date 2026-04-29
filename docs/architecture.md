@@ -227,10 +227,10 @@ gh repo clone GitHubのユーザー名/新規リポジトリ名
 
 1. デザインデータから使用フォントを確認
 2. 必要なフォントファイルをダウンロード
-3. フォントファイルを圧縮（woff2形式推奨）
-4. `src/assets/fonts/` に配置
-5. `src/assets/sass/base/_root.scss` の `@font-face` を編集
-6. `header.php` の `preload` リンクを追加（必要に応じて）
+3. `raw/fonts/README-font-compress.md` に従い、`fonttools` で woff2 化（全グリフ or サブセット）
+4. 出力を `src/assets/fonts/` に配置
+5. `src/assets/sass/base/_root.scss` の `@font-face` とカスタムプロパティを編集
+6. `header.php` の `preload` を必要に応じて追加（`ty_vite_asset_url('src/assets/fonts/...')`）
 
 ### 8. カスタムプロパティ・Sass変数の登録
 
@@ -445,6 +445,7 @@ dist/ から実際のファイルを enqueue
 
 - 画像（背景画像等）: `src/assets/images/**` を Sass の `url(...)` 経由で参照し、Viteがビルド対象として解決
 - フォント: `src/assets/fonts/**` を `@font-face` で参照し、ビルドで `dist/assets/*.woff2` に出力
+- フォントの WOFF2 変換（作業用）: **`raw/fonts/`** に静的テンプレと同じ `font-compress.sh` / `font-compress-subset.sh` / `README-font-compress.md` を置く。`raw/` はデプロイ除外
 
 補足（`<img>` の画像）:
 - `<img>` はCSSの `url(...)` のように参照を辿れないため、`vite build` 時に `src/assets/images/**` を `dist/assets/images/**` へ出力し、`dist/theme-assets.json` を生成してPHPが解決する方式を採用
@@ -927,7 +928,7 @@ chmod +x scripts/setup-secrets.sh
 以下のファイル/ディレクトリはデプロイ対象外です：
 
 - `.git*`, `.github/`
-- `node_modules/`, `src/`, `scripts/`, `docs/`
+- `node_modules/`, `src/`, `scripts/`, `raw/`, `docs/`
 - `package.json`, `package-lock.json`
 - `vite.config.*`, `postcss.config.*`
 - `*.map`, `README.md`
