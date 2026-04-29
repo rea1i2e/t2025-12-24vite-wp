@@ -27,7 +27,8 @@
 ### 動画の Web 向け圧縮（エージェント）
 
 - **手順の Skill（正本）**: `/Users/yoshiaki/working/2026-04-23kn/.cursor/skills/video-compress-web/SKILL.md`（ナレッジをワークスペースに含めない場合は `~/.cursor/skills/` へ同内容を置いてもよい）
-- **実行環境**: `npm run inspect:video` / `compress:video` と `raw/videos/` は**静的テンプレ（型録）**に同梱。本テーマのみ開いているときは**型録のルート**で圧縮し、出力を `src/assets/videos/` 等へ取り込む
+- **`raw/videos/` の正本**: **静的テンプレ（型録）のみ**。本テーマで圧縮フローを使うときは、**型録から `raw/videos/` を手動で丸ごとコピー**し、テーマルートに置く。`package.json` に `inspect:video` / `compress:video` を型録と同じ内容で追加する。手順の細部は `{型録}/raw/videos/README-video-compress.md` の「WordPress・案件リポで使う場合」を参照。
+- **未複製のとき**: 型録のルートで圧縮し、出力だけを `src/assets/videos/` 等へ取り込む。
 - **技術手順の正本**: `{型録}/raw/videos/README-video-compress.md`（チャット依頼は型録の README「動画圧縮を AI に依頼するとき」を参照）
 - **索引**: ナレッジ `wiki/asset-compression-notes.md`
 

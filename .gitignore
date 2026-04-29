@@ -15,6 +15,14 @@ dist-ssr
 # Deploy secrets (local only)
 .env.deploy
 
+# 動画圧縮（raw/videos を型録から手動複製したとき。素材・案件別設定はコミットしない）
+raw/videos/*.mp4
+raw/videos/*.webm
+raw/videos/*.mov
+raw/videos/*.avi
+raw/videos/compress-config.json
+raw/videos/compress-report.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
