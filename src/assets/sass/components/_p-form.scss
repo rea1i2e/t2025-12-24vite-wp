@@ -151,13 +151,6 @@
   }
 }
 
-.p-form input:is(#tel-date),
-.p-form__select-wrap:has(#tel-time) {
-  @include mq() {
-    width: rem(193);
-  }
-}
-
 /* ラジオボタンのスタイル */
 .p-form__dd:has(input[type="radio" i]) {
   display: flex;
