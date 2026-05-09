@@ -1,6 +1,7 @@
 <?php get_header(); ?>
 <main class="p-main-top">
-  <?php get_template_part('components/top-mvw'); ?>
+  <?php get_template_part('components/top-mv'); ?>
+  <?php get_template_part('components-demo/top-news'); ?>
   <section class="p-demo l-demo js-section" id="demo">
     <div class="p-demo__inner l-inner">
       <div class="p-demo__heading">
