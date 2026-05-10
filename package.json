@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:staging-docroot-basic": "bash scripts/build-staging-docroot-basic.sh",
     "preview": "open http://t2025-12-24vite-wp.local",
     "local:admin": "open http://t2025-12-24vite-wp.local/wp-admin/",
     "build:preview": "npm run build && npm run preview",

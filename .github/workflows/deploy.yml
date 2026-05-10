@@ -51,6 +51,14 @@ jobs:
       
     - name: Build project
       run: npm run build
+
+    - name: Install apache2-utils (htpasswd)
+      run: sudo apt-get update && sudo apt-get install -y apache2-utils
+
+    - name: Build staging docroot Basic (.htaccess + .htpasswd)
+      env:
+        CASE_ID: ${{ github.event.repository.name }}
+      run: bash scripts/build-staging-docroot-basic.sh
       
     - name: Generate deployment summary
       if: always()
@@ -100,6 +108,17 @@ jobs:
         # Set this in repo secrets.
         server-dir: ${{ secrets.FTP_SERVER_DIR }}
         exclude: ${{ env.FTP_EXCLUDE }}
+
+    - name: Deploy docroot Basic (site-wide .htaccess)
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./staging/docroot/
+        server-dir: ${{ secrets.FTP_SERVER_DIR_DOCROOT }}
+        log-level: warn
           
     - name: Deploy to Test Environment (PR)
       if: github.event_name == 'pull_request'
@@ -111,6 +130,17 @@ jobs:
         local-dir: ./
         server-dir: ${{ secrets.FTP_SERVER_DIR }}
         exclude: ${{ env.FTP_EXCLUDE }}
+
+    - name: Deploy docroot Basic (site-wide .htaccess) (PR)
+      if: github.event_name == 'pull_request'
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./staging/docroot/
+        server-dir: ${{ secrets.FTP_SERVER_DIR_DOCROOT }}
+        log-level: warn
           
     - name: Send Discord Notification - Test Deploy
       if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')

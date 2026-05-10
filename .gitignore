@@ -15,6 +15,9 @@ dist-ssr
 # Deploy secrets (local only)
 .env.deploy
 
+# CI 生成: ドキュメントルート向け Basic（.htaccess / .htpasswd）
+staging/docroot/
+
 # 動画圧縮（raw/videos を型録から手動複製したとき。素材・案件別設定はコミットしない）
 raw/videos/*.mp4
 raw/videos/*.webm

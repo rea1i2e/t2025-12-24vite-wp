@@ -38,7 +38,7 @@ set -a
 source "${ENV_FILE}"
 set +a
 
-required_vars=(FTP_SERVER FTP_USERNAME FTP_PASSWORD FTP_SERVER_DIR)
+required_vars=(FTP_SERVER FTP_USERNAME FTP_PASSWORD FTP_SERVER_DIR FTP_SERVER_DIR_DOCROOT)
 missing=()
 for v in "${required_vars[@]}"; do
   if [[ -z "${!v:-}" ]]; then
@@ -57,6 +57,7 @@ gh secret set FTP_SERVER     --body "${FTP_SERVER}"
 gh secret set FTP_USERNAME   --body "${FTP_USERNAME}"
 gh secret set FTP_PASSWORD   --body "${FTP_PASSWORD}"
 gh secret set FTP_SERVER_DIR --body "${FTP_SERVER_DIR}"
+gh secret set FTP_SERVER_DIR_DOCROOT --body "${FTP_SERVER_DIR_DOCROOT}"
 
 # Optional: Discord notifications
 if [[ -n "${DISCORD_WEBHOOK:-}" ]]; then
