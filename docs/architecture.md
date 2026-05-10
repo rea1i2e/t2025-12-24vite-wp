@@ -914,12 +914,13 @@ chmod +x scripts/setup-secrets.sh
 2. **Node.js環境セットアップ**: Node.js 20をセットアップし、npmキャッシュを有効化
 3. **依存関係のインストール**: `npm ci` で依存関係をインストール
 4. **ビルド**: `npm run build` でViteビルドを実行（`dist/` に成果物を出力）
-5. **apache2-utils**: `htpasswd` 用にパッケージをインストール（Ubuntu ランナー）
-6. **ドキュメントルート用 Basic 生成**: `scripts/build-staging-docroot-basic.sh` が `CASE_ID=${{ github.event.repository.name }}` で `staging/docroot/.htaccess` と `.htpasswd` を生成（サイト全体 Basic + WP 既定リライト）
-7. **デプロイサマリー生成**: GitHub Actionsのサマリーにデプロイ情報を出力
-8. **FTPデプロイ（テーマ）**: `SamKirkland/FTP-Deploy-Action` で `FTP_SERVER_DIR` へアップロード（従来どおり）
-9. **FTPデプロイ（ドキュメントルート Basic）**: 同 Action で `staging/docroot/` を `FTP_SERVER_DIR_DOCROOT` へ（**`dangerous-*` は使わず**、ルートの他ファイルは削除しない）
-10. **Discord通知**: デプロイ成功/失敗時にDiscordに通知（オプション）
+5. **docroot Basic の可否**: リポジトリ名（`github.event.repository.name`）が案件 ID 形式（正規表現 `^[0-9]{4}-[0-9]{2}-[0-9]{2}[a-zA-Z]{2}$`、例 `2026-05-08ex`）のときのみ docroot 系ステップへ進む。**テンプレート名**（例 `t2025-12-24vite-wp`）では docroot はスキップし、テーマ FTP のみで完走する
+6. **apache2-utils**: `htpasswd` 用にパッケージをインストール（Ubuntu ランナー・**上記がマッチするときのみ**）
+7. **ドキュメントルート用 Basic 生成**: `scripts/build-staging-docroot-basic.sh` が `CASE_ID=${{ github.event.repository.name }}` で `staging/docroot/.htaccess` と `.htpasswd` を生成（サイト全体 Basic + WP 既定リライト・**マッチ時のみ**）
+8. **デプロイサマリー生成**: GitHub Actionsのサマリーにデプロイ情報を出力
+9. **FTPデプロイ（テーマ）**: `SamKirkland/FTP-Deploy-Action` で `FTP_SERVER_DIR` へアップロード（従来どおり・常に実行）
+10. **FTPデプロイ（ドキュメントルート Basic）**: 同 Action で `staging/docroot/` を `FTP_SERVER_DIR_DOCROOT` へ（**`dangerous-*` は使わず**、ルートの他ファイルは削除しない・**マッチ時のみ**）
+11. **Discord通知**: デプロイ成功/失敗時にDiscordに通知（オプション）
 
 ### デプロイ対象の環境
 

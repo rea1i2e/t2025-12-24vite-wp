@@ -52,10 +52,25 @@ jobs:
     - name: Build project
       run: npm run build
 
+    # リポジトリ名が案件ID形式（YYYY-MM-DDxx）のときだけ docroot Basic を生成・FTP（テンプレ t2025-… はスキップ）
+    - name: Determine docroot Basic eligibility
+      id: docroot_basic
+      run: |
+        name="${{ github.event.repository.name }}"
+        if [[ "${name}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}[a-zA-Z]{2}$ ]]; then
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
+          echo "**docroot Basic:** 有効（\`${name}\` は案件ID形式）" >> "$GITHUB_STEP_SUMMARY"
+        else
+          echo "enabled=false" >> "$GITHUB_OUTPUT"
+          echo "**docroot Basic:** スキップ（\`${name}\` — テンプレート名など。テーマFTPのみ）" >> "$GITHUB_STEP_SUMMARY"
+        fi
+
     - name: Install apache2-utils (htpasswd)
+      if: steps.docroot_basic.outputs.enabled == 'true'
       run: sudo apt-get update && sudo apt-get install -y apache2-utils
 
     - name: Build staging docroot Basic (.htaccess + .htpasswd)
+      if: steps.docroot_basic.outputs.enabled == 'true'
       env:
         CASE_ID: ${{ github.event.repository.name }}
       run: bash scripts/build-staging-docroot-basic.sh
@@ -110,7 +125,7 @@ jobs:
         exclude: ${{ env.FTP_EXCLUDE }}
 
     - name: Deploy docroot Basic (site-wide .htaccess)
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && steps.docroot_basic.outputs.enabled == 'true'
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ${{ secrets.FTP_SERVER }}
@@ -132,7 +147,7 @@ jobs:
         exclude: ${{ env.FTP_EXCLUDE }}
 
     - name: Deploy docroot Basic (site-wide .htaccess) (PR)
-      if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request' && steps.docroot_basic.outputs.enabled == 'true'
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ${{ secrets.FTP_SERVER }}
