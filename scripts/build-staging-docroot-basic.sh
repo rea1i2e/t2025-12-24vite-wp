@@ -9,7 +9,8 @@
 #   PARENT_DOMAIN  既定: rea1i2e.net
 #   BASIC_STAGING_AUTH_NAME  既定: Staging
 #   STAGING_AUTH_USER_FILE — Apache AuthUserFile（サーバー上の絶対パス）。省略時は
-#     /${PARENT_DOMAIN}/public_html/${CASE_ID}.${PARENT_DOMAIN}/.htpasswd
+#     ${BASIC_STAGING_SERVER_HOME:-/home/rea1i2e}/${PARENT_DOMAIN}/public_html/${CASE_ID}.${PARENT_DOMAIN}/.htpasswd
+#     （静的テンプレ／basic-auth-staging の apply-basic-staging.sh と同じ BASIC_STAGING_SERVER_HOME を共有）
 #   STAGING_BASIC_USER / STAGING_BASIC_PASS — CASE_ID からの派生の代わりに明示（非推奨・履歴に残り得る）
 #
 # 用法:
@@ -53,7 +54,9 @@ if [[ -n "${STAGING_AUTH_USER_FILE:-}" ]]; then
   AUTH_USER_FILE_RESOLVED="${STAGING_AUTH_USER_FILE}"
 else
   fqdn="${CASE_ID}.${PARENT_DOMAIN}"
-  AUTH_USER_FILE_RESOLVED="/${PARENT_DOMAIN}/public_html/${fqdn}/.htpasswd"
+  _home="${BASIC_STAGING_SERVER_HOME:-/home/rea1i2e}"
+  _home="${_home%/}"
+  AUTH_USER_FILE_RESOLVED="${_home}/${PARENT_DOMAIN}/public_html/${fqdn}/.htpasswd"
 fi
 
 if ! command -v htpasswd >/dev/null 2>&1; then
