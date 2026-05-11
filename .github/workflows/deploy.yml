@@ -133,8 +133,8 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./staging/docroot/
         server-dir: ${{ secrets.FTP_SERVER_DIR_DOCROOT }}
-        log-level: warn
-          
+        log-level: minimal
+
     - name: Deploy to Test Environment (PR)
       if: github.event_name == 'pull_request'
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -155,8 +155,8 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./staging/docroot/
         server-dir: ${{ secrets.FTP_SERVER_DIR_DOCROOT }}
-        log-level: warn
-          
+        log-level: minimal
+
     - name: Send Discord Notification - Test Deploy
       if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       uses: Ilshidur/action-discord@master
