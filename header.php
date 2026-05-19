@@ -6,8 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="format-detection" content="telephone=no">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="shortcut icon" href="<?php ty_theme('/favicon.ico'); ?>">
-  <link rel="apple-touch-icon" href="<?php ty_theme('/apple-touch-icon.png'); ?>">
+  <?php if (! has_site_icon()) : ?>
+    <link rel="shortcut icon" href="<?php ty_theme('/favicon.ico'); ?>">
+    <link rel="apple-touch-icon" href="<?php ty_theme('/apple-touch-icon.png'); ?>">
+  <?php endif; ?>
   <link rel="preload" href="<?php echo ty_vite_asset_url('src/assets/fonts/NotoSansJP-VF.woff2'); ?>" as="font" type="font/woff2" crossorigin>
   <?php if (is_front_page()) : $preload_image_url = ty_theme_image_url('demo/nagasaki1.jpg'); ?>
     <link rel="preload" href="<?php echo $preload_image_url; ?>" as="image">
