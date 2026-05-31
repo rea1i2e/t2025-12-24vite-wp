@@ -1360,6 +1360,15 @@ dist/            # ビルド成果物
 | `func-url.php` | パス定義のヘルパー関数（img_path、page_path等） |
 | `func-vite-assets.php` | Viteアセットの読み込み（enqueue実装） |
 | `func-vite.php` | Vite連携（dev/prod判定 + URL解決） |
+| `func-wpcf7.php` | Contact Form 7 の autop（`<p>` / `<br>` 自動付与）を全フォームで無効化 |
+
+### Contact Form 7（autop）
+
+- **実装**: `functions-lib/func-wpcf7.php` — `add_filter( 'wpcf7_autop_or_not', '__return_false' );`
+- **理由**: フォームは `p-form` BEM（`dl` / `dt` / `dd` / `.p-form__select-wrap` 等）で HTML を組む。CF7 既定の autop だと余計な `<p>` が入りレイアウトが崩れる。
+- **スコープ**: サイト内の**全 CF7 フォーム**（`the_content` の `wpautop` とは別）。
+- **汎用方針・タグ記述の注意**: ナレッジ [`wiki/wordpress-contact-form-7-autop.md`](file:///Users/yoshiaki/working/2026-04-23kn/wiki/wordpress-contact-form-7-autop.md)
+- **送信ボタン**: `.p-form__submit` ラッパー + `input` 本体（詳細は上記 Wiki「送信ボタン」節）。Sass は `src/assets/sass/components/_p-form.scss`。
 
 ## 画像最適化設定
 
