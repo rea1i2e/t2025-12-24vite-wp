@@ -169,22 +169,54 @@ function ty_build_format_source_tags(string $pathUnderImages, string $media = ''
 /**
  * 実ファイルパスから width/height を取得
  *
+ * - ラスタ（png/jpg/webp 等）は getimagesize() を使用
+ * - SVG は width/height または viewBox から推定
+ *
  * @return array{width: int|null, height: int|null}
  */
 function ty_get_image_dimensions(string $absPath): array
 {
-	if ($absPath === '' || !file_exists($absPath)) {
+	if ($absPath === '' || !is_readable($absPath)) {
 		return ['width' => null, 'height' => null];
 	}
 	$ext = strtolower((string) pathinfo($absPath, PATHINFO_EXTENSION));
-	$isRaster = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'], true);
-	if (!$isRaster) {
+
+	if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'], true)) {
+		$size = @getimagesize($absPath);
+		if (is_array($size) && !empty($size[0]) && !empty($size[1])) {
+			return ['width' => (int) $size[0], 'height' => (int) $size[1]];
+		}
 		return ['width' => null, 'height' => null];
 	}
-	$size = @getimagesize($absPath);
-	if (is_array($size) && !empty($size[0]) && !empty($size[1])) {
-		return ['width' => (int) $size[0], 'height' => (int) $size[1]];
+
+	if ($ext === 'svg') {
+		$svg = file_get_contents($absPath);
+		if (!is_string($svg) || $svg === '') {
+			return ['width' => null, 'height' => null];
+		}
+
+		$width = null;
+		$height = null;
+
+		if (preg_match('/\bwidth="([\d.]+)(px)?"/i', $svg, $m)) {
+			$width = (int) floor((float) $m[1]);
+		}
+		if (preg_match('/\bheight="([\d.]+)(px)?"/i', $svg, $m)) {
+			$height = (int) floor((float) $m[1]);
+		}
+
+		if ((!$width || !$height) && preg_match('/\bviewBox="[\d.\-]+\s+[\d.\-]+\s+([\d.]+)\s+([\d.]+)"/i', $svg, $m)) {
+			if (!$width) {
+				$width = (int) floor((float) $m[1]);
+			}
+			if (!$height) {
+				$height = (int) floor((float) $m[2]);
+			}
+		}
+
+		return ['width' => $width, 'height' => $height];
 	}
+
 	return ['width' => null, 'height' => null];
 }
 
