@@ -13,8 +13,11 @@ import imageminOptipng from "imagemin-optipng";
 import imageminGifsicle from "imagemin-gifsicle";
 import imageminSvgo from "imagemin-svgo";
 import imageminWebp from "imagemin-webp";
+import imageminAvif from "imagemin-avif";
 // imagemin-gif2webp は CJS なので default import の互換に依存せず、名前空間受け取りにします
 import gif2webpCjs from 'imagemin-gif2webp';
+import { themeBuildConfig } from "./config/theme-build.config.js";
+
 const imageminGif2webp = gif2webpCjs;
 
 /**
@@ -22,6 +25,19 @@ const imageminGif2webp = gif2webpCjs;
  */
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const certDir = path.resolve(__dirname, ".certs");
+
+const {
+  useFileHash,
+  imageAltFormats,
+  cssMinify,
+  jpegQuality,
+  webpQuality,
+  skipIfLargerThan,
+} = themeBuildConfig;
+const hash = useFileHash ? "-[hash]" : "";
+const makeWebpEnabled = imageAltFormats === "webp" || imageAltFormats === "both";
+const makeAvifEnabled = imageAltFormats === "avif" || imageAltFormats === "both";
+const skipIfLargerThanImagemin = skipIfLargerThan ? "optimized" : 0;
 
 /**
  * HTTPS設定の取得
@@ -117,22 +133,16 @@ function getImageDimensions(absPath) {
   return null;
 }
 
+/** theme-assets.json に載せるソース画像（ビルド生成の webp/avif は除外） */
+const manifestSourceExt = new Set([".png", ".jpg", ".jpeg", ".gif", ".svg"]);
+
 /**
- * テーマ画像をハッシュ付きアセットとしてdistに出力し、PHPが解決するためのマップを書き込む
+ * テーマ画像を dist に出力し、PHP が解決するためのマップを書き込む
  * - ソースキー: "src/assets/images/<relpath>"
- * - 出力値: { file, width?, height? }（寸法はビルド時に取得し、ランタイムの getimagesize を不要にする）
+ * - 出力値: { file, width?, height? }
  */
 function wpThemeImagesManifest() {
   const imagesRoot = path.resolve(__dirname, "src/assets/images");
-  const allowExt = new Set([
-    ".png",
-    ".jpg",
-    ".jpeg",
-    ".gif",
-    ".svg",
-    ".webp",
-    ".avif",
-  ]);
 
   const idByKey = new Map();
   const dimsByKey = new Map();
@@ -142,7 +152,7 @@ function wpThemeImagesManifest() {
     apply: "build",
     buildStart() {
       const files = listFilesRecursive(imagesRoot).filter((abs) =>
-        allowExt.has(path.extname(abs).toLowerCase())
+        manifestSourceExt.has(path.extname(abs).toLowerCase())
       );
 
       for (const abs of files) {
@@ -177,29 +187,21 @@ function wpThemeImagesManifest() {
         fileName: "theme-assets.json",
         source: JSON.stringify(map, null, 2),
       });
+
+      this.emitFile({
+        type: "asset",
+        fileName: "theme-build-config.json",
+        source: JSON.stringify(
+          {
+            imageAltFormats,
+            useFileHash,
+          },
+          null,
+          2
+        ),
+      });
     },
   };
-}
-
-/**
- * 環境変数をブール値として取得
- * "1", "true", "yes", "on" を true として扱う
- */
-function envBool(name, defaultValue = false) {
-  const v = process.env[name];
-  if (v == null || v === "") return defaultValue;
-  return ["1", "true", "yes", "on"].includes(String(v).toLowerCase());
-}
-
-/**
- * 環境変数を数値として取得
- * 無効な値の場合はデフォルト値を返す
- */
-function envNumber(name, defaultValue) {
-  const v = process.env[name];
-  if (v == null || v === "") return defaultValue;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : defaultValue;
 }
 
 /**
@@ -238,11 +240,13 @@ export default defineConfig({
   
   /**
    * ビルド設定
-   * エントリーポイント（JS/CSS）の指定と、出力ファイル名のハッシュ付与設定
+   * エントリーポイント（JS/CSS）の指定と、出力ファイル名の設定
    */
   build: {
     outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,
+    minify: true,
+    cssMinify: cssMinify !== false,
     // assetsInlineLimit: 0, // svgをインライン化させない場合はコメントアウト解除
     manifest: true,
     rollupOptions: {
@@ -256,22 +260,18 @@ export default defineConfig({
           const isImage = /\.(png|jpe?g|gif|svg|webp|avif)$/i.test(n);
 
           if (isImage) {
-            // 画像は assets/images/ にフラットに出力（同名・別ディレクトリは内容ハッシュで区別）
-            const ext = path.posix.extname(n);
-            const base = path.posix.basename(n, ext);
-            return `assets/images/${base}-[hash]${ext}`;
+            return `assets/images/[name]${hash}[extname]`;
           }
 
-          // フォントは assets/fonts/ に出力
           if (/\.(woff2?|ttf|otf|eot)$/i.test(n)) {
-            return "assets/fonts/[name]-[hash][extname]";
+            return `assets/fonts/[name]${hash}[extname]`;
           }
 
-          if (/\.css$/i.test(n)) return "assets/css/[name]-[hash][extname]";
-          return "assets/[name]-[hash][extname]";
+          if (/\.css$/i.test(n)) return `assets/css/[name]${hash}[extname]`;
+          return `assets/[name]${hash}[extname]`;
         },
-        entryFileNames: "assets/js/[name]-[hash].js",
-        chunkFileNames: "assets/js/[name]-[hash].js"
+        entryFileNames: `assets/js/[name]${hash}.js`,
+        chunkFileNames: `assets/js/[name]${hash}.js`
       }
     }
   },
@@ -284,36 +284,40 @@ export default defineConfig({
     wpPhpFullReload(),
     wpThemeImagesManifest(),
     sassGlobImports(),
-    // 画像圧縮とWebP変換
     viteImagemin({
-      root: path.resolve(__dirname), // 絶対パスを維持（相対パスNG）
+      root: path.resolve(__dirname),
       onlyAssets: true,
       include: /\.(png|jpe?g|gif|svg)$/i,
       exclude: [/node_modules/],
-      // exclude: [/node_modules/, /mv_bottom_bg\.png$/i], // mv_bottom_bg.pngは最適化しない場合は除外
       plugins: {
-        // 静的インポートに変更
-        jpg: imageminMozjpeg({ quality: envNumber("VITE_JPEG_QUALITY", 75), progressive: true }),
+        jpg: imageminMozjpeg({ quality: jpegQuality, progressive: true }),
         png: imageminOptipng({ optimizationLevel: 2 }),
         gif: imageminGifsicle({ optimizationLevel: 2 }),
         svg: imageminSvgo()
       },
-      ...(envBool("VITE_ENABLE_WEBP", false) // trueでwebP生成
-        ? {
-            makeWebp: {
-              plugins: {
-                // 静的インポートに変更
-                jpg: imageminWebp({ quality: envNumber("VITE_WEBP_QUALITY", 75) }),
-                png: imageminWebp({ quality: envNumber("VITE_WEBP_QUALITY", 75) }),
-                gif: imageminGif2webp({ quality: envNumber("VITE_WEBP_QUALITY", 75) }),
-              },
-              formatFilePath: (file) =>
-                file.replace(/\.(jpe?g|png|gif)$/i, ".webp"),
-              // 'optimized' | number (bytes). このプロジェクトではデフォルトで'optimized'を使用
-              skipIfLargerThan: envBool("VITE_WEBP_SKIP_IF_LARGER", true) ? "optimized" : 0,
-            },
-          }
-        : {})
+      ...(makeWebpEnabled && {
+        makeWebp: {
+          plugins: {
+            jpg: imageminWebp({ quality: webpQuality }),
+            png: imageminWebp({ quality: webpQuality }),
+            gif: imageminGif2webp({ quality: webpQuality }),
+          },
+          formatFilePath: (file) =>
+            file.replace(/\.(jpe?g|png|gif)$/i, ".webp"),
+          skipIfLargerThan: skipIfLargerThanImagemin,
+        },
+      }),
+      ...(makeAvifEnabled && {
+        makeAvif: {
+          plugins: {
+            jpg: imageminAvif({ quality: webpQuality }),
+            png: imageminAvif({ quality: webpQuality }),
+          },
+          formatFilePath: (file) =>
+            file.replace(/\.(jpe?g|png)$/i, ".avif"),
+          skipIfLargerThan: skipIfLargerThanImagemin,
+        },
+      }),
     })
   ]
 });

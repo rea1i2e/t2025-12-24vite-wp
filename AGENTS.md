@@ -152,6 +152,7 @@ dist/ から実際のファイルを enqueue
 
 ## 変更時の注意点
 
+- **WP テンプレビルド:** [`config/theme-build.config.js`](config/theme-build.config.js) が正本（既定 `imageAltFormats: "none"`・`useFileHash: true`・`cssMinify: true`）。案件複製後は案件ごとに上書き（例: ik は `avif` + `useFileHash: false`）。詳細は [docs/architecture.md](docs/architecture.md) の画像最適化節。
 - **Vite連携の仕組みを変更しない**: dev/prod判定とmanifest読み込みの仕組みは必須
 - **関数名のプレフィックス**: `ty_` を必ず付与（WordPress/プラグインとの衝突回避）
 - **画像パスの解決**: CSS内はViteが解決、HTML内は `ty_theme_image_url()` を使用

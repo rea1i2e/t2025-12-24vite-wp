@@ -116,6 +116,37 @@ function ty_vite_theme_assets_path(): string
 	return ty_vite_dist_path() . '/theme-assets.json';
 }
 
+// theme-build-config.json の実ファイルパスを返す（ビルド時の imageAltFormats 等）
+function ty_vite_theme_build_config_path(): string
+{
+	return ty_vite_dist_path() . '/theme-build-config.json';
+}
+
+// theme-build-config.json を読み込む（1リクエスト内キャッシュ）
+function ty_vite_theme_build_config(): array
+{
+	static $cache = null;
+	if (is_array($cache)) {
+		return $cache;
+	}
+
+	$config_path = ty_vite_theme_build_config_path();
+	if (!file_exists($config_path)) {
+		$cache = [];
+		return $cache;
+	}
+
+	$raw = file_get_contents($config_path);
+	if ($raw === false) {
+		$cache = [];
+		return $cache;
+	}
+
+	$decoded = json_decode($raw, true);
+	$cache = is_array($decoded) ? $decoded : [];
+	return $cache;
+}
+
 // theme-assets.json を読み込み、srcパス -> エントリ（文字列または array file, width?, height?）のマッピングを返す（1リクエスト内キャッシュ）
 function ty_vite_theme_assets_map(): array
 {

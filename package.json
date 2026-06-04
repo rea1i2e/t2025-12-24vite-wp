@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/postbuild-image-set.mjs",
     "build:staging-docroot-basic": "bash scripts/build-staging-docroot-basic.sh",
     "preview": "open http://t2025-12-24vite-wp.local",
     "local:admin": "open http://t2025-12-24vite-wp.local/wp-admin/",
@@ -22,6 +22,7 @@
     "image-size": "^1.1.1",
     "imagemin-gif2webp": "^3.0.0",
     "imagemin-gifsicle": "^7.0.0",
+    "imagemin-avif": "^0.1.6",
     "imagemin-mozjpeg": "^10.0.0",
     "imagemin-optipng": "^8.0.0",
     "imagemin-svgo": "^11.0.1",

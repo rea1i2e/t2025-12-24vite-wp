@@ -25,7 +25,168 @@ declare(strict_types=1);
  * 補足:
  * - 可能であれば width/height を自動付与して CLS を抑制します。寸法はビルド時に theme-assets.json に含まれる場合はそれを参照し、無い場合（未ビルド・開発時など）のみ getimagesize で取得します
  * - 画像URLは Vite dev/prod 差を吸収します（theme-assets.json / dev server）
+ * - 本番ビルドで config/theme-build.config.js の imageAltFormats が avif/webp/both のとき、ラスタ画像は `<picture>` に AVIF/WebP の `<source type="...">` を付与。WP テンプレ既定は none（プラグイン想定）
  */
+/**
+ * ビルド設定の imageAltFormats（none | webp | avif | both）。dev では none。
+ */
+function ty_image_alt_formats(): string
+{
+	if (ty_vite_is_dev()) {
+		return 'none';
+	}
+	$cfg = ty_vite_theme_build_config();
+	if (isset($cfg['imageAltFormats']) && is_string($cfg['imageAltFormats'])) {
+		return $cfg['imageAltFormats'];
+	}
+	return 'none';
+}
+
+/**
+ * @return list<string> 挿入するフォーマット（AVIF → WebP の順）
+ */
+function ty_image_alt_formats_inject_order(): array
+{
+	$mode = ty_image_alt_formats();
+	if ($mode === 'none') {
+		return [];
+	}
+	if ($mode === 'webp') {
+		return ['webp'];
+	}
+	if ($mode === 'avif') {
+		return ['avif'];
+	}
+	if ($mode === 'both') {
+		return ['avif', 'webp'];
+	}
+	return [];
+}
+
+/**
+ * dist 相対パスから代替フォーマットの候補パス一覧（after-build candidates 相当）
+ *
+ * @return list<string>
+ */
+function ty_theme_image_variant_dist_rel_candidates(string $distRel, string $formatExt): array
+{
+	$distRel = ltrim($distRel, '/');
+	if (!preg_match('/\.(jpe?g|png|gif)$/i', $distRel)) {
+		return [];
+	}
+	$baseNoExt = (string) preg_replace('/\.(jpe?g|png|gif)$/i', '', $distRel);
+	$origExt = '';
+	if (preg_match('/\.(jpe?g|png|gif)$/i', $distRel, $m)) {
+		$origExt = $m[0];
+	}
+	$out = [$baseNoExt . '.' . $formatExt];
+	if ($origExt !== '') {
+		$out[] = str_replace($origExt, $origExt . '.' . $formatExt, $distRel);
+	}
+	return array_values(array_unique($out));
+}
+
+/**
+ * テーマ画像の代替フォーマット URL（prod のみ。存在しない場合は空文字）
+ */
+function ty_theme_image_variant_url(string $pathUnderImages, string $formatExt): string
+{
+	if (ty_vite_is_dev()) {
+		return '';
+	}
+	if (!in_array($formatExt, ['webp', 'avif'], true)) {
+		return '';
+	}
+
+	$srcKey = 'src/assets/images/' . ltrim($pathUnderImages, '/');
+	$distRel = ty_vite_theme_asset_dist_rel($srcKey);
+	if ($distRel === '') {
+		return '';
+	}
+
+	foreach (ty_theme_image_variant_dist_rel_candidates($distRel, $formatExt) as $cand) {
+		$abs = ty_vite_dist_path() . '/' . ltrim($cand, '/');
+		if (file_exists($abs)) {
+			return ty_vite_dist_url() . '/' . ltrim($cand, '/');
+		}
+	}
+	return '';
+}
+
+/**
+ * ラスター画像パスか（jpg/png/gif）
+ */
+function ty_is_raster_image_path(string $pathUnderImages): bool
+{
+	return (bool) preg_match('/\.(jpe?g|png|gif)$/i', $pathUnderImages);
+}
+
+/**
+ * extraAttrs に data-no-picture が含まれるか
+ */
+function ty_extra_attrs_has_no_picture(string $extraAttrs): bool
+{
+	return (bool) preg_match('/\bdata-no-picture\b/i', $extraAttrs);
+}
+
+/**
+ * format 用 <source> タグ群（media 省略＝フォーマットのみ）
+ */
+function ty_build_format_source_tags(string $pathUnderImages, string $media = ''): string
+{
+	if (!ty_is_raster_image_path($pathUnderImages)) {
+		return '';
+	}
+
+	$dims = ty_theme_image_dimensions($pathUnderImages);
+	$html = '';
+
+	foreach (ty_image_alt_formats_inject_order() as $fmt) {
+		$url = ty_theme_image_variant_url($pathUnderImages, $fmt);
+		if ($url === '') {
+			continue;
+		}
+		$type = $fmt === 'avif' ? 'image/avif' : 'image/webp';
+		$attrs = [
+			'srcset' => $url,
+			'type' => $type,
+		];
+		if ($media !== '') {
+			$attrs['media'] = $media;
+		}
+		if (!empty($dims['width'])) {
+			$attrs['width'] = (int) $dims['width'];
+		}
+		if (!empty($dims['height'])) {
+			$attrs['height'] = (int) $dims['height'];
+		}
+		$html .= '<source' . ty_build_html_attrs($attrs) . '>';
+	}
+
+	return $html;
+}
+
+/**
+ * 実ファイルパスから width/height を取得
+ *
+ * @return array{width: int|null, height: int|null}
+ */
+function ty_get_image_dimensions(string $absPath): array
+{
+	if ($absPath === '' || !file_exists($absPath)) {
+		return ['width' => null, 'height' => null];
+	}
+	$ext = strtolower((string) pathinfo($absPath, PATHINFO_EXTENSION));
+	$isRaster = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'], true);
+	if (!$isRaster) {
+		return ['width' => null, 'height' => null];
+	}
+	$size = @getimagesize($absPath);
+	if (is_array($size) && !empty($size[0]) && !empty($size[1])) {
+		return ['width' => (int) $size[0], 'height' => (int) $size[1]];
+	}
+	return ['width' => null, 'height' => null];
+}
 
 /**
  * src パスで指定されたテーマ画像の「実ファイルパス」を解決する
@@ -33,17 +194,15 @@ declare(strict_types=1);
  * @param string $srcPath 例: 'src/assets/images/demo/dummy1.jpg'
  */
 function ty_theme_asset_file_path(string $srcPath): string {
-	$srcPath = ltrim($srcPath, '/'); // 冒頭に/があったら除外
+	$srcPath = ltrim($srcPath, '/');
 
-	// dev では、テーマ配下（src/）に実ファイルが存在する
 	$devCandidate = get_theme_file_path($srcPath);
 	if (file_exists($devCandidate)) return $devCandidate;
 
-	// prod では、theme-assets.json のマッピングから dist 側の実ファイルへ解決する
 	$rel = ty_vite_theme_asset_dist_rel($srcPath);
 	if ($rel === '') return '';
 
-	$rel = ltrim($rel, '/'); // 例: assets/images/demo/dummy1-xxxx.jpg
+	$rel = ltrim($rel, '/');
 	$distCandidate = get_theme_file_path('dist/' . $rel);
 	return file_exists($distCandidate) ? $distCandidate : '';
 }
@@ -71,23 +230,23 @@ function ty_theme_image_sp_path(string $pcPathUnderImages): string {
 }
 
 /**
- * `src/assets/images/**` 配下のテーマ画像から <img> タグの HTML 文字列を返す（取得のみ）
+ * `<img>` 用の属性配列を組み立てる
  *
- * @param string $pathUnderImages images 配下の相対パス（例: 'demo/dummy1.jpg'）
- * @param string $alt alt 属性
- * @param bool   $eager true のとき loading="eager"、省略時は loading="lazy"
- * @param string $extraAttrs その他の属性を文字列で（例: 'class="hero" fetchpriority="high"'）。動的値は呼び出し側で esc_attr すること
+ * @return array<string, scalar>
  */
-function ty_get_img(string $pathUnderImages, string $alt = '', bool $eager = false, string $extraAttrs = ''): string {
+function ty_build_img_attrs_array(
+	string $pathUnderImages,
+	string $alt,
+	bool $eager
+): array {
 	$pathUnderImages = ltrim($pathUnderImages, '/');
 	$url = ty_theme_image_url($pathUnderImages);
 	if ($url === '') {
-		// フォールバック：images配下のsrcパスを直接組み立てる
 		$srcPath = 'src/assets/images/' . $pathUnderImages;
 		$url = ty_theme_asset_url($srcPath);
 	}
 	if ($url === '') {
-		return '';
+		return [];
 	}
 
 	$attrs = [
@@ -96,39 +255,49 @@ function ty_get_img(string $pathUnderImages, string $alt = '', bool $eager = fal
 		'loading' => $eager ? 'eager' : 'lazy',
 	];
 
-	// width/height が取得可能な場合のみ付与する（JSON の寸法を優先し、無い場合のみ getimagesize にフォールバック）
 	$dims = ty_theme_image_dimensions($pathUnderImages);
 	if ($dims['width'] !== null && $dims['height'] !== null) {
 		$attrs['width'] = $dims['width'];
 		$attrs['height'] = $dims['height'];
 	} else {
-		$path = ty_theme_image_file_path($pathUnderImages);
-		if ($path !== '') {
-			$ext = strtolower((string) pathinfo($path, PATHINFO_EXTENSION));
-			$isRaster = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'], true);
-			if ($isRaster) {
-				$size = @getimagesize($path);
-				if (is_array($size) && !empty($size[0]) && !empty($size[1])) {
-					$attrs['width'] = (int) $size[0];
-					$attrs['height'] = (int) $size[1];
-				}
+		$filePath = ty_theme_image_file_path($pathUnderImages);
+		if ($filePath !== '') {
+			$sizeDims = ty_get_image_dimensions($filePath);
+			if ($sizeDims['width'] !== null && $sizeDims['height'] !== null) {
+				$attrs['width'] = $sizeDims['width'];
+				$attrs['height'] = $sizeDims['height'];
 			}
 		}
 	}
 
-	$html = '<img';
-	foreach ($attrs as $k => $v) {
-		if ($v === null || $v === false) continue;
-		// alt は空でも必ず出力（alt="" を担保）
-		if ($v === '' && (string) $k !== 'alt') continue;
-		$html .= ' ' . esc_attr((string) $k) . '="' . esc_attr((string) $v) . '"';
-	}
-	if ($extraAttrs !== '') {
-		$html .= ' ' . trim($extraAttrs);
-	}
-	$html .= '>';
+	return $attrs;
+}
 
-	return $html;
+/**
+ * `src/assets/images/**` 配下のテーマ画像から <img> タグの HTML 文字列を返す（取得のみ）
+ */
+function ty_get_img(string $pathUnderImages, string $alt = '', bool $eager = false, string $extraAttrs = ''): string {
+	$attrs = ty_build_img_attrs_array($pathUnderImages, $alt, $eager);
+	if ($attrs === []) {
+		return '';
+	}
+
+	$imgTag = '<img' . ty_build_html_attrs($attrs);
+	if ($extraAttrs !== '') {
+		$imgTag .= ' ' . trim($extraAttrs);
+	}
+	$imgTag .= '>';
+
+	$useFormatPicture = ty_is_raster_image_path($pathUnderImages)
+		&& !ty_extra_attrs_has_no_picture($extraAttrs)
+		&& ty_image_alt_formats_inject_order() !== []
+		&& ty_build_format_source_tags($pathUnderImages) !== '';
+
+	if (!$useFormatPicture) {
+		return $imgTag;
+	}
+
+	return '<picture>' . ty_build_format_source_tags($pathUnderImages) . $imgTag . '</picture>';
 }
 
 /**
@@ -138,14 +307,12 @@ function ty_img(string $pathUnderImages, string $alt = '', bool $eager = false, 
 	echo ty_get_img($pathUnderImages, $alt, $eager, $extraAttrs);
 }
 
-// HTML属性配列を ` key="value"` 形式の文字列へ変換する
 function ty_build_html_attrs(array $attrs): string {
 	$out = '';
 	foreach ($attrs as $k => $v) {
 		if ($v === null || $v === false) continue;
 		if ($k === '' || !is_string($k)) continue;
 
-		// alt は空でも alt="" を担保（boolean属性扱いにしない）
 		if ($k === 'alt' && $v === '') {
 			$out .= ' alt=""';
 			continue;
@@ -161,17 +328,6 @@ function ty_build_html_attrs(array $attrs): string {
 	return $out;
 }
 
-/**
- * PC/SP 画像を <picture> で出し分けした HTML 文字列を返す（取得のみ）
- * SP 用パスは null/空のとき PC パスから自動導出（name.png → name_sp.png）。
- *
- * @param string      $pcPathUnderImages PC用画像の images 配下パス
- * @param string|null $spPathOrAlt       SP用画像の images 配下パス（null/空なら自動導出）
- * @param string      $alt              alt 属性
- * @param bool        $eager             true のとき loading="eager"
- * @param string      $extraAttrs       <img> へのその他属性を文字列で（例: 'fetchpriority="high"'）
- * @param string      $spMedia          <source> の media 値
- */
 function ty_get_picture_img(
 	string $pcPathUnderImages,
 	?string $spPathOrAlt = null,
@@ -204,6 +360,9 @@ function ty_get_picture_img(
 	if (!empty($pc_dims['width'])) $imgAttrs['width'] = (int) $pc_dims['width'];
 	if (!empty($pc_dims['height'])) $imgAttrs['height'] = (int) $pc_dims['height'];
 
+	$skipFormat = ty_extra_attrs_has_no_picture($extraAttrs);
+	$format_html = $skipFormat ? '' : ty_build_format_source_tags($pcPathUnderImages);
+
 	$source_html = '';
 	$sp_url = ty_theme_image_url($spPathUnderImages);
 	if ($sp_url !== '') {
@@ -222,7 +381,11 @@ function ty_get_picture_img(
 		if (!empty($sp_dims['width'])) $source_attrs['width'] = (int) $sp_dims['width'];
 		if (!empty($sp_dims['height'])) $source_attrs['height'] = (int) $sp_dims['height'];
 
-		$source_html = '<source' . ty_build_html_attrs($source_attrs) . '>';
+		if (!$skipFormat && ty_is_raster_image_path($spPathUnderImages)) {
+			$source_html .= ty_build_format_source_tags($spPathUnderImages, $spMedia);
+		}
+
+		$source_html .= '<source' . ty_build_html_attrs($source_attrs) . '>';
 	}
 
 	$imgTag = '<img' . ty_build_html_attrs($imgAttrs);
@@ -231,13 +394,9 @@ function ty_get_picture_img(
 	}
 	$imgTag .= '>';
 
-	return '<picture>' . $source_html . $imgTag . '</picture>';
+	return '<picture>' . $format_html . $source_html . $imgTag . '</picture>';
 }
 
-/**
- * ty_get_picture_img() の結果をそのまま出力する。テンプレートではこちらを主に使用。
- * 2引数で呼んだときは (pcPath, alt)、3引数以上は (pcPath, spPath, alt, ...)。
- */
 function ty_picture_img(
 	string $pcPathUnderImages,
 	?string $spPathOrAlt = null,
@@ -252,4 +411,3 @@ function ty_picture_img(
 		echo ty_get_picture_img($pcPathUnderImages, $spPathOrAlt, $alt, $eager, $extraAttrs, $spMedia);
 	}
 }
-

@@ -340,9 +340,9 @@ Vite dev serverが起動し、`localhost:5173` でアクセス可能になりま
 
 ### 画像最適化
 
-- **WebP生成**: 環境変数 `VITE_ENABLE_WEBP` で制御可能です（デフォルト: `false`）
-- **画像圧縮**: `@vheemstra/vite-plugin-imagemin` の設定を変更可能です
-- **品質設定**: `VITE_JPEG_QUALITY`, `VITE_WEBP_QUALITY` で調整可能です
+- **設定の正本**: [`config/theme-build.config.js`](config/theme-build.config.js)（`imageAltFormats`・`useFileHash`・`cssMinify`・品質など）。変更後は `npm run build`
+- **代替フォーマット**: `imageAltFormats` — `none` | `webp` | `avif` | `both`（WP テンプレ既定は `none` — WebP/AVIF はプラグイン想定）
+- **画像圧縮**: `@vheemstra/vite-plugin-imagemin`（品質は `theme-build.config.js` の `jpegQuality` / `webpQuality` 等）
 
 ### カスタム投稿タイプ
 
@@ -450,6 +450,7 @@ dist/ から実際のファイルを enqueue
 補足（`<img>` の画像）:
 - `<img>` はCSSの `url(...)` のように参照を辿れないため、`vite build` 時に `src/assets/images/**` を `dist/assets/images/**` へ出力し、`dist/theme-assets.json` を生成してPHPが解決する方式を採用
 - **画像の width/height**: ビルド時に Vite の `wpThemeImagesManifest` プラグイン（vite.config.js）が `image-size`（ラスター画像）または SVG の viewBox 等パースで寸法を取得し、`dist/theme-assets.json` に保存する。表示時は `ty_theme_image_dimensions()`（func-vite.php）がその JSON を参照し、エントリが無い場合（未ビルド・開発時など）のみ `getimagesize()` にフォールバックする
+- **WebP/AVIF（任意）**: ビルドで `dist/assets/images/` に兄弟ファイルとして出力可能。PHP は `dist/theme-build-config.json` の `imageAltFormats` を読み、`ty_img` 等で format 用 `<source>` を付与。dev（Vite 到達時）は format 化しない。WP テンプレ既定は `none`
 
 ---
 
@@ -596,9 +597,10 @@ npm run build
 ```
 
 ビルド時の処理：
-- WebP生成（環境変数 `VITE_ENABLE_WEBP=true` で有効化）
+- WebP/AVIF 生成（`config/theme-build.config.js` の `imageAltFormats`、WP テンプレ既定 `none`）
 - 画像圧縮（JPEG/PNG/GIF/SVG）
-- CSS/JSのハッシュ付与
+- CSS 背景の `image-set` 付与（`postbuild-image-set.mjs`）
+- JS/CSS/フォント/画像のファイル名ハッシュ（`useFileHash: true` が既定）
 
 ### ビルド確認（簡易サーバー）
 
@@ -644,6 +646,7 @@ dist/                # 本番出力（ビルド生成物）
   .vite/
     manifest.json    # パスマッピング
   theme-assets.json  # 画像パスマッピング
+  theme-build-config.json  # imageAltFormats 等（PHP 参照）
 ```
 
 ## Sass/スタイル
@@ -708,24 +711,32 @@ import './_modal.js';
 
 - PNG/JPEG/GIF/SVG
 
-### WebP生成
+### WebP / AVIF 生成（静的テンプレ `imageAltFormats` 相当）
 
-環境変数で制御可能：
+正本: [`config/theme-build.config.js`](config/theme-build.config.js)。値を変えたら `npm run build`。ビルド時に `dist/theme-build-config.json` へ書き出し、PHP（prod）が参照します。
 
-```bash
-VITE_ENABLE_WEBP=true npm run build
-```
+| `imageAltFormats` | ビルド | PHP（prod） |
+|----|--------|-------------|
+| `none` | 代替フォーマットなし（WP テンプレ既定） | `<img>` のみ |
+| `webp` | WebP のみ | `<source type="image/webp">` |
+| `avif` | AVIF のみ | `<source type="image/avif">` |
+| `both` | WebP + AVIF | AVIF → WebP の順 |
 
-設定項目：
-- `VITE_ENABLE_WEBP`: WebP生成の有効/無効（デフォルト: `false`）
-- `VITE_WEBP_QUALITY`: WebPの品質（デフォルト: `75`）
-- `VITE_WEBP_SKIP_IF_LARGER`: 最適化後より大きいWebPは出力しない（デフォルト: `true`）
+`theme-build.config.js` の主な項目:
+- `imageAltFormats` — 上記
+- `useFileHash` — WP テンプレ既定 `true`（`false` でハッシュなし出力）
+- `cssMinify` — CSS を minify するか（既定 `true`）
+- `jpegQuality` / `webpQuality` — 圧縮品質（既定 `75`）
+- `skipIfLargerThan` — 元より大きい代替は出力しない（既定 `true`）
 
 ### 出力パス
 
+`useFileHash: true`（既定）のとき:
 - 画像: `assets/images/[name]-[hash][ext]`
 - CSS: `assets/css/[name]-[hash].css`
 - JS: `assets/js/[name]-[hash].js`
+
+`useFileHash: false` のときは `[hash]` なし（案件例: ik）
 
 ## PHP開発
 
@@ -1239,7 +1250,7 @@ NODE_OPTIONS="--max-old-space-size=4096" npm run build
 **解決方法**:
 
 - 不要な画像最適化を無効化
-- WebP生成を無効化（`VITE_ENABLE_WEBP=false`）
+- 代替フォーマットを無効化（`theme-build.config.js` で `imageAltFormats: "none"` — WP テンプレ既定）
 - ビルドキャッシュを活用
 
 ## 参考資料
@@ -1584,12 +1595,13 @@ dist/            # ビルド成果物
 - PHPはHMRで差し替えできないため、**PHPファイル変更を検知してブラウザをフルリロード**する
 - `vite.config.js` にPHP変更で `full-reload` を投げる処理を追加済み
 
-## WebP生成の制御（案件ごと）
-`vite.config.js` のWebP生成は環境変数で制御します。
+## 画像代替フォーマットの制御（案件ごと）
+[`config/theme-build.config.js`](config/theme-build.config.js) が正本です（詳細は [画像最適化（ビルド時）](#画像最適化ビルド時)）。環境変数での上書きは行いません。WP テンプレ既定は `imageAltFormats: "none"`（プラグイン想定）。案件で Vite 側の AVIF/WebP が必要なときだけ `webp` / `avif` / `both` に変更して再ビルドします。
 
-- `VITE_ENABLE_WEBP`（default: true）: `true/false` でWebP生成をON/OFF
-- `VITE_WEBP_QUALITY`（default: 75）: WebPのquality
-- `VITE_WEBP_SKIP_IF_LARGER`（default: true）: `true` の場合は「最適化後より大きいWebPは出力しない」
+### 2026-06-04
+- 変更: `config/theme-build.config.js` によるビルド設定一本化（`imageAltFormats` / `useFileHash` / `cssMinify`）、`ty_img` の format `<picture>`、`postbuild-image-set.mjs`
+- 既定: `imageAltFormats: "none"`、`useFileHash: true`、`cssMinify: true`
+- 影響: `vite.config.js`、`func-images.php`、`func-vite.php`、`package.json`（`imagemin-avif`、build 後処理）
 
 ### 2025-12-24
 - 変更: prod側のmanifest参照パスを `dist/.vite/manifest.json` に追従（`functions-lib/func-vite.php`）
