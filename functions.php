@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 /**
+ * ローダー専用（機能ロジック・案件設定は `functions-lib/func-*.php` に書く）
+ *
  * - テーマ機能を `functions-lib/` 配下へ分割して、globで読み込む
  * - 依存関係がある場合だけ、読み込み順を明示できるようにする
  *

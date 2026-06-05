@@ -370,6 +370,24 @@ Vite dev serverが起動し、`localhost:5173` でアクセス可能になりま
 - **`edit.php` を非表示にする場合**: 「投稿」メニューが消えるため、`func-set-posttype-post.php` のラベル変更（お知らせ）は見た目に効かなくなります。お知らせとして残す場合は非表示リストに `edit.php` を入れないこと。
 - 意思決定の背景はナレッジ [wp-template-decision-records.md（§6）](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md#6-管理画面メニューのカスタマイズ) を参照。
 
+### 標準投稿（post）— カテゴリー・タグ UI の非表示（任意）
+
+標準の「投稿」で**カテゴリー・タグを運用しない**案件向け。実装は [`functions-lib/func-set-posttype-post.php`](functions-lib/func-set-posttype-post.php)。**既定は無効**（フィルター false）。
+
+**有効化（案件の `functions-lib/func-set-posttype-post.php` 末尾）:**
+
+`functions.php` はローダー専用とし、機能の ON/OFF も該当 `func-*.php` に書く。同ファイル末尾のコメント行を外すか、次を追加する。
+
+```php
+add_filter('ty_post_hide_category_tag_ui', '__return_true');
+```
+
+**フィルター名:** `ty_post_hide_category_tag_ui`（`apply_filters` の第2引数既定値: `false`）
+
+**非表示範囲（true のとき）:** 投稿一覧のカテゴリー・タグ列、左メニュー配下のカテゴリー・タグ、編集画面メタボックス、クイック編集のタクソノミー欄。`register_taxonomy` で管理 UI を off（`unregister_taxonomy` はしない — 未分類付与はコア任せ）。
+
+ラベル変更（`ty_post_label_name` 等）は本フィルターと**独立**して常時動作する。
+
 ## 詳細情報
 
 ### ファイル構成詳細
@@ -1365,7 +1383,7 @@ dist/            # ビルド成果物
 | `func-posts-ajax-load-more.php` | アーカイブページの「もっと見る」Ajax読み込み機能 |
 | `func-recaptcha.php` | 必要なページでのみreCAPTCHAスクリプトを読み込む |
 | `func-security.php` | セキュリティ対策（WordPressバージョン情報の削除） |
-| `func-set-posttype-post.php` | デフォルト投稿タイプ（post）の設定 |
+| `func-set-posttype-post.php` | デフォルト投稿（post）のラベル変更。カテゴリー・タグ UI 非表示はフィルター `ty_post_hide_category_tag_ui`（既定 false） |
 | `func-set-posttype-works.php` | カスタム投稿タイプ「works」の設定 |
 | `func-thumbnail.php` | サムネイル画像の表示とデータ取得関数 |
 | `func-url.php` | パス定義のヘルパー関数（img_path、page_path等） |

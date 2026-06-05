@@ -101,6 +101,7 @@
 ### WP テンプレ固有のルール
 
 - **[docs/architecture.md](docs/architecture.md)**: 設計判断・コーディング（WP 固有）・開発・デプロイ・トラブル等の**技術正本**
+- **投稿のカテゴリー・タグ UI 非表示（任意）:** `functions-lib/func-set-posttype-post.php` + フィルター `ty_post_hide_category_tag_ui`（既定 false）。案件で使うときは同ファイル末尾で `add_filter('ty_post_hide_category_tag_ui', '__return_true');`（`functions.php` はローダー専用）— 詳細は architecture「標準投稿 — カテゴリー・タグ UI の非表示」
 
 ---
 
