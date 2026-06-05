@@ -374,15 +374,15 @@ Vite dev serverが起動し、`localhost:5173` でアクセス可能になりま
 
 標準の「投稿」で**カテゴリー・タグを運用しない**案件向け。実装は [`functions-lib/func-set-posttype-post.php`](functions-lib/func-set-posttype-post.php)。**既定は無効**（フィルター false）。
 
-**有効化（案件の `functions-lib/func-set-posttype-post.php` 末尾）:**
-
-`functions.php` はローダー専用とし、機能の ON/OFF も該当 `func-*.php` に書く。同ファイル末尾のコメント行を外すか、次を追加する。
+**案件設定（`functions-lib/func-set-posttype-post.php` 冒頭の定数）:**
 
 ```php
-add_filter('ty_post_hide_category_tag_ui', '__return_true');
+const TY_POST_LABEL_NAME = 'お知らせ';
+const TY_POST_HIDE_CATEGORY_UI = false; // 使わない案件は true
+const TY_POST_HIDE_TAG_UI = false;      // 使わない案件は true
 ```
 
-**フィルター名:** `ty_post_hide_category_tag_ui`（`apply_filters` の第2引数既定値: `false`）
+`functions.php` はローダー専用。上記定数を編集するか、フィルター `ty_post_label_name` / `ty_post_hide_category_ui` / `ty_post_hide_tag_ui` で上書きする。カテゴリーとタグは個別に切り替え可能。
 
 **非表示範囲（true のとき）:** 投稿一覧のカテゴリー・タグ列、左メニュー配下のカテゴリー・タグ、編集画面メタボックス、クイック編集のタクソノミー欄。`register_taxonomy` で管理 UI を off（`unregister_taxonomy` はしない — 未分類付与はコア任せ）。
 
@@ -1383,7 +1383,7 @@ dist/            # ビルド成果物
 | `func-posts-ajax-load-more.php` | アーカイブページの「もっと見る」Ajax読み込み機能 |
 | `func-recaptcha.php` | 必要なページでのみreCAPTCHAスクリプトを読み込む |
 | `func-security.php` | セキュリティ対策（WordPressバージョン情報の削除） |
-| `func-set-posttype-post.php` | デフォルト投稿（post）のラベル変更。カテゴリー・タグ UI 非表示はフィルター `ty_post_hide_category_tag_ui`（既定 false） |
+| `func-set-posttype-post.php` | デフォルト投稿（post）のラベル変更。冒頭定数 `TY_POST_LABEL_NAME` / `TY_POST_HIDE_CATEGORY_UI` / `TY_POST_HIDE_TAG_UI` |
 | `func-set-posttype-works.php` | カスタム投稿タイプ「works」の設定 |
 | `func-thumbnail.php` | サムネイル画像の表示とデータ取得関数 |
 | `func-url.php` | パス定義のヘルパー関数（img_path、page_path等） |

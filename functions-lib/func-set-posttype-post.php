@@ -5,16 +5,36 @@ declare(strict_types=1);
 /**
  * 投稿タイプ「投稿」の管理画面カスタム
  *
- * - ラベル・メニュー文言の変更（常時）
- * - カテゴリー・タグ UI の非表示（任意 — フィルター `ty_post_hide_category_tag_ui` が true のときのみ）
+ * 案件ごとの切り替えは下記「案件設定」の定数のみ編集する。
+ * フィルター `ty_post_label_name` / `ty_post_hide_category_ui` / `ty_post_hide_tag_ui` で上書きも可能。
  */
+
+// --- 案件設定 ---
+/** 管理画面の表示名（標準 post） */
+const TY_POST_LABEL_NAME = 'お知らせ';
+
+/** true … カテゴリーの管理 UI を非表示（タクソノミー自体は残す） */
+const TY_POST_HIDE_CATEGORY_UI = false;
+
+/** true … タグの管理 UI を非表示（タクソノミー自体は残す） */
+const TY_POST_HIDE_TAG_UI = false;
 
 function ty_post_label_name(): string
 {
 	/**
 	 * @param string $name デフォルトの表示名
 	 */
-	return (string) apply_filters('ty_post_label_name', 'お知らせ');
+	return (string) apply_filters('ty_post_label_name', TY_POST_LABEL_NAME);
+}
+
+function ty_post_is_category_ui_hidden(): bool
+{
+	return (bool) apply_filters('ty_post_hide_category_ui', TY_POST_HIDE_CATEGORY_UI);
+}
+
+function ty_post_is_tag_ui_hidden(): bool
+{
+	return (bool) apply_filters('ty_post_hide_tag_ui', TY_POST_HIDE_TAG_UI);
 }
 
 function ty_change_post_object_labels(): void
@@ -79,8 +99,12 @@ function ty_post_disable_taxonomy_admin(): void
 		'meta_box_cb' => false,
 	];
 
-	register_taxonomy('category', 'post', $args);
-	register_taxonomy('post_tag', 'post', $args);
+	if (ty_post_is_category_ui_hidden()) {
+		register_taxonomy('category', 'post', $args);
+	}
+	if (ty_post_is_tag_ui_hidden()) {
+		register_taxonomy('post_tag', 'post', $args);
+	}
 }
 
 /**
@@ -88,8 +112,12 @@ function ty_post_disable_taxonomy_admin(): void
  */
 function ty_post_hide_taxonomy_meta_boxes(): void
 {
-	remove_meta_box('categorydiv', 'post', 'side');
-	remove_meta_box('tagsdiv-post_tag', 'post', 'side');
+	if (ty_post_is_category_ui_hidden()) {
+		remove_meta_box('categorydiv', 'post', 'side');
+	}
+	if (ty_post_is_tag_ui_hidden()) {
+		remove_meta_box('tagsdiv-post_tag', 'post', 'side');
+	}
 }
 
 /**
@@ -100,7 +128,12 @@ function ty_post_hide_taxonomy_meta_boxes(): void
  */
 function ty_post_remove_taxonomy_columns(array $columns): array
 {
-	unset($columns['categories'], $columns['tags']);
+	if (ty_post_is_category_ui_hidden()) {
+		unset($columns['categories']);
+	}
+	if (ty_post_is_tag_ui_hidden()) {
+		unset($columns['tags']);
+	}
 
 	return $columns;
 }
@@ -110,7 +143,13 @@ function ty_post_remove_taxonomy_columns(array $columns): array
  */
 function ty_post_quick_edit_hide_taxonomy(bool $show, string $taxonomy, string $post_type): bool
 {
-	if ($post_type === 'post' && in_array($taxonomy, ['category', 'post_tag'], true)) {
+	if ($post_type !== 'post') {
+		return $show;
+	}
+	if ($taxonomy === 'category' && ty_post_is_category_ui_hidden()) {
+		return false;
+	}
+	if ($taxonomy === 'post_tag' && ty_post_is_tag_ui_hidden()) {
 		return false;
 	}
 
@@ -122,16 +161,20 @@ function ty_post_quick_edit_hide_taxonomy(bool $show, string $taxonomy, string $
  */
 function ty_post_remove_taxonomy_submenus(): void
 {
-	remove_submenu_page('edit.php', 'edit-tags.php?taxonomy=category');
-	remove_submenu_page('edit.php', 'edit-tags.php?taxonomy=post_tag');
+	if (ty_post_is_category_ui_hidden()) {
+		remove_submenu_page('edit.php', 'edit-tags.php?taxonomy=category');
+	}
+	if (ty_post_is_tag_ui_hidden()) {
+		remove_submenu_page('edit.php', 'edit-tags.php?taxonomy=post_tag');
+	}
 }
 
 /**
- * カテゴリー・タグ UI 非表示のフック登録（既定は OFF）
+ * カテゴリー・タグ UI 非表示のフック登録
  */
 function ty_post_register_taxonomy_hide_hooks(): void
 {
-	if (!apply_filters('ty_post_hide_category_tag_ui', false)) {
+	if (!ty_post_is_category_ui_hidden() && !ty_post_is_tag_ui_hidden()) {
 		return;
 	}
 
@@ -141,9 +184,6 @@ function ty_post_register_taxonomy_hide_hooks(): void
 	add_filter('manage_posts_columns', 'ty_post_remove_taxonomy_columns');
 	add_filter('quick_edit_show_taxonomy', 'ty_post_quick_edit_hide_taxonomy', 10, 3);
 }
-
-// 案件でカテゴリー・タグを使わないときは次行のコメントを外す:
-// add_filter('ty_post_hide_category_tag_ui', '__return_true');
 
 add_action('init', 'ty_change_post_object_labels');
 add_action('admin_menu', 'ty_change_post_menu_labels');
