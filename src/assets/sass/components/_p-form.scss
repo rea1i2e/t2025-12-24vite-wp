@@ -250,7 +250,7 @@ label:has(input[type="radio" i]) {
 /* type="date" */
 .p-form input[type="date" i]:not([type=radio i]):not([type=checkbox i]) {
  position: relative;
- padding-block: calc(var(--text-padding-block) - rem(1));
+ padding-block: calc(var(--text-padding-block) - 1px);
   min-height: rem(46); // iPhone Safariでpadding-block効かない対策
   appearance: none;
   text-align: left;
