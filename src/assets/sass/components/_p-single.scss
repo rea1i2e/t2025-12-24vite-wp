@@ -48,10 +48,10 @@
 
 .p-single__title {
   margin-block-start: rem(20);
-  font-size: max(24);
+  font-size: maxrem(24);
   @include mq() {
     margin-block-start: rem(30);
-    font-size: max(32);
+    font-size: maxrem(32);
   }
 }
 

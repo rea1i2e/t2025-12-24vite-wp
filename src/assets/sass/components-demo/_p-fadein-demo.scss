@@ -18,7 +18,7 @@
 }
 
 .p-fadein-demo__eyebrow {
-  font-size: max(14);
+  font-size: maxrem(14);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: #6c5ce7;
@@ -44,7 +44,7 @@
 .p-fadein-demo__lead {
   margin-top: rem(24);
   max-width: 720px;
-  font-size: max(16);
+  font-size: maxrem(16);
 }
 
 .p-fadein-demo__guide {
@@ -87,7 +87,7 @@
   border-radius: 50%;
   background-color: #6c5ce7;
   color: #fff;
-  font-size: max(14);
+  font-size: maxrem(14);
   display: grid;
   place-items: center;
 }
@@ -107,13 +107,13 @@
 }
 
 .p-fadein-demo__card-title {
-  font-size: max(18);
+  font-size: maxrem(18);
   font-weight: 600;
   margin-bottom: rem(12);
 }
 
 .p-fadein-demo__card-body {
-  font-size: max(14);
+  font-size: maxrem(14);
 }
 
 .p-fadein-demo__notes {
