@@ -262,6 +262,20 @@ function ty_theme_image_sp_path(string $pcPathUnderImages): string {
 }
 
 /**
+ * SP 用 media（max-width）から PC 用 format <source> の media（min-width）を導出する
+ */
+function ty_picture_pc_media_from_sp(string $spMedia): string
+{
+	if (preg_match('/max-width:\s*(\d+)px/i', $spMedia, $matches)) {
+		$min = (int) $matches[1] + 1;
+
+		return '(min-width: ' . $min . 'px)';
+	}
+
+	return '(min-width: 768px)';
+}
+
+/**
  * `<img>` 用の属性配列を組み立てる
  *
  * @return array<string, scalar>
@@ -393,10 +407,13 @@ function ty_get_picture_img(
 	if (!empty($pc_dims['height'])) $imgAttrs['height'] = (int) $pc_dims['height'];
 
 	$skipFormat = ty_extra_attrs_has_no_picture($extraAttrs);
-	$format_html = $skipFormat ? '' : ty_build_format_source_tags($pcPathUnderImages);
 
 	$source_html = '';
 	$sp_url = ty_theme_image_url($spPathUnderImages);
+	$has_sp_art_direction = ($sp_url !== '' && $spPathUnderImages !== $pcPathUnderImages);
+	$pc_format_media = $has_sp_art_direction ? ty_picture_pc_media_from_sp($spMedia) : '';
+	$format_html = $skipFormat ? '' : ty_build_format_source_tags($pcPathUnderImages, $pc_format_media);
+
 	if ($sp_url !== '') {
 		$sp_dims = ty_theme_image_dimensions($spPathUnderImages);
 		if ($sp_dims['width'] === null || $sp_dims['height'] === null) {
@@ -426,7 +443,11 @@ function ty_get_picture_img(
 	}
 	$imgTag .= '>';
 
-	return '<picture>' . $format_html . $source_html . $imgTag . '</picture>';
+	$picture_inner = $has_sp_art_direction
+		? ($source_html . $format_html)
+		: ($format_html . $source_html);
+
+	return '<picture>' . $picture_inner . $imgTag . '</picture>';
 }
 
 function ty_picture_img(
