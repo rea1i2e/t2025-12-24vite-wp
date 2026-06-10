@@ -55,7 +55,7 @@
 
 .p-demo-cards__title {
   margin-bottom: rem(8);
-  font-size: rem(18);
+  font-size: max(18);
   font-weight: bold;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -64,7 +64,7 @@
 }
 
 .p-demo-cards__description {
-  font-size: rem(14);
+  font-size: max(14);
   color: #666;
   line-height: 1.6;
   flex: 1;
