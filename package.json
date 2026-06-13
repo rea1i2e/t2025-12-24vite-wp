@@ -15,7 +15,8 @@
     "reinstall": "npm run clean:all && npm install",
     "prepare": "husky",
     "capture:qa": "node scripts/capture-qa-screenshot.mjs",
-    "capture:qa:all": "node scripts/capture-qa-all.mjs"
+    "capture:qa:all": "node scripts/capture-qa-all.mjs",
+    "check:images": "node scripts/check-images.mjs"
   },
   "devDependencies": {
     "@vheemstra/vite-plugin-imagemin": "^2.2.1",
