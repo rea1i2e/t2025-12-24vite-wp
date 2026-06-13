@@ -102,6 +102,7 @@
 
 - **[docs/architecture.md](docs/architecture.md)**: 設計判断・コーディング（WP 固有）・開発・デプロイ・トラブル等の**技術正本**
 - **投稿の管理画面（任意）:** `functions-lib/func-set-posttype-post.php` 冒頭の `TY_POST_LABEL_NAME` / `TY_POST_HIDE_CATEGORY_UI` / `TY_POST_HIDE_TAG_UI`（`functions.php` はローダー専用）— 詳細は architecture「標準投稿 — カテゴリー・タグ UI の非表示」
+- **Sass mixin:** コンポーネント SCSS では **`src/assets/sass/global/mixins/` を先に Read** し、ホバー・省略・reduced-motion 等は `@include` する。Cursor ルール [`.cursor/rules/sass-use-mixins.mdc`](.cursor/rules/sass-use-mixins.mdc)。**`line-clamp` / `text-truncate` は padding なしの子に `@include`**（padding は親）。索引: 静的テンプレ `{型録}/src/demo/demo-document/`、`_text-truncate.scss` 冒頭コメント
 
 ---
 

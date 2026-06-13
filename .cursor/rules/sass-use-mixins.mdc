@@ -1,0 +1,40 @@
+---
+description: コンポーネント SCSS 追記時に global/mixins を先に Read し、既存 mixin を @include する
+globs: src/assets/sass/**/*.scss
+alwaysApply: false
+---
+
+# Sass — mixin 優先
+
+`src/assets/sass/**` を**新規・変更**するとき、**同型の宣言を直書きする前に**次を行う。
+
+1. `src/assets/sass/global/mixins/_index.scss` で一覧を確認する
+2. 該当 mixin ファイルを **Read** する（冒頭コメントに境界条件あり）
+3. 近いデモがあれば DOM 構造も Read する（静的テンプレ型録の `demo-document` 等）
+
+汎用の長文正本: ナレッジ [`wiki/yoshiaki-knowledge-stocking.md`](file:///Users/yoshiaki/working/2026-04-23kn/wiki/yoshiaki-knowledge-stocking.md)。技術索引: 本テーマ `docs/architecture.md` §3.2 以降。
+
+## 先に mixin を探す（典型）
+
+| やりたいこと | mixin | 正本 |
+|-------------|-------|------|
+| 1行省略 | `text-truncate()` | `global/mixins/_text-truncate.scss` |
+| 複数行省略 | `line-clamp($lines)` | 同上 |
+| ホバー・フォーカス可視化 | `hover-*` | `global/mixins/_hover-*.scss` |
+| `prefers-reduced-motion` | `reduced-motion` | `global/mixins/_reduced-motion.scss` |
+| ボタン末尾アイコン | `button-icon-after` | `global/mixins/_button-icon-after.scss` |
+| テキストクリップ | `text-clip` | `global/mixins/_text-clip.scss` |
+
+`-webkit-line-clamp` や `:hover` + `:focus-visible` のセットなど、**mixin と同型の宣言セットは直書きしない**。該当 mixin があれば `@include` する。
+
+## line-clamp / text-truncate — 必須
+
+- `@include line-clamp()` / `text-truncate()` を付ける要素に **padding を置かない**
+- 枠の padding は **親**、省略は **子**（例: 親 `__box` > 子 `__title` に `@include line-clamp(2)`）
+- 索引: 静的テンプレ `{型録}/src/demo/demo-document/index.html`、`_p-demo.scss` の `.p-demo__box` > `.p-demo__line-clamp-*`
+
+## 作業後チェック
+
+- ホバー・省略・reduced-motion を mixin 相当の宣言セットで直書きしていないか
+- `line-clamp` と padding が同一要素にないか
+- コンポーネント SCSS 先頭に `@use "../global" as *;`（またはプロジェクト既定の `@use`）があるか
