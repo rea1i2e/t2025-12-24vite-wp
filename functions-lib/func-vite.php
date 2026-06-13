@@ -290,22 +290,24 @@ function ty_enqueue_vite_script_entry(string $entry, string $handle = 'ty'): voi
 	if (isset($entry_data['css']) && is_array($entry_data['css'])) {
 		foreach ($entry_data['css'] as $i => $css_file) {
 			if (!is_string($css_file)) continue;
+			$css_path = ty_vite_dist_path() . '/' . ltrim($css_file, '/');
 			wp_enqueue_style(
 				$handle . '-script-style-' . $i,
 				$dist_url . '/' . ltrim($css_file, '/'),
 				[],
-				null
+				file_exists($css_path) ? (string) filemtime($css_path) : null
 			);
 		}
 	}
 
 	// JS 本体
 	if (!isset($entry_data['file']) || !is_string($entry_data['file'])) return;
+	$js_path = ty_vite_dist_path() . '/' . ltrim($entry_data['file'], '/');
 	wp_enqueue_script(
 		$handle . '-script',
 		$dist_url . '/' . ltrim($entry_data['file'], '/'),
 		[],
-		null,
+		file_exists($js_path) ? (string) filemtime($js_path) : null,
 		['in_footer' => false]
 	);
 	wp_script_add_data($handle . '-script', 'type', 'module');
@@ -339,10 +341,11 @@ function ty_enqueue_vite_style_entry(string $entry, string $handle = 'ty'): void
 	$entry_data = $manifest[$entry];
 
 	if (!isset($entry_data['file']) || !is_string($entry_data['file'])) return;
+	$css_path = ty_vite_dist_path() . '/' . ltrim($entry_data['file'], '/');
 	wp_enqueue_style(
 		$handle . '-style',
 		$dist_url . '/' . ltrim($entry_data['file'], '/'),
 		[],
-		null
+		file_exists($css_path) ? (string) filemtime($css_path) : null
 	);
 }
