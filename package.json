@@ -13,7 +13,8 @@
     "clean": "rm -rf dist src/.vite src/.img",
     "clean:all": "rm -rf dist src/.vite src/.img node_modules package-lock.json",
     "reinstall": "npm run clean:all && npm install",
-    "prepare": "husky"
+    "prepare": "husky",
+    "capture:qa": "node scripts/capture-qa-screenshot.mjs"
   },
   "devDependencies": {
     "@vheemstra/vite-plugin-imagemin": "^2.2.1",
@@ -27,6 +28,7 @@
     "imagemin-optipng": "^8.0.0",
     "imagemin-svgo": "^11.0.1",
     "imagemin-webp": "^8.0.0",
+    "playwright": "^1.51.0",
     "postcss": "^8.4.47",
     "postcss-sort-media-queries": "^5.2.0",
     "sass": "^1.93.0",

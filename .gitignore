@@ -36,3 +36,6 @@ raw/videos/compress-report.md
 *.njsproj
 *.sln
 *.sw?
+
+# QA 比較用スクショ（ローカル生成のみ）
+qa-screenshots/
