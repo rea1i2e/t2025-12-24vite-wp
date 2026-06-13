@@ -14,7 +14,8 @@
     "clean:all": "rm -rf dist src/.vite src/.img node_modules package-lock.json",
     "reinstall": "npm run clean:all && npm install",
     "prepare": "husky",
-    "capture:qa": "node scripts/capture-qa-screenshot.mjs"
+    "capture:qa": "node scripts/capture-qa-screenshot.mjs",
+    "capture:qa:all": "node scripts/capture-qa-all.mjs"
   },
   "devDependencies": {
     "@vheemstra/vite-plugin-imagemin": "^2.2.1",

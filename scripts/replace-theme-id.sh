@@ -34,6 +34,7 @@ files=(
   "env.deploy.example"
   "docs/architecture.md"
   "tools/README.md"
+  "capture-qa.config.json"
 )
 
 # 置換実行

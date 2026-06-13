@@ -1,0 +1,7 @@
+{
+  "baseUrl": "http://t2025-12-24vite-wp.local",
+  "widths": [1440, 375],
+  "pages": [
+    { "slug": "top", "path": "" }
+  ]
+}

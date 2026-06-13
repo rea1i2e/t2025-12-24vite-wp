@@ -21,9 +21,20 @@ function getArg(name) {
   return args[index + 1];
 }
 
+function getOptionalArg(name) {
+  const index = args.indexOf(`--${name}`);
+  if (index === -1 || !args[index + 1]) return null;
+  return args[index + 1];
+}
+
 const url = getArg('url');
 const width = Number(getArg('width'));
 const out = resolve(getArg('out'));
+const basicUser = getOptionalArg('user');
+const basicPass = getOptionalArg('pass');
+const httpCredentials = (basicUser && basicPass)
+  ? { username: basicUser, password: basicPass }
+  : undefined;
 
 if (!Number.isFinite(width) || width <= 0) {
   throw new Error('--width は正の数値で指定してください');
@@ -52,6 +63,7 @@ const page = await browser.newPage({
     height: width <= 480 ? 844 : 1080,
   },
   deviceScaleFactor: 1,
+  ...(httpCredentials && { httpCredentials }),
 });
 
 await page.emulateMedia({ reducedMotion: 'reduce' });
