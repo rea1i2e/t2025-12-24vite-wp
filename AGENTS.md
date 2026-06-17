@@ -178,3 +178,11 @@ dist/ から実際のファイルを enqueue
 ## 参考ドキュメント
 
 - **技術正本**: [docs/architecture.md](docs/architecture.md)
+
+## Cursor Cloud specific instructions
+
+- **依存関係:** `npm install`（`package-lock.json` 使用）。`prepare` スクリプトで husky が Git hooks をセットアップする。
+- **フロントエンドビルド:** `npm run build`（Vite でアセットを `dist/` に出力、`manifest.json` 生成）。Cloud VM でもビルドは正常に動作する。
+- **dev サーバー:** `npm run dev` で Vite HMR サーバーが localhost:5173 で起動する。ただし CSS/JS を提供するのみで、WordPress（PHP + MySQL）が別途必要。
+- **WordPress 環境:** Cloud VM には PHP・MySQL・WordPress がないため、テーマの PHP テンプレートの動作確認（ブラウザでの表示）はできない。フロントエンドアセットのビルド検証のみ可能。
+- **pre-commit hook:** `npm run build` が走る。コミット前にビルドが通ることを確認すること。
