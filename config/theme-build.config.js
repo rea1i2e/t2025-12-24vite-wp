@@ -11,11 +11,13 @@ export const themeBuildConfig = {
   /** none | webp | avif | both */
   imageAltFormats: "none",
   /** dist 出力の JS/CSS/フォント/画像ファイル名に [hash] を付けるか */
-  useFileHash: true,
+  // useFileHash: true,
+  useFileHash: false,
   /**
    * CSS を minify するか（vite build.cssMinify）。JS は常に minify される。
    */
-  cssMinify: true,
+  // cssMinify: true,
+  cssMinify: false,
   /** JPEG 圧縮（mozjpeg） */
   jpegQuality: 75,
   /** WebP / AVIF の quality 目安（imageAltFormats が webp/avif/both のとき） */
