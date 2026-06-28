@@ -4,7 +4,7 @@
 
 対象は **WordPress サイト制作用テンプレート**（略称 **WP テンプレ**）。呼称の正本はナレッジベースの [wiki/operated-repositories.md](/Users/yoshiaki/working/2026-04-23kn/wiki/operated-repositories.md#表記ルール3-リポジトリと型録)（表記ルール）。
 
-**人間が読む場合は、ルート [README.md](README.md) と [docs/architecture.md](docs/architecture.md) を参照してください。**
+**人間が読む場合は、ルート [README.md](README.md) と [ai-docs/architecture.md](ai-docs/architecture.md) を参照してください。**
 
 ---
 
@@ -52,7 +52,7 @@
 
 1. 下表から **JS・マークアップ（EJS）・Sass** の該当ファイルパスを特定し、`Read` 等で内容を把握する。
 2. マークアップの組み立て例が必要なら、デモページの `index.html` を読む（どの `_p-*.ejs` が載っているかの索引になる）。
-3. この WP テンプレ向けに **PHP テンプレート・既存の BEM / `ty_` 規約・[docs/architecture.md のコーディング規約節](docs/architecture.md#コーディング規約wp-テンプレ固有)** に合わせて移植する。EJS のままコピーしない。**コンテンツ文言の捏造は禁止**（汎用ラベルのみ・またはプレースホルダにし、ユーザーまたは既存データに任せる）。
+3. この WP テンプレ向けに **PHP テンプレート・既存の BEM / `ty_` 規約・[ai-docs/architecture.md のコーディング規約節](ai-docs/architecture.md#コーディング規約wp-テンプレ固有)** に合わせて移植する。EJS のままコピーしない。**コンテンツ文言の捏造は禁止**（汎用ラベルのみ・またはプレースホルダにし、ユーザーまたは既存データに任せる）。
 4. JS は静的テンプレ（型録）の **`data-*` / `.js-*` クラス契約と同等の DOM 構造**を保てるならそのまま近い形で取り込み、テーマのエントリ（例: `main.js`）に import する必要があれば `{型録}/src/assets/js/main.js` を参照する。
 
 **主要パーツと型録ファイル（`{型録}/` 以下）**
@@ -68,7 +68,7 @@
 ### アクセシビリティ仮基準（参照）
 
 - **正本（共通）:** ナレッジベース `/Users/yoshiaki/working/2026-04-23kn/wiki/a11y-baseline.md`（**Must / Should / 運用 / チェックリスト**）。**基準の改訂はこの Wiki で行う。**
-- **WP テンプレでの実装の手がかり:** [docs/architecture.md](docs/architecture.md) 冒頭の A11y 補足、[コーディング規約（WP テンプレ固有）](docs/architecture.md#コーディング規約wp-テンプレ固有)、および本ファイルの「型録参照」（stub ファイルは置かない）。
+- **WP テンプレでの実装の手がかり:** [ai-docs/architecture.md](ai-docs/architecture.md) 冒頭の A11y 補足、[コーディング規約（WP テンプレ固有）](ai-docs/architecture.md#コーディング規約wp-テンプレ固有)、および本ファイルの「型録参照」（stub ファイルは置かない）。
 - **適用**は**静的サイトに限らない**（WCAG 適合の宣言文書ではない）。PHP・テンプレート・JS の**新規・修正**の際、Wiki 正本の **Must** を当該範囲で満たす。
 
 表に無いパターン（トグル・フェードイン等）のときは、**`{型録}/src/assets/js/main.js` の `import './demo/...'` を一覧し**、対応する `src/ejs/components-demo/`・`src/assets/sass/demo-components/` を `grep` で辿る。
@@ -100,7 +100,7 @@
 
 ### WP テンプレ固有のルール
 
-- **[docs/architecture.md](docs/architecture.md)**: 設計判断・コーディング（WP 固有）・開発・デプロイ・トラブル等の**技術正本**
+- **[ai-docs/architecture.md](ai-docs/architecture.md)**: 設計判断・コーディング（WP 固有）・開発・デプロイ・トラブル等の**技術正本**
 - **投稿の管理画面（任意）:** `functions-lib/func-set-posttype-post.php` 冒頭の `TY_POST_LABEL_NAME` / `TY_POST_HIDE_CATEGORY_UI` / `TY_POST_HIDE_TAG_UI`（`functions.php` はローダー専用）— 詳細は architecture「標準投稿 — カテゴリー・タグ UI の非表示」
 - **Sass mixin:** コンポーネント SCSS では **`src/assets/sass/global/mixins/` を先に Read** し、ホバー・省略・reduced-motion 等は `@include` する。Cursor ルール [`.cursor/rules/sass-use-mixins.mdc`](.cursor/rules/sass-use-mixins.mdc)。**`line-clamp` / `text-truncate` は padding なしの子に `@include`**（padding は親）。索引: 静的テンプレ `{型録}/src/demo/demo-document/`、`_text-truncate.scss` 冒頭コメント
 
@@ -108,7 +108,7 @@
 
 ## アーキテクチャ概要
 
-詳細は [docs/architecture.md](docs/architecture.md) を参照してください。
+詳細は [ai-docs/architecture.md](ai-docs/architecture.md) を参照してください。
 
 ### 開発環境（dev）のフロー
 
@@ -154,7 +154,7 @@ dist/ から実際のファイルを enqueue
 
 ## 変更時の注意点
 
-- **WP テンプレビルド:** [`config/theme-build.config.js`](config/theme-build.config.js) が正本（既定 `imageAltFormats: "none"`・`useFileHash: true`・`cssMinify: true`）。案件複製後は案件ごとに上書き（例: ik は `avif` + `useFileHash: false`）。詳細は [docs/architecture.md](docs/architecture.md) の画像最適化節。
+- **WP テンプレビルド:** [`config/theme-build.config.js`](config/theme-build.config.js) が正本（既定 `imageAltFormats: "none"`・`useFileHash: true`・`cssMinify: true`）。案件複製後は案件ごとに上書き（例: ik は `avif` + `useFileHash: false`）。詳細は [ai-docs/architecture.md](ai-docs/architecture.md) の画像最適化節。
 - **Vite連携の仕組みを変更しない**: dev/prod判定とmanifest読み込みの仕組みは必須
 - **関数名のプレフィックス**: `ty_` を必ず付与（WordPress/プラグインとの衝突回避）
 - **画像パスの解決**: CSS内はViteが解決、HTML内は `ty_theme_image_url()` を使用
@@ -169,12 +169,12 @@ dist/ から実際のファイルを enqueue
 
 | 内容 | 行き先 |
 |------|--------|
-| 技術仕様・手順の追記 | [docs/architecture.md](docs/architecture.md) の該当節 |
-| 意思決定 | ナレッジ [wp-template-decision-records.md](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md)・[adr-workflow.md](/Users/yoshiaki/working/2026-04-23kn/wiki/adr-workflow.md)／新規 ADR は必要なら `docs/decisions/NNNN-topic.md` |
-| A11y の実装の手がかり | [docs/architecture.md](docs/architecture.md) 冒頭・コーディング規約節／Wiki 正本 `wiki/a11y-baseline.md` |
+| 技術仕様・手順の追記・案件固有ルール | **`ai-docs/`**（正本 [`architecture.md`](ai-docs/architecture.md)、索引 [INDEX.md](ai-docs/INDEX.md)） |
+| 意思決定 | ナレッジ [wp-template-decision-records.md](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md)・[adr-workflow.md](/Users/yoshiaki/working/2026-04-23kn/wiki/adr-workflow.md)／新規 ADR は必要なら `ai-docs/decisions/NNNN-topic.md` |
+| A11y の実装の手がかり | [ai-docs/architecture.md](ai-docs/architecture.md) 冒頭・コーディング規約節／Wiki 正本 `wiki/a11y-baseline.md` |
 
 ---
 
 ## 参考ドキュメント
 
-- **技術正本**: [docs/architecture.md](docs/architecture.md)
+- **技術正本**: [ai-docs/architecture.md](ai-docs/architecture.md)

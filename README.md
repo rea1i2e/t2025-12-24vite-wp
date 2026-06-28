@@ -6,7 +6,7 @@
 ## この README の責務
 
 - 入口（クイックスタート・注意事項・クローン手順）
-- **詳細はすべて [docs/architecture.md](docs/architecture.md)**（導入・設計・開発・デプロイ・トラブル・案件メモ・移行ログ・コーディング規約を集約）
+- **詳細はすべて [ai-docs/architecture.md](ai-docs/architecture.md)**（導入・設計・開発・デプロイ・トラブル・案件メモ・移行ログ・コーディング規約を集約）
 - **文書化・ADR の基準**（汎用）: ナレッジ [template-repository-docs.md](/Users/yoshiaki/working/2026-04-23kn/wiki/template-repository-docs.md)
 
 ## 特徴
@@ -24,7 +24,7 @@ npm run dev
 npm run build
 ```
 
-**手順の詳細・新規案件セットアップ・デプロイ**は [docs/architecture.md](docs/architecture.md) の目次から辿る。
+**手順の詳細・新規案件セットアップ・デプロイ**は [ai-docs/architecture.md](ai-docs/architecture.md) の目次から辿る。
 
 **Vite は既定で `localhost:5173`。** 他プロジェクトが同じポートを使うと、dev 判定やアセット読み込みがずれることがある。必要なら **5173 を使っているプロセスを確認したうえで** 終了する（macOS の例）。
 
@@ -56,11 +56,12 @@ gh repo clone GitHubのユーザー名/新規リポジトリ名
 
 | ファイル | 役割 |
 |----------|------|
-| [docs/architecture.md](docs/architecture.md) | 技術正本（上記のすべて・A11y のテーマ側手がかりは冒頭） |
-| （任意）`docs/decisions/NNNN-topic.md` | **新規 ADR** をテーマ内に残すときの置き場。**過去分・判断基準**はナレッジ [wp-template-decision-records.md](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md)・[adr-workflow.md](/Users/yoshiaki/working/2026-04-23kn/wiki/adr-workflow.md) |
+| [ai-docs/INDEX.md](ai-docs/INDEX.md) | 技術ドキュメントの索引 |
+| [ai-docs/architecture.md](ai-docs/architecture.md) | 技術正本（上記のすべて・A11y のテーマ側手がかりは冒頭） |
+| （任意）`ai-docs/decisions/NNNN-topic.md` | **新規 ADR** をテーマ内に残すときの置き場。**過去分・判断基準**はナレッジ [wp-template-decision-records.md](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md)・[adr-workflow.md](/Users/yoshiaki/working/2026-04-23kn/wiki/adr-workflow.md) |
 | [AGENTS.md](AGENTS.md) | AI エージェント向け |
 
-**アクセシビリティ仮基準の正本**はナレッジ [`wiki/a11y-baseline.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/a11y-baseline.md)。テーマ固有の実装の手がかりは [docs/architecture.md](docs/architecture.md) 冒頭とコーディング規約節、および [AGENTS.md](AGENTS.md) の型録参照。
+**アクセシビリティ仮基準の正本**はナレッジ [`wiki/a11y-baseline.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/a11y-baseline.md)。テーマ固有の実装の手がかりは [ai-docs/architecture.md](ai-docs/architecture.md) 冒頭とコーディング規約節、および [AGENTS.md](AGENTS.md) の型録参照。
 
 ## ライセンス
 

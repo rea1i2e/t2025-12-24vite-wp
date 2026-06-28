@@ -7,7 +7,7 @@ env:
     **/.git*/**
     **/node_modules/**
     **/.github/**
-    **/docs/**
+    **/ai-docs/**
     **/src/**
     **/scripts/**
     **/raw/**

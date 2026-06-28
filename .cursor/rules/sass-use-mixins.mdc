@@ -12,7 +12,7 @@ alwaysApply: false
 2. 該当 mixin ファイルを **Read** する（冒頭コメントに境界条件あり）
 3. 近いデモがあれば DOM 構造も Read する（静的テンプレ型録の `demo-document` 等）
 
-汎用の長文正本: ナレッジ [`wiki/yoshiaki-knowledge-stocking.md`](file:///Users/yoshiaki/working/2026-04-23kn/wiki/yoshiaki-knowledge-stocking.md)。技術索引: 本テーマ `docs/architecture.md` §3.2 以降。
+汎用の長文正本: ナレッジ [`wiki/yoshiaki-knowledge-stocking.md`](file:///Users/yoshiaki/working/2026-04-23kn/wiki/yoshiaki-knowledge-stocking.md)。技術索引: 本テーマ `ai-docs/architecture.md` §3.2 以降。
 
 ## 先に mixin を探す（典型）
 

@@ -189,15 +189,15 @@ gh repo clone GitHubのユーザー名/新規リポジトリ名
   - `tools/import-pages.php`（パス）
   - `tools/import-pages.sh`（パス）
   - `env.deploy.example`（`FTP_SERVER_DIR`、`TEST_URL`）
-  - `docs/architecture.md`（コマンド例）
-  - `docs/architecture.md`（コマンド例）
-  - `docs/architecture.md`（ディレクトリ名）
+  - `ai-docs/architecture.md`（コマンド例）
+  - `ai-docs/architecture.md`（コマンド例）
+  - `ai-docs/architecture.md`（ディレクトリ名）
   - `tools/README.md`（コマンド例）
 - 注意: 以下のMDファイルはテンプレートとして残します（置換しません）
   - `README.md`
-  - `docs/architecture.md`
-  - `docs/architecture.md`
-  - `docs/architecture.md`
+  - `ai-docs/architecture.md`
+  - `ai-docs/architecture.md`
+  - `ai-docs/architecture.md`
 - **個別に変更しても問題ない項目**：
   - `style.css` の `Theme Name`: WordPress管理画面に表示されるテーマ名なので、案件名などに変更しても問題ありません
 - **テーマディレクトリ名を変更する場合の注意**：
@@ -207,7 +207,7 @@ gh repo clone GitHubのユーザー名/新規リポジトリ名
 
 ### 4. Secrets指定、登録
 
-[docs/architecture.md](../architecture.md#デプロイ) の「Secrets設定のスクリプト化」を参照
+[architecture.md](architecture.md#デプロイ) の「Secrets設定のスクリプト化」を参照
 
 ### 5. サーバー管理パネルからの作業
 
@@ -276,7 +276,7 @@ Vite dev serverが起動し、`localhost:5173` でアクセス可能になりま
 
 ## トラブルシューティング
 
-セットアップ時に問題が発生した場合は、[docs/architecture.md](../architecture.md#トラブルシューティング) を参照してください。
+セットアップ時に問題が発生した場合は、[architecture.md](architecture.md#トラブルシューティング) を参照してください。
 
 よくある問題：
 
@@ -974,7 +974,7 @@ chmod +x scripts/setup-secrets.sh
 以下のファイル/ディレクトリはデプロイ対象外です：
 
 - `.git*`, `.github/`
-- `node_modules/`, `src/`, `scripts/`, `raw/`, `docs/`
+- `node_modules/`, `src/`, `scripts/`, `raw/`, `ai-docs/`
 - `package.json`, `package-lock.json`
 - `vite.config.*`, `postcss.config.*`
 - `*.map`, `README.md`
@@ -1277,7 +1277,7 @@ NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
 ## 参考資料
 
-- [本ドキュメント（architecture.md）](../architecture.md) — 上記各節に統合済み
+- [本ドキュメント（architecture.md）](architecture.md) — 上記各節に統合済み
 ## 案件固有情報の記入先
 
 このドキュメントは、案件ごとの仕様を記録するためのファイルです。リポジトリをクローンした後、このファイルの内容を記入してください。
