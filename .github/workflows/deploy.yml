@@ -35,7 +35,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+    # Secrets 未登録（リポ作成直後・setup-secrets.sh 前）でも赤くならないよう、
+    # FTP_SERVER の有無でデプロイ／通知ステップを出し分けるための写し。
+    env:
+      FTP_SERVER: ${{ secrets.FTP_SERVER }}
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -111,7 +115,7 @@ jobs:
         fi
       
     - name: Deploy to Test Environment
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && env.FTP_SERVER != ''
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ${{ secrets.FTP_SERVER }}
@@ -125,7 +129,7 @@ jobs:
         exclude: ${{ env.FTP_EXCLUDE }}
 
     - name: Deploy docroot Basic (site-wide .htaccess)
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && steps.docroot_basic.outputs.enabled == 'true'
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && steps.docroot_basic.outputs.enabled == 'true' && env.FTP_SERVER != ''
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ${{ secrets.FTP_SERVER }}
@@ -136,7 +140,7 @@ jobs:
         log-level: minimal
 
     - name: Deploy to Test Environment (PR)
-      if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request' && env.FTP_SERVER != ''
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ${{ secrets.FTP_SERVER }}
@@ -147,7 +151,7 @@ jobs:
         exclude: ${{ env.FTP_EXCLUDE }}
 
     - name: Deploy docroot Basic (site-wide .htaccess) (PR)
-      if: github.event_name == 'pull_request' && steps.docroot_basic.outputs.enabled == 'true'
+      if: github.event_name == 'pull_request' && steps.docroot_basic.outputs.enabled == 'true' && env.FTP_SERVER != ''
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ${{ secrets.FTP_SERVER }}
@@ -158,7 +162,7 @@ jobs:
         log-level: minimal
 
     - name: Send Discord Notification - Test Deploy
-      if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && env.FTP_SERVER != ''
       uses: Ilshidur/action-discord@master
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
@@ -178,7 +182,7 @@ jobs:
           • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
           
     - name: Send Discord Notification - PR Test Deploy
-      if: success() && github.event_name == 'pull_request'
+      if: success() && github.event_name == 'pull_request' && env.FTP_SERVER != ''
       uses: Ilshidur/action-discord@master
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
