@@ -114,8 +114,12 @@ jobs:
           echo "- [プルリクエスト](https://github.com/${{ github.repository }}/pull/${{ github.event.number }})" >> $GITHUB_STEP_SUMMARY
         fi
       
+    # 本番(main)テーマデプロイは一時的な FTP 接続タイムアウト（Timeout (control socket)）を吸収するため、
+    # continue-on-error で1回だけ自動リトライする。2回目も失敗したら本当の失敗として赤くする（失敗通知もそのとき出る）。
     - name: Deploy to Test Environment
+      id: deploy_main
       if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && env.FTP_SERVER != ''
+      continue-on-error: true
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ${{ secrets.FTP_SERVER }}
@@ -126,6 +130,19 @@ jobs:
         # Example: /wp-content/themes/t2025-12-24vite-wp/
         # Set this in repo secrets.
         server-dir: ${{ secrets.FTP_SERVER_DIR }}
+        timeout: 60000
+        exclude: ${{ env.FTP_EXCLUDE }}
+
+    - name: Deploy to Test Environment (retry)
+      if: steps.deploy_main.outcome == 'failure'
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./
+        server-dir: ${{ secrets.FTP_SERVER_DIR }}
+        timeout: 60000
         exclude: ${{ env.FTP_EXCLUDE }}
 
     - name: Deploy docroot Basic (site-wide .htaccess)
