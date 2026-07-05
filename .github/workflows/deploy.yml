@@ -61,7 +61,7 @@ jobs:
       id: docroot_basic
       run: |
         name="${{ github.event.repository.name }}"
-        if [[ "${name}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}[a-zA-Z]{2}$ ]]; then
+        if [[ "${name}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}[a-zA-Z]{2}[0-9]*$ ]]; then
           echo "enabled=true" >> "$GITHUB_OUTPUT"
           echo "**docroot Basic:** 有効（\`${name}\` は案件ID形式）" >> "$GITHUB_STEP_SUMMARY"
         else
