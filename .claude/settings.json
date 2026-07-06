@@ -2,6 +2,19 @@
   "permissions": {
     "additionalDirectories": [
       "../../../../../../../working/2026-04-23kn"
+    ],
+    "deny": [
+      "Read(//**/.env)",
+      "Read(//**/.env.*)",
+      "Read(//**/.htpasswd)",
+      "Read(//**/*.pem)",
+      "Read(//**/id_rsa)",
+      "Read(//**/id_rsa.pub)",
+      "Read(//**/*credentials*.json)",
+      "Bash(rm -rf:*)",
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(chmod -R 777:*)"
     ]
   },
   "hooks": {
