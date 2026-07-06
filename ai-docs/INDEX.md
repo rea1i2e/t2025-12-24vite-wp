@@ -36,6 +36,7 @@
 | ファイル | 要約 | 最終更新 |
 |---|---|---|
 | [`architecture.md`](architecture.md) | テンプレ技術正本 | — |
-| （未追加） | — | — |
+| [`session-handoff.md`](session-handoff.md) | Cursor ↔ Claude Code 引き継ぎ | 2026-07-06 |
+| [`claude-code-resume-prompt.md`](claude-code-resume-prompt.md) | Cursor → Claude Code 再開用コピペ | 2026-07-06 |
 
 **メンテ:** ファイル追加・改訂時はこの索引表も更新する。

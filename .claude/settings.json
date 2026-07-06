@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "additionalDirectories": [
+      "../../../../../../../working/2026-04-23kn"
+    ]
+  },
+  "hooks": {
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/stopfailure-handoff.sh",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

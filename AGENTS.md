@@ -143,6 +143,10 @@ dist/ から実際のファイルを enqueue
 
 ---
 
+## Cursor ↔ Claude Code 引き継ぎ
+
+Claude Code と Cursor を併用するときは `memo/session-log.md` に `- 次:` を残す。Claude Code 終了前は `/handoff`、Cursor から続けるときは `@memo/session-log.md`。詳細: [`ai-docs/session-handoff.md`](ai-docs/session-handoff.md)。正本スキル: ナレッジ `skills/cross-tool-session-handoff/SKILL.md`。
+
 ## Git（エージェント向け）
 
 - **`commit` / `push` / ブランチ操作 / マージ / `stash` など、リポジトリに履歴やリモートへ影響する Git 操作は、ユーザーから明示的に依頼があった場合のみ行う。**
