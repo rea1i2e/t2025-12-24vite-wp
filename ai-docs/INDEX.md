@@ -21,6 +21,9 @@
 
 | ファイル（例） | 用途 |
 |---|---|
+| [`figma-design-mapping.md`](figma-design-mapping.md) | Figma URL 正本（ページ・node・実装ファイル対応） |
+| [`figma-design-kickoff-prompt.md`](figma-design-kickoff-prompt.md) | 案件開始時：URL を mapping にストック |
+| [`figma-design-section-prompt.md`](figma-design-section-prompt.md) | 1セクションずつ Figma MCP → 実装 |
 | `scss-coding-rules.md` | レガシーテーマ改修の Sass 規約・地雷 |
 | `path-conventions.md` | 画像パス・enqueue の案件固有ルール |
 | `css-loading-order.md` | 既存 CSS 積層の調査結果 |
@@ -31,6 +34,8 @@
 | 作業 | 読むファイル |
 |---|---|
 | スタック共通・セットアップ | [`architecture.md`](architecture.md) |
+| Figma 初回受領・mapping 整備 | [`figma-design-kickoff-prompt.md`](figma-design-kickoff-prompt.md) → [`figma-design-mapping.md`](figma-design-mapping.md) |
+| Figma から1セクション実装 | [`figma-design-section-prompt.md`](figma-design-section-prompt.md) + [`figma-design-mapping.md`](figma-design-mapping.md) |
 | （案件で追加したルール） | 下表を更新 |
 
 | ファイル | 要約 | 最終更新 |
@@ -38,5 +43,8 @@
 | [`architecture.md`](architecture.md) | テンプレ技術正本 | — |
 | [`session-handoff.md`](session-handoff.md) | Cursor ↔ Claude Code 引き継ぎ | 2026-07-06 |
 | [`claude-code-resume-prompt.md`](claude-code-resume-prompt.md) | Cursor → Claude Code 再開用コピペ | 2026-07-06 |
+| [`figma-design-mapping.md`](figma-design-mapping.md) | Figma URL 正本（雛形） | 2026-07-07 |
+| [`figma-design-kickoff-prompt.md`](figma-design-kickoff-prompt.md) | 案件開始：mapping ストック | 2026-07-07 |
+| [`figma-design-section-prompt.md`](figma-design-section-prompt.md) | 1セクション実装プロンプト | 2026-07-07 |
 
 **メンテ:** ファイル追加・改訂時はこの索引表も更新する。
