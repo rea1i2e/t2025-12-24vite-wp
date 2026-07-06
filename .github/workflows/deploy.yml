@@ -25,6 +25,11 @@ env:
     **/tools/**
     **/.env*
     **/env.deploy.example
+    **/memo/**
+    **/.claude/**
+    **/.cursor/**
+    **/CLAUDE.md
+    **/capture-qa.config.json
 
 on:
   push:
@@ -43,22 +48,59 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+      with:
+        fetch-depth: 0
+
+    - name: Detect deploy-relevant changes
+      id: changes
+      uses: dorny/paths-filter@v3
+      with:
+        filters: |
+          deploy:
+            - 'src/**'
+            - 'scripts/**'
+            - 'config/**'
+            - 'vite.config.*'
+            - 'postcss.config.*'
+            - 'package.json'
+            - 'package-lock.json'
+            - '*.php'
+            - 'style.css'
+            - 'components/**'
+            - 'components-demo/**'
+            - 'functions-lib/**'
+            - 'acf-json/**'
+            - 'apple-touch-icon.png'
+            - 'favicon.ico'
+            - 'dist/**'
+
+    - name: Note skipped deployment
+      if: steps.changes.outputs.deploy != 'true'
+      run: |
+        echo "## ⏭️ デプロイスキップ" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "ビルド／デプロイ対象外のファイルのみの変更のため、ビルド・FTP・Discord 通知は行いません。" >> $GITHUB_STEP_SUMMARY
+
     - name: Setup Node.js
+      if: steps.changes.outputs.deploy == 'true'
       uses: actions/setup-node@v4
       with:
         node-version: '20'
         cache: 'npm'
-        
+
     - name: Install dependencies
+      if: steps.changes.outputs.deploy == 'true'
       run: npm ci
-      
+
     - name: Build project
+      id: build_project
+      if: steps.changes.outputs.deploy == 'true'
       run: npm run build
 
     # リポジトリ名が案件ID形式（YYYY-MM-DDxx）のときだけ docroot Basic を生成・FTP（テンプレ t2025-… はスキップ）
     - name: Determine docroot Basic eligibility
       id: docroot_basic
+      if: steps.changes.outputs.deploy == 'true'
       run: |
         name="${{ github.event.repository.name }}"
         if [[ "${name}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}[a-zA-Z]{2}[0-9]*$ ]]; then
@@ -70,17 +112,17 @@ jobs:
         fi
 
     - name: Install apache2-utils (htpasswd)
-      if: steps.docroot_basic.outputs.enabled == 'true'
+      if: steps.changes.outputs.deploy == 'true' && steps.docroot_basic.outputs.enabled == 'true'
       run: sudo apt-get update && sudo apt-get install -y apache2-utils
 
     - name: Build staging docroot Basic (.htaccess + .htpasswd)
-      if: steps.docroot_basic.outputs.enabled == 'true'
+      if: steps.changes.outputs.deploy == 'true' && steps.docroot_basic.outputs.enabled == 'true'
       env:
         CASE_ID: ${{ github.event.repository.name }}
       run: bash scripts/build-staging-docroot-basic.sh
-      
+
     - name: Generate deployment summary
-      if: always()
+      if: always() && steps.changes.outputs.deploy == 'true'
       run: |
         echo "## 📋 デプロイサマリー" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
@@ -89,13 +131,13 @@ jobs:
         echo "**コミッター:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
         echo "**イベント:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        
+
         if [ "${{ github.event_name }}" = "push" ] && { [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.ref }}" = "refs/heads/master" ]; }; then
           echo "**🌐 テスト環境:** ${{ secrets.TEST_URL }}" >> $GITHUB_STEP_SUMMARY
         elif [ "${{ github.event_name }}" = "pull_request" ]; then
           echo "**🌐 PRテスト環境:** ${{ secrets.TEST_URL }}" >> $GITHUB_STEP_SUMMARY
         fi
-        
+
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "### 📁 デプロイ対象（テーマ一式）" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
@@ -103,9 +145,9 @@ jobs:
         ls -1 *.php style.css 2>/dev/null | head -30 >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "Built assets (examples):" >> $GITHUB_STEP_SUMMARY
-        find dist -type f \( -name "*.css" -o -name "*.js" -o -name "*.json" -o -name "*.woff2" -o -name "*.svg" -o -name "*.jpg" -o -name "*.png" -o -name "*.webp" \) | head -30 >> $GITHUB_STEP_SUMMARY
+        find dist -type f \( -name "*.css" -o -name "*.js" -o -name "*.json" -o -name "*.woff2" -o -name "*.svg" -o -name "*.jpg" -o -name "*.png" -o -name "*.webp" \) 2>/dev/null | head -30 >> $GITHUB_STEP_SUMMARY || true
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-        
+
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "### 🔗 確認リンク" >> $GITHUB_STEP_SUMMARY
         echo "- [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
@@ -113,12 +155,12 @@ jobs:
         if [ "${{ github.event_name }}" = "pull_request" ]; then
           echo "- [プルリクエスト](https://github.com/${{ github.repository }}/pull/${{ github.event.number }})" >> $GITHUB_STEP_SUMMARY
         fi
-      
+
     # 本番(main)テーマデプロイは一時的な FTP 接続タイムアウト（Timeout (control socket)）を吸収するため、
     # continue-on-error で1回だけ自動リトライする。2回目も失敗したら本当の失敗として赤くする（失敗通知もそのとき出る）。
     - name: Deploy to Test Environment
       id: deploy_main
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && env.FTP_SERVER != ''
+      if: steps.changes.outputs.deploy == 'true' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && env.FTP_SERVER != ''
       continue-on-error: true
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
@@ -130,10 +172,15 @@ jobs:
         # Example: /wp-content/themes/t2025-12-24vite-wp/
         # Set this in repo secrets.
         server-dir: ${{ secrets.FTP_SERVER_DIR }}
-        timeout: 60000
+        timeout: 120000
         exclude: ${{ env.FTP_EXCLUDE }}
 
+    - name: Wait before FTP retry
+      if: steps.deploy_main.outcome == 'failure'
+      run: sleep 30
+
     - name: Deploy to Test Environment (retry)
+      id: deploy_retry
       if: steps.deploy_main.outcome == 'failure'
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
@@ -142,11 +189,12 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./
         server-dir: ${{ secrets.FTP_SERVER_DIR }}
-        timeout: 60000
+        timeout: 120000
         exclude: ${{ env.FTP_EXCLUDE }}
 
     - name: Deploy docroot Basic (site-wide .htaccess)
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && steps.docroot_basic.outputs.enabled == 'true' && env.FTP_SERVER != ''
+      id: deploy_docroot
+      if: steps.changes.outputs.deploy == 'true' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && steps.docroot_basic.outputs.enabled == 'true' && env.FTP_SERVER != ''
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ${{ secrets.FTP_SERVER }}
@@ -157,7 +205,8 @@ jobs:
         log-level: minimal
 
     - name: Deploy to Test Environment (PR)
-      if: github.event_name == 'pull_request' && env.FTP_SERVER != ''
+      id: deploy_pr
+      if: steps.changes.outputs.deploy == 'true' && github.event_name == 'pull_request' && env.FTP_SERVER != ''
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ${{ secrets.FTP_SERVER }}
@@ -165,10 +214,12 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./
         server-dir: ${{ secrets.FTP_SERVER_DIR }}
+        timeout: 120000
         exclude: ${{ env.FTP_EXCLUDE }}
 
     - name: Deploy docroot Basic (site-wide .htaccess) (PR)
-      if: github.event_name == 'pull_request' && steps.docroot_basic.outputs.enabled == 'true' && env.FTP_SERVER != ''
+      id: deploy_docroot_pr
+      if: steps.changes.outputs.deploy == 'true' && github.event_name == 'pull_request' && steps.docroot_basic.outputs.enabled == 'true' && env.FTP_SERVER != ''
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ${{ secrets.FTP_SERVER }}
@@ -179,66 +230,84 @@ jobs:
         log-level: minimal
 
     - name: Send Discord Notification - Test Deploy
-      if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && env.FTP_SERVER != ''
+      if: success() && steps.changes.outputs.deploy == 'true' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && env.FTP_SERVER != ''
       uses: Ilshidur/action-discord@master
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
       with:
         args: |
           🧪 **テスト環境デプロイ完了**
-          
+
           **ブランチ:** ${{ github.ref_name }}
           **コミット:** ${{ github.sha }}
           **コミッター:** ${{ github.actor }}
           **メッセージ:** ${{ github.event.head_commit.message }}
-          
+
           **テストURL:** ${{ secrets.TEST_URL }}
-          
+
           **🔍 変更確認:**
           • [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-          
+
     - name: Send Discord Notification - PR Test Deploy
-      if: success() && github.event_name == 'pull_request' && env.FTP_SERVER != ''
+      if: success() && steps.changes.outputs.deploy == 'true' && github.event_name == 'pull_request' && env.FTP_SERVER != ''
       uses: Ilshidur/action-discord@master
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
       with:
         args: |
           🔍 **PRテスト環境デプロイ完了**
-          
+
           **PR:** #${{ github.event.number }}
           **ブランチ:** ${{ github.head_ref }}
           **コミット:** ${{ github.sha }}
           **作成者:** ${{ github.actor }}
-          
+
           **PRテストURL:** ${{ secrets.TEST_URL }}
-          
+
           **🔍 変更確認:**
           • [PRテスト環境を開く](${{ secrets.TEST_URL }})
           • [プルリクエスト](https://github.com/${{ github.repository }}/pull/${{ github.event.number }})
           • [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-          
-    - name: Send Discord Notification - Failure
-      if: failure()
+
+    - name: Send Discord Notification - Build Failure
+      if: failure() && steps.changes.outputs.deploy == 'true' && steps.build_project.outcome == 'failure'
+      uses: Ilshidur/action-discord@master
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      with:
+        args: |
+          ❌ **ビルド失敗**
+
+          **ブランチ:** ${{ github.ref_name }}
+          **コミット:** ${{ github.sha }}
+          **コミッター:** ${{ github.actor }}
+          **イベント:** ${{ github.event_name }}
+
+          **🔍 詳細確認:**
+          • [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+
+    - name: Send Discord Notification - Deploy Failure
+      if: failure() && steps.changes.outputs.deploy == 'true' && env.FTP_SERVER != '' && steps.build_project.outcome != 'failure' && (steps.deploy_main.outcome == 'failure' || steps.deploy_retry.outcome == 'failure' || steps.deploy_pr.outcome == 'failure' || steps.deploy_docroot.outcome == 'failure' || steps.deploy_docroot_pr.outcome == 'failure')
       uses: Ilshidur/action-discord@master
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
       with:
         args: |
           ❌ **デプロイ失敗**
-          
+
           **ブランチ:** ${{ github.ref_name }}
           **コミット:** ${{ github.sha }}
           **コミッター:** ${{ github.actor }}
           **イベント:** ${{ github.event_name }}
-          
+
           **🔍 詳細確認:**
           • [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
           ${{ github.event_name == 'pull_request' && format('• [プルリクエスト](https://github.com/{0}/pull/{1})', github.repository, github.event.number) || '' }}
-          
+
           **🌐 環境URL:**
           ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && format('• テスト環境: {0}', secrets.TEST_URL) || '' }}
           ${{ github.event_name == 'pull_request' && format('• PRテスト環境: {0}', secrets.TEST_URL) || '' }}
