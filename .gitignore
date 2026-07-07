@@ -39,3 +39,6 @@ raw/videos/compress-report.md
 
 # QA 比較用スクショ（ローカル生成のみ）
 qa-screenshots/
+
+# cross-tool-session-handoff: session-log（ローカルのみ。チーム非共有）
+memo/session-log.md
