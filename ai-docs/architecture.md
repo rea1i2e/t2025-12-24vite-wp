@@ -760,6 +760,8 @@ import './_modal.js';
 
 `useFileHash: false` のときは `[hash]` なし（案件例: ik）
 
+本番の `wp_enqueue_script` / `wp_enqueue_style` の `ver`（`?ver=`）は `ty_vite_enqueue_version()`（`func-vite.php`）が `dist/theme-build-config.json` の `useFileHash` を参照する。`true` のときは `null`（ファイル名ハッシュでキャッシュ破棄）、`false` のときは `filemtime` を使う。
+
 ## PHP開発
 
 ### テンプレートファイル

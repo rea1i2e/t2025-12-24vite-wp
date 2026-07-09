@@ -236,6 +236,17 @@ function ty_theme_image_dimensions(string $pathUnderImages): array
 	return ['width' => $w, 'height' => $h];
 }
 
+// wp_enqueue_* の第4引数（ver）。useFileHash 時はファイル名でキャッシュ破棄するため null、それ以外は filemtime
+function ty_vite_enqueue_version(string $file_path): ?string
+{
+	$cfg = ty_vite_theme_build_config();
+	if (!empty($cfg['useFileHash'])) {
+		return null;
+	}
+
+	return file_exists($file_path) ? (string) filemtime($file_path) : null;
+}
+
 // Vite クライアントを enqueue（dev のみ）
 function ty_enqueue_vite_client(string $handle = 'ty'): void
 {
@@ -295,7 +306,7 @@ function ty_enqueue_vite_script_entry(string $entry, string $handle = 'ty'): voi
 				$handle . '-script-style-' . $i,
 				$dist_url . '/' . ltrim($css_file, '/'),
 				[],
-				file_exists($css_path) ? (string) filemtime($css_path) : null
+				ty_vite_enqueue_version($css_path)
 			);
 		}
 	}
@@ -307,7 +318,7 @@ function ty_enqueue_vite_script_entry(string $entry, string $handle = 'ty'): voi
 		$handle . '-script',
 		$dist_url . '/' . ltrim($entry_data['file'], '/'),
 		[],
-		file_exists($js_path) ? (string) filemtime($js_path) : null,
+		ty_vite_enqueue_version($js_path),
 		['in_footer' => false]
 	);
 	wp_script_add_data($handle . '-script', 'type', 'module');
@@ -346,6 +357,6 @@ function ty_enqueue_vite_style_entry(string $entry, string $handle = 'ty'): void
 		$handle . '-style',
 		$dist_url . '/' . ltrim($entry_data['file'], '/'),
 		[],
-		file_exists($css_path) ? (string) filemtime($css_path) : null
+		ty_vite_enqueue_version($css_path)
 	);
 }
