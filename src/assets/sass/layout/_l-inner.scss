@@ -1,8 +1,9 @@
 @use "../global" as *;
 
+/* --inner = コンテンツ幅（max-width）。padding は外側に付く（content-box） */
 .l-inner {
 	margin-inline: auto;
-	max-width: calc(var(--inner) + var(--inner-padding) * 2);
-	width: 100%;
+	box-sizing: content-box;
+	max-width: var(--inner);
 	padding-inline: var(--inner-padding);
 }
