@@ -6,6 +6,13 @@
 
 **人間が読む場合は、ルート [README.md](README.md) と [ai-docs/architecture.md](ai-docs/architecture.md) を参照してください。**
 
+## Figma デザインからの実装
+
+- Figma を参照するページ・セクション実装では、作業前にナレッジベースの `skills/figma-design-implementation/SKILL.md` を読む。
+- 案件の正本は `ai-docs/figma-design-mapping.md`。未登録なら `ai-docs/figma-design-kickoff-prompt.md` で URL / node-id を先に記録する。
+- `ai-docs/figma-design-section-prompt.md` に従い、Figma MCP で PC/SP を確認して **1セクションずつ**実装する。取得できないデザインを推測しない。
+- 正本差し替えは `figma-design-refresh-pixexport`、初稿前比較は `figma-qa-compare` を使う。
+
 ---
 
 ## ローカル絶対パス（個人環境・Cursor 用）
