@@ -3,7 +3,7 @@ alwaysApply: true
 ---
 # セッション引き継ぎ（Cursor ↔ Claude Code）
 
-共通の正本: `memo/session-log.md`。詳細: `ai-docs/session-handoff.md`
+共通の正本: `ai-docs/session-log.md`。詳細: `ai-docs/session-handoff.md`
 
 ## いつ更新する
 

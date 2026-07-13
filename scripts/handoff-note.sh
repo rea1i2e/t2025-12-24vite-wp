@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # 人間用: session-log に1行追記（AI が使えないときのフォールバック）
-# env: HANDOFF_SESSION_LOG — 未設定時は PROJECT_ROOT/memo/session-log.md
+# env: HANDOFF_SESSION_LOG — 未設定時は PROJECT_ROOT/ai-docs/session-log.md
 set -euo pipefail
 
 usage() {
@@ -11,7 +11,7 @@ usage() {
 [[ $# -ge 1 ]] || usage
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
-log="${HANDOFF_SESSION_LOG:-$root/memo/session-log.md}"
+log="${HANDOFF_SESSION_LOG:-$root/ai-docs/session-log.md}"
 date="$(date +%Y-%m-%d)"
 note="$*"
 

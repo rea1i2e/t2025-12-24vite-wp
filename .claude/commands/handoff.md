@@ -1,8 +1,8 @@
 ---
-description: Cursor 引き継ぎ用に memo/session-log.md を更新する
+description: Cursor 引き継ぎ用に ai-docs/session-log.md を更新する
 ---
 
-`memo/session-log.md` を更新して。
+`ai-docs/session-log.md` を更新して。
 
 ## やること
 

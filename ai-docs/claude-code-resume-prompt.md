@@ -17,7 +17,7 @@ Cursor から引き継ぎ。前提を読んでから返答して。
 
 ## 必読
 
-1. memo/session-log.md（末尾の - 次: を最優先）
+1. ai-docs/session-log.md（末尾の - 次: を最優先）
 2. git status / git diff（未コミットの途中成果）
 3. CLAUDE.md
 

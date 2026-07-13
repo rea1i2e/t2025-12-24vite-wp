@@ -2,7 +2,7 @@
 
 正本スキル: ナレッジベース `skills/cross-tool-session-handoff/SKILL.md`
 
-`memo/session-log.md`（または `--session-log` で指定したパス）に状態を残し、ツールをまたいで続ける。
+`ai-docs/session-log.md`（または `--session-log` で指定したパス）に状態を残し、ツールをまたいで続ける。
 
 ## 3層構成（両方向共通）
 
@@ -14,7 +14,7 @@
 
 ## Claude Code → Cursor
 
-1. `@memo/session-log.md` と作業中ファイルを添付
+1. `@ai-docs/session-log.md` と作業中ファイルを添付
 2. 「session-log と git diff を読んで続きから」
 
 ## Cursor → Claude Code

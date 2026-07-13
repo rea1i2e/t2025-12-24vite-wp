@@ -2,7 +2,7 @@
 
 ## セッション引き継ぎ（Cursor ↔ Claude Code）
 
-- 意味のある区切りごとに `memo/session-log.md` の当日見出し（`## YYYY-MM-DD`）へ追記する
+- 意味のある区切りごとに `ai-docs/session-log.md` の当日見出し（`## YYYY-MM-DD`）へ追記する
 - `- 次:` 行は常に最新1つに保つ（古い `- 次:` は `- 完了:` に書き換える）
 - 触ったファイルがあれば `- ファイル: path` も添える
 - **Claude Code**: セッション終了前・リミットが近いと感じたら `/handoff` を実行する

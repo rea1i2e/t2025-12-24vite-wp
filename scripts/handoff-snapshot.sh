@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # session-log へスナップショット1行を追記（Claude Code / Cursor フック共通）
 # usage: handoff-snapshot.sh TAG "detail" [PROJECT_ROOT]
-# env: HANDOFF_SESSION_LOG — ログパス（未設定時 PROJECT_ROOT/memo/session-log.md）
+# env: HANDOFF_SESSION_LOG — ログパス（未設定時 PROJECT_ROOT/ai-docs/session-log.md）
 set -euo pipefail
 
 tag="${1:?usage: handoff-snapshot.sh TAG \"detail\" [PROJECT_ROOT]}"
 detail="${2:-}"
 root="${3:-${CLAUDE_PROJECT_DIR:-$(pwd)}}"
-log="${HANDOFF_SESSION_LOG:-$root/memo/session-log.md}"
+log="${HANDOFF_SESSION_LOG:-$root/ai-docs/session-log.md}"
 
 mkdir -p "$(dirname "$log")"
 
