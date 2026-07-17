@@ -29,7 +29,7 @@
  *   ]);
  *
  * @param array $args 引数配列
- *   - text (string, 必須): ボタンのテキスト
+ *   - text (string, 必須): ボタンのテキスト（br / wbr / span / strong / em のインラインタグ可）
  *   - href (string, オプション): リンクURL（指定がない場合は<span>タグ）
  *   - target (string, オプション): ターゲット属性（例: '_blank'）
  *   - attributes (array, オプション): 追加属性の配列（例: ['data-slidein-mask' => 'white', 'aria-label' => '資料ダウンロードページへ']）
@@ -96,6 +96,6 @@ $href_attr = $href ? ' href="' . esc_url($href) . '"' : '';
 ?>
 
 <<?php echo $tag; ?> class="c-button"<?php echo $href_attr; ?><?php echo $attributes_string; ?><?php echo $extra_attributes_string; ?>>
-  <span class="c-button__text"><?php echo esc_html($text); ?></span>
+  <span class="c-button__text"><?php echo wp_kses($text, ty_kses_inline()); ?></span>
 </<?php echo $tag; ?>>
 

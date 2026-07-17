@@ -15,15 +15,15 @@ $tabs = [
 			<button
 				type="button"
 				class="p-tab__button js-tab-trigger<?php echo !empty($tab['active']) ? ' is-active' : ''; ?>"
-				data-id="<?php echo $tab['id']; ?>"
-			><?php echo $tab['label']; ?></button>
+				data-id="<?php echo esc_attr($tab['id']); ?>"
+			><?php echo esc_html($tab['label']); ?></button>
     </li>
 		<?php endforeach; ?>
   </ul>
   <div class="p-tab__contents">
 		<?php foreach ($tabs as $i => $tab) : ?>
 			<div class="p-tab__content js-tab-target<?php echo !empty($tab['active']) ? ' is-active' : ''; ?>" id="<?php echo esc_attr($tab['id']); ?>">
-				<?php echo esc_html($tab['content']); ?>
+				<?php echo wp_kses($tab['content'], ty_kses_inline()); ?>
 			</div>
 		<?php endforeach; ?>
   </div>
@@ -37,15 +37,15 @@ $tabs = [
 			<button
 				type="button"
 				class="p-tab__button js-tab-trigger<?php echo !empty($tab['active']) ? ' is-active' : ''; ?>"
-				data-id="<?php echo $tab['id']; ?>"
-			><?php echo $tab['label']; ?></button>
+				data-id="<?php echo esc_attr($tab['id']); ?>"
+			><?php echo esc_html($tab['label']); ?></button>
     </li>
 		<?php endforeach; ?>
   </ul>
   <div class="p-tab__contents">
 		<?php foreach ($tabs as $i => $tab) : ?>
 			<div class="p-tab__content js-tab-target<?php echo !empty($tab['active']) ? ' is-active' : ''; ?>" id="<?php echo esc_attr($tab['id']); ?>">
-				<?php echo esc_html($tab['content']); ?>
+				<?php echo wp_kses($tab['content'], ty_kses_inline()); ?>
 			</div>
 		<?php endforeach; ?>
   </div>

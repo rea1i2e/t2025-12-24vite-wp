@@ -28,7 +28,7 @@
  *   ]);
  * 
  * @param array $args 引数配列
- *   - text_en (string, 必須): 英語テキスト（HTMLタグを含む可能性がある）
+ *   - text_en (string, 必須): 英語テキスト（br / wbr / span / strong / em のインラインタグ可）
  *   - text_ja (string, 必須): 日本語テキスト（br / wbr / span / strong / em のインラインタグ可）
  *   - en_tag (string, オプション): 英語テキストのタグ（例: 'h1'〜'h6' / 'p'）
  *   - tag (string, オプション): 日本語見出しのタグ（例: 'h1'〜'h6' / 'p'）
@@ -56,7 +56,7 @@ $en = (string) $heading_args['text_en'];
 $ja = (string) $heading_args['text_ja'];
 ?>
 <<?php echo $wrap_tag; ?> class="c-heading">
-  <<?php echo $en_tag; ?> class="c-heading__en" data-fadein><?php echo wp_kses_post($en); ?></<?php echo $en_tag; ?>>
+  <<?php echo $en_tag; ?> class="c-heading__en" data-fadein><?php echo wp_kses($en, ty_kses_inline()); ?></<?php echo $en_tag; ?>>
   <<?php echo $ja_tag; ?> class="c-heading__ja" data-fadein><?php echo wp_kses($ja, ty_kses_inline()); ?></<?php echo $ja_tag; ?>>
 </<?php echo $wrap_tag; ?>>
 

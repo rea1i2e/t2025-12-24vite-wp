@@ -11,8 +11,8 @@ declare(strict_types=1);
  * ▼ 基本（画像なし）
  * get_template_part('components-demo/sub-mv', null, [
  *   'tag' => 'h1', // p/h1-h6（それ以外はp扱い）
- *   'title_ja' => '',
- *   'title_en' => '',
+ *   'title_ja' => '', // br / wbr / span / strong / em のインラインタグ可
+ *   'title_en' => '', // 同上
  * ]);
  *
  * ▼ 画像あり（PCのみ）
@@ -78,9 +78,9 @@ $has_image = ($picture_html !== '');
 <div class="p-sub-mv l-sub-mv" id="js-mv">
   <div class="p-sub-mv__inner l-inner">
     <<?php echo $title_wrap_tag; ?> class="p-sub-mv__title">
-      <<?php echo $title_ja_tag; ?> class="p-sub-mv__title-ja"><?php echo esc_html($sub_mv_args['title_ja']); ?></<?php echo $title_ja_tag; ?>>
+      <<?php echo $title_ja_tag; ?> class="p-sub-mv__title-ja"><?php echo wp_kses($sub_mv_args['title_ja'], ty_kses_inline()); ?></<?php echo $title_ja_tag; ?>>
       <?php if (!empty($sub_mv_args['title_en'])) : ?>
-        <p class="p-sub-mv__title-en"><?php echo esc_html($sub_mv_args['title_en']); ?></p>
+        <p class="p-sub-mv__title-en"><?php echo wp_kses($sub_mv_args['title_en'], ty_kses_inline()); ?></p>
       <?php endif; ?>
     </<?php echo $title_wrap_tag; ?>>
   </div>
