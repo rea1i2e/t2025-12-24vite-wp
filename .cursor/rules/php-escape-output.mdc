@@ -1,0 +1,23 @@
+---
+description: PHP でテキスト・HTML を出力するときのエスケープ関数の選び方（ty_kses_inline / esc_html の使い分け）
+globs: "**/*.php"
+alwaysApply: false
+---
+
+# PHP — 出力エスケープの選び方
+
+判断基準は **「誰が書いた文字列か」（信頼境界）**。詳細な早見表は `functions-lib/func-kses-allowed.php` 冒頭のメモ。
+
+| 出す値 | 関数 |
+|--------|------|
+| 開発者が書く配列データ・コンポーネント引数のテキスト（見出し・ボタンラベル・タブ内容など） | `wp_kses( $text, ty_kses_inline() )` — `br[class]` / `wbr` / `span[class]` / `strong[class]` / `em[class]` のみ許可 |
+| WP・外部由来の動的データ（ターム名・投稿タイトル・日付・API レスポンス） | `esc_html()`（タグを許可しない） |
+| 属性値（title / data-* / 動的 class 名） | `esc_attr()` |
+| href / src など URL | `esc_url()` |
+| 投稿本文と同等のタグセット | `wp_kses_post()` |
+| マップ埋め込み等の iframe 断片 | `wp_kses( $html, ty_kses_map_iframe() )` |
+
+- 開発者データを `esc_html()` にすると `<br class="u-sp">`（SP のみ改行）や `<span>` 装飾が文字化けする。`ty_kses_inline()` を使う。
+- 逆に WP 動的データへ `ty_kses_inline()` を使わない。編集者入力の class 付きタグがレンダリングされ、レイアウト事故や他出力面（`<title>` / RSS）との不整合を招く（最小権限の原則）。
+- `wp_kses` / `wp_kses_post` で出した HTML の外側に `esc_html()` を重ねない（二重エスケープで表示が壊れる）。
+- 使用例: `components/c-heading.php`・`components/c-button.php`・`components-demo/sub-mv.php`・`components-demo/p-tab.php`

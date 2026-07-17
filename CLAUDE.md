@@ -18,3 +18,9 @@
 - 以降のコーディングは [`ai-docs/figma-design-section-prompt.md`](ai-docs/figma-design-section-prompt.md) に従い **1セクションずつ** Figma MCP → 実装（ページ一括は禁止）
 - 修正 FB は [`ai-docs/fb.md`](ai-docs/fb.md) に溜めて **1ラリー**で直す（`figma-qa-compare` の修正依頼文を転記可）
 - 正本 Figma 差し替え: ナレッジ `skills/figma-design-refresh-pixexport/SKILL.md`
+
+## PHP 出力エスケープ規約
+
+正本は `.cursor/rules/php-escape-output.mdc`（以下に取り込み。冒頭の frontmatter は Cursor 用なので無視してよい）:
+
+@.cursor/rules/php-escape-output.mdc
