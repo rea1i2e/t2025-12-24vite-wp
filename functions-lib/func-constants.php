@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * - プレーンテキスト（会社名・住所・電話など）→ esc_html()
  * - URL を href / src に渡す（SNS_* など）→ esc_url()
- * - HTML 断片（COMPANY_MAP の iframe など）→ wp_kses( 値, ty_map_iframe_wp_kses_allowed() ) — 詳細・早見表は functions-lib/func-kses-allowed.php 先頭のメモ参照
+ * - HTML 断片（COMPANY_MAP の iframe など）→ wp_kses( 値, ty_kses_map_iframe() ) — 詳細・早見表は functions-lib/func-kses-allowed.php 先頭のメモ参照
  *
  * wp_kses / wp_kses_post 済みの HTML に、その外側から esc_html() を重ねない（二重エスケープで表示が壊れる）。
  */

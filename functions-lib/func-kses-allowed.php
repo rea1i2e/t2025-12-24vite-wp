@@ -6,9 +6,9 @@ declare(strict_types=1);
  * マップ埋め込みなど iframe の HTML 断片用、`wp_kses()` 第2引数の許可リスト
  *
  * 使用例:
- * echo wp_kses( COMPANY_MAP, ty_map_iframe_wp_kses_allowed() );
+ * echo wp_kses( COMPANY_MAP, ty_kses_map_iframe() );
  *
- * 子テーマやプラグインから属性を足す場合はフィルタ `ty_map_iframe_wp_kses_allowed` を使う。
+ * 子テーマやプラグインから属性を足す場合はフィルタ `ty_kses_map_iframe` を使う。
  *
  * ---
  * メモ: テーマから HTML に値を出すときのエスケープ（出す場所で関数を選ぶ）
@@ -20,14 +20,14 @@ declare(strict_types=1);
  * | href / src など URL として解釈される値 | esc_url() |
  * | 投稿本文と同等のタグセットで HTML を許可 | wp_kses_post() |
  * | 許可タグを独自に絞る HTML 断片（本ファイルの iframe など） | wp_kses( $html, $allowed_html ) |
- * | テキスト内のインラインタグのみ許可（br / wbr / span / strong / em） | wp_kses( $text, ty_text_inline_wp_kses_allowed() ) |
+ * | テキスト内のインラインタグのみ許可（br / wbr / span / strong / em） | wp_kses( $text, ty_kses_inline() ) |
  *
  * - wp_kses / wp_kses_post で出す HTML はすでにサニタイズ済み。**その外側に esc_html() を重ねない**（表示が壊れる）。
  * - 定数の URL をリンクにする: `echo esc_url( SNS_X_URL );` — テキストラベルは `esc_html()`。
  *
  * @return array<string, array<string, bool>>
  */
-function ty_map_iframe_wp_kses_allowed(): array
+function ty_kses_map_iframe(): array
 {
 	$allowed = [
 		'iframe' => [
@@ -50,7 +50,7 @@ function ty_map_iframe_wp_kses_allowed(): array
 	 *
 	 * @param array<string, array<string, bool>> $allowed
 	 */
-	return (array) apply_filters('ty_map_iframe_wp_kses_allowed', $allowed);
+	return (array) apply_filters('ty_kses_map_iframe', $allowed);
 }
 
 /**
@@ -61,11 +61,11 @@ function ty_map_iframe_wp_kses_allowed(): array
  * リンクや画像などブロックを跨ぐタグは許可しない（必要になったら個別に判断）。
  *
  * 使用例:
- * echo wp_kses( $section['title'], ty_text_inline_wp_kses_allowed() );
+ * echo wp_kses( $section['title'], ty_kses_inline() );
  *
  * @return array<string, array<string, bool>>
  */
-function ty_text_inline_wp_kses_allowed(): array
+function ty_kses_inline(): array
 {
 	return [
 		'br' => [

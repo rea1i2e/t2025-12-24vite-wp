@@ -57,6 +57,6 @@ $ja = (string) $heading_args['text_ja'];
 ?>
 <<?php echo $wrap_tag; ?> class="c-heading">
   <<?php echo $en_tag; ?> class="c-heading__en" data-fadein><?php echo wp_kses_post($en); ?></<?php echo $en_tag; ?>>
-  <<?php echo $ja_tag; ?> class="c-heading__ja" data-fadein><?php echo wp_kses($ja, ty_text_inline_wp_kses_allowed()); ?></<?php echo $ja_tag; ?>>
+  <<?php echo $ja_tag; ?> class="c-heading__ja" data-fadein><?php echo wp_kses($ja, ty_kses_inline()); ?></<?php echo $ja_tag; ?>>
 </<?php echo $wrap_tag; ?>>
 
