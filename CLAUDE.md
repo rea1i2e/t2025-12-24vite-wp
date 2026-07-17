@@ -16,4 +16,5 @@
 
 - 案件で Figma URL を受け取ったら **1回だけ** [`ai-docs/figma-design-kickoff-prompt.md`](ai-docs/figma-design-kickoff-prompt.md) で `ai-docs/figma-design-mapping.md` を整備する
 - 以降のコーディングは [`ai-docs/figma-design-section-prompt.md`](ai-docs/figma-design-section-prompt.md) に従い **1セクションずつ** Figma MCP → 実装（ページ一括は禁止）
+- 修正 FB は [`ai-docs/fb.md`](ai-docs/fb.md) に溜めて **1ラリー**で直す（`figma-qa-compare` の修正依頼文を転記可）
 - 正本 Figma 差し替え: ナレッジ `skills/figma-design-refresh-pixexport/SKILL.md`
