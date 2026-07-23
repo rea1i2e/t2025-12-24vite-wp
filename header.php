@@ -19,7 +19,7 @@
 
 <body <?php body_class(); ?>>
   <?php wp_body_open(); ?>
-  <header class="p-header" id="js-header">
+  <header class="p-header" id="js-header" data-fixed-header>
     <div class="p-header__inner">
       <?php $tag = (is_front_page()) ? 'h1' : 'div'; ?>
       <<?php echo $tag; ?> class="p-header__logo">
