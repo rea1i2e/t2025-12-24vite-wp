@@ -26,6 +26,7 @@
 ## 前提条件
 
 - Node.js がインストールされていること
+- Composer（PHP 依存・WPCS 検査用）がインストールされていること
 - WordPress のローカル環境（Local など）が準備されていること
 
 ## 手順
@@ -34,6 +35,7 @@
 
 ```bash
 npm install
+composer install
 ```
 
 ### 2. 開発サーバーの起動
@@ -501,6 +503,39 @@ dist/ から実際のファイルを enqueue
 ### コーディングスタイル
 
 - **型宣言を付与する**（`declare(strict_types=1);` を使用）
+- **配列は短縮記法 `[]`**（`array()` は使わない。ナレッジ `wiki/coding-php.md` と同方針）
+
+### PHP 検査（WPCS）
+
+WordPress Coding Standards（WPCS）3.4 系を Composer 開発依存で導入している。設定の正本はリポジトリ直下の [`phpcs.xml.dist`](../phpcs.xml.dist)。
+
+#### コマンド
+
+```bash
+composer install          # 初回・clone 後
+composer lint:php         # 検査のみ（自動修正なし）
+composer fix:php          # phpcbf（差分を確認できるときだけ）
+```
+
+#### 案件複製時に変える項目
+
+| 項目 | 場所 | テンプレ既定 |
+|------|------|-------------|
+| 最低対応 WP バージョン | `phpcs.xml.dist` の `minimum_wp_version` | `6.7` |
+| 関数プレフィックス | `WordPress.NamingConventions.PrefixAllGlobals` の `prefixes` | `ty` |
+| テキストドメイン | `WordPress.WP.I18n` の `text_domain` | `t2025-12-24vite-wp` |
+
+#### テンプレート固有の例外（ルールセット側）
+
+- **短縮配列 `[]` を許可**（`Universal.Arrays.DisallowShortArraySyntax` を除外）
+- **`ty` プレフィックス**は 3 文字未満のため `ShortPrefixPassed` のみ抑止（プレフィックス未付与の検出は有効のまま）
+- **`ty_get_img` / `ty_vite_asset_url` 等**を `EscapeOutput` の auto-escaped / printing 関数として登録
+
+#### 現状の扱い（導入時点）
+
+初回検査では WordPress-Extra 全体に対し、空白・括弧まわり・Yoda 条件などのスタイル違反が多く残る。**一括の `composer fix:php` は行わない**（差分が巨大になる）。新規・修正した PHP では検査を通し、既存負債は必要になった範囲で直す。CI・Git フックへの組み込みは運用が安定してから検討する（Husky 起因のインストールトラブル履歴あり）。
+
+方針の出典: ナレッジ [`wiki/wordpress-coding-standards-3-4-template-improvements.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/wordpress-coding-standards-3-4-template-improvements.md)
 
 ### `components/` のマークアップとデータ
 
@@ -976,11 +1011,14 @@ chmod +x scripts/setup-secrets.sh
 以下のファイル/ディレクトリはデプロイ対象外です：
 
 - `.git*`, `.github/`
-- `node_modules/`, `src/`, `scripts/`, `raw/`, `ai-docs/`
+- `node_modules/`, `vendor/`, `src/`, `scripts/`, `raw/`, `ai-docs/`
 - `package.json`, `package-lock.json`
+- `composer.json`, `composer.lock`, `phpcs.xml`, `phpcs.xml.dist`（WPCS 検査用。サーバには不要）
 - `vite.config.*`, `postcss.config.*`
 - `*.map`, `README.md`
 - `.DS_Store`, `Thumbs.db`
+
+正本は [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) の `FTP_EXCLUDE`。All-in-One WP Migration の除外は `functions-lib/func-ai1wm-exclude.php`。
 
 **方針**: サーバには **開発用ファイルを置かない**想定です。
 

@@ -88,6 +88,7 @@
 - **Vite**: フロントエンドビルドツール（HMR対応）
 - **Sass**: CSSプリプロセッサ
 - **PostCSS**: CSS後処理（autoprefixer、メディアクエリソート）
+- **Composer / WPCS 3.4**: PHP 検査（`composer lint:php`。設定は `phpcs.xml.dist`）
 
 ---
 
@@ -110,6 +111,7 @@
 - **[ai-docs/architecture.md](ai-docs/architecture.md)**: 設計判断・コーディング（WP 固有）・開発・デプロイ・トラブル等の**技術正本**
 - **投稿の管理画面（任意）:** `functions-lib/func-set-posttype-post.php` 冒頭の `TY_POST_LABEL_NAME` / `TY_POST_HIDE_CATEGORY_UI` / `TY_POST_HIDE_TAG_UI`（`functions.php` はローダー専用）— 詳細は architecture「標準投稿 — カテゴリー・タグ UI の非表示」
 - **Sass mixin:** コンポーネント SCSS では **`src/assets/sass/global/mixins/` を先に Read** し、ホバー・省略・reduced-motion 等は `@include` する。Cursor ルール [`.cursor/rules/sass-use-mixins.mdc`](.cursor/rules/sass-use-mixins.mdc)。**`line-clamp` / `text-truncate` は padding なしの子に `@include`**（padding は親）。索引: 静的テンプレ `{型録}/src/demo/demo-document/`、`_text-truncate.scss` 冒頭コメント
+- **PHP 検査（WPCS）:** PHP ファイルを変更した場合は、完了前に `composer lint:php` を実行する。`composer fix:php`（phpcbf）は変更範囲を確認できる場合に限り使用する。案件の最低対応 WordPress バージョンは `phpcs.xml.dist` の `minimum_wp_version` を正本とする。詳細は [ai-docs/architecture.md](ai-docs/architecture.md) の「PHP 検査（WPCS）」
 
 ---
 

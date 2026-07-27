@@ -78,7 +78,7 @@ add_action('admin_notices', function (): void {
 		return;
 	}
 	echo '<div class="notice notice-info"><p>';
-	echo esc_html__('このページでは本文エディタを非表示にしています。', 'flavor');
+	echo esc_html__('このページでは本文エディタを非表示にしています。', 't2025-12-24vite-wp');
 	echo '（テーマ設定: <code>functions-lib/func-page-editor.php</code>）';
 	echo '</p></div>';
 });

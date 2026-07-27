@@ -19,9 +19,13 @@
 
 ```bash
 npm install
+composer install   # PHP 検査（WPCS）用。未導入でもサイト表示自体は可
 npm run dev
 # 本番ビルド
 npm run build
+
+# PHP を触ったとき（詳細は ai-docs/architecture.md「PHP 検査（WPCS）」）
+composer lint:php
 ```
 
 **手順の詳細・新規案件セットアップ・デプロイ**は [ai-docs/architecture.md](ai-docs/architecture.md) の目次から辿る。

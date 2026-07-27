@@ -36,11 +36,16 @@ add_filter(
 		// 開発用ディレクトリ
 		$exclude_filters[] = $theme_dir . '/src';
 		$exclude_filters[] = $theme_dir . '/node_modules';
+		$exclude_filters[] = $theme_dir . '/vendor';
 		$exclude_filters[] = $theme_dir . '/scripts';
-		
+
 		// 設定ファイル
 		$exclude_filters[] = $theme_dir . '/package.json';
 		$exclude_filters[] = $theme_dir . '/package-lock.json';
+		$exclude_filters[] = $theme_dir . '/composer.json';
+		$exclude_filters[] = $theme_dir . '/composer.lock';
+		$exclude_filters[] = $theme_dir . '/phpcs.xml';
+		$exclude_filters[] = $theme_dir . '/phpcs.xml.dist';
 		$exclude_filters[] = $theme_dir . '/vite.config.js';
 		$exclude_filters[] = $theme_dir . '/postcss.config.cjs';
 		$exclude_filters[] = $theme_dir . '/env.deploy.example';

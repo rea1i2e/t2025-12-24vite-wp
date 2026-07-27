@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<ruleset name="Yoshiaki WordPress Theme">
+	<description>WordPress theme coding standards for t2025-12-24vite-wp.</description>
+
+	<file>./</file>
+
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/dist/*</exclude-pattern>
+	<exclude-pattern>*/src/.vite/*</exclude-pattern>
+	<exclude-pattern>*/src/.img/*</exclude-pattern>
+	<exclude-pattern>*/staging/*</exclude-pattern>
+
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="sp"/>
+
+	<!-- 案件複製時は要件に合わせて変更する（既定はテンプレ想定の 6.7） -->
+	<config name="minimum_wp_version" value="6.7"/>
+
+	<rule ref="WordPress-Extra"/>
+
+	<rule ref="WordPress.Files.FileName">
+		<properties>
+			<property name="is_theme" value="true"/>
+		</properties>
+	</rule>
+
+	<!-- テーマ関数プレフィックスは ty_（プロジェクト方針。3文字未満のため ShortPrefix 警告のみ抑止） -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="ty"/>
+			</property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.ShortPrefixPassed">
+		<severity name="severity"/>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="t2025-12-24vite-wp"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- ナレッジ coding-php.md: 短縮配列 [] を用いる -->
+	<rule ref="Universal.Arrays.DisallowShortArraySyntax">
+		<severity name="exclude"/>
+	</rule>
+
+	<!--
+		テーマ固有の出力ヘルパー。
+		ty_get_* / ty_*_url は内部でエスケープ済み文字列を返す。
+		ty_img / ty_picture_img / ty_display_thumbnail はエスケープ済み HTML を直接出力する。
+	-->
+	<rule ref="WordPress.Security.EscapeOutput">
+		<properties>
+			<property name="customAutoEscapedFunctions" type="array">
+				<element value="ty_get_img"/>
+				<element value="ty_get_picture_img"/>
+				<element value="ty_build_format_source_tags"/>
+				<element value="ty_build_html_attrs"/>
+				<element value="ty_vite_asset_url"/>
+				<element value="ty_theme_asset_url"/>
+				<element value="ty_theme_image_url"/>
+				<element value="ty_theme_image_variant_url"/>
+				<element value="ty_get_page"/>
+				<element value="ty_get_nav_item_url"/>
+				<element value="ty_get_nav_item_target_attr"/>
+				<element value="ty_get_nav_item_current_class"/>
+				<element value="ty_get_nav_item_data"/>
+				<element value="ty_kses_inline"/>
+				<element value="ty_kses_map_iframe"/>
+			</property>
+			<property name="customPrintingFunctions" type="array">
+				<element value="ty_img"/>
+				<element value="ty_picture_img"/>
+				<element value="ty_display_thumbnail"/>
+				<element value="ty_theme"/>
+				<element value="ty_page"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

@@ -13,7 +13,7 @@
 
 | ファイル | 内容 |
 |---|---|
-| [`architecture.md`](architecture.md) | スタック固有の技術正本（導入・設計・開発・デプロイ・トラブル・WP 固有コーディング規約） |
+| [`architecture.md`](architecture.md) | スタック固有の技術正本（導入・設計・開発・デプロイ・トラブル・WP 固有コーディング規約・WPCS） |
 
 リポ固有の意思決定（ADR）が増えたら **`ai-docs/decisions/`** に置いてよい。**ADR の書き方・命名**はナレッジ [adr-workflow.md](/Users/yoshiaki/working/2026-04-23kn/wiki/adr-workflow.md)。WP テンプレの記録集約: [wp-template-decision-records.md](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md)。
 
@@ -42,7 +42,7 @@
 
 | ファイル | 要約 | 最終更新 |
 |---|---|---|
-| [`architecture.md`](architecture.md) | テンプレ技術正本 | — |
+| [`architecture.md`](architecture.md) | テンプレ技術正本（WPCS 3.4 導入含む） | 2026-07-27 |
 | [`session-handoff.md`](session-handoff.md) | Cursor ↔ Claude Code 引き継ぎ | 2026-07-06 |
 | [`claude-code-resume-prompt.md`](claude-code-resume-prompt.md) | Cursor → Claude Code 再開用コピペ | 2026-07-06 |
 | [`figma-design-mapping.md`](figma-design-mapping.md) | Figma URL 正本（雛形） | 2026-07-07 |

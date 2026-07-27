@@ -1,0 +1,22 @@
+{
+  "name": "rea1i2e/t2025-12-24vite-wp",
+  "description": "WordPress theme template (Vite + classic theme)",
+  "type": "wordpress-theme",
+  "license": "proprietary",
+  "require": {
+    "php": ">=8.0"
+  },
+  "require-dev": {
+    "wp-coding-standards/wpcs": "^3.4"
+  },
+  "scripts": {
+    "lint:php": "phpcs",
+    "fix:php": "phpcbf"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "sort-packages": true
+  }
+}
