@@ -11,6 +11,16 @@
       "Read(//**/id_rsa)",
       "Read(//**/id_rsa.pub)",
       "Read(//**/*credentials*.json)",
+      "Read(//**/*.env)",
+      "Read(//**/.config/shin-account/**)",
+      "Read(//**/.config/notion/**)",
+      "Read(//**/.ssh/**)",
+      "Read(//**/.gnupg/**)",
+      "Read(//**/.aws/**)",
+      "Read(//**/.npmrc)",
+      "Read(//**/.git-credentials)",
+      "Read(//**/.codex/config.toml)",
+      "Read(//**/*.mcp.json)",
       "Bash(rm -rf:*)",
       "Bash(git push --force:*)",
       "Bash(git reset --hard:*)",
@@ -25,6 +35,17 @@
             "type": "command",
             "command": ".claude/hooks/stopfailure-handoff.sh",
             "timeout": 15
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/secret-path-guard.sh",
+            "timeout": 10
           }
         ]
       }
