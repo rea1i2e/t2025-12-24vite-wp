@@ -38,6 +38,10 @@ XD エクスポート（JSON + PNG）を手がかりに、HTML / SCSS / PHP を�
    - JSON の `text` ノードから `fontFamily`, `fontSize`, `fontStyle`, `letterSpacing`, `fill` を取る。
    - **family / weight はステップ 0 のトークン・`_root` に合わせる**（コンポーネントで別ファミリーを直書きしない。欧文・数字は `var(--font-family-en)`）。
    - XD `fontStyle` → CSS: Regular→400 / Medium→500 / Bold→700 / Black→900（トークン表を正）。
+   - **文字色（重要）:** JSON の `fill` はノード代表色のみ（文字単位の色分けは export で落ちることがある。API では最後の range の色になりがち）。単色と決めつけない。
+     1. 対応 PNG で「同一テキスト内に複数色があるか」を検知する
+     2. 色の値は [`DESIGN-TOKENS.md`](./DESIGN-TOKENS.md) / `_root` の既知トークンに寄せる（アンチエイリアス縁の中間色を直書きしない）
+     3. どのトークンにも合わない・微妙な色だけ **要確認** としてユーザーに聞く（実装で推測確定しない）
    - 見出し・ラベルなど用途ごとに分類して、クラス命名に反映。
    - 表示文言は JSON / 既存テンプレート / ユーザー指定のみ使う。カンプがダミー文言のときはそのままダミーでよい（ユーザーが「ダミーで OK」とした範囲）。
 
@@ -64,7 +68,7 @@ XD エクスポート（JSON + PNG）を手がかりに、HTML / SCSS / PHP を�
 7. **HTML と SCSS の記述**
 
    - 書き方は正本規約（[`HTML-SCSS_PROMPT.md`](./HTML-SCSS_PROMPT.md)）に従う。
-   - JSON に記載の値を優先し、調整が必要な箇所はコメントで理由を残す。
+   - 単色の `fill`・サイズ・相対 `bounds` など **1 ノード 1 値で足りるものは JSON を優先**。文字単位色・見た目の最終確認は PNG（ステップ 3）。JSON と PNG が食い違うときは PNG＋トークン照合を正とし、理由をコメントに残す。
 
 8. **確認フロー**
 
