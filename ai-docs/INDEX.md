@@ -24,7 +24,7 @@
 | [`figma-design-mapping.md`](figma-design-mapping.md) | Figma URL 正本（ページ・node・実装ファイル対応） |
 | [`figma-design-kickoff-prompt.md`](figma-design-kickoff-prompt.md) | 案件開始時：URL を mapping にストック |
 | [`figma-design-section-prompt.md`](figma-design-section-prompt.md) | 1セクションずつ Figma MCP → 実装 |
-| [`fb.md`](fb.md) | 修正指示の一括リスト（1ラリーで直す） |
+| [`fb/`](fb/README.md) | 修正指示（qa＝制作側 / client＝先方回次。client は再現・変更混在可） |
 | [`xd-file/DESIGN-TOKENS.md`](xd-file/DESIGN-TOKENS.md) | フォント等トークン（セクション実装前に埋める） |
 | [`xd-file/IMAGE-EXPORT.md`](xd-file/IMAGE-EXPORT.md) | XD 画像パス一覧・約 2x / 圧縮 |
 | `scss-coding-rules.md` | レガシーテーマ改修の Sass 規約・地雷 |
@@ -40,7 +40,7 @@
 | Figma 初回受領・mapping 整備 | [`figma-design-kickoff-prompt.md`](figma-design-kickoff-prompt.md) → [`figma-design-mapping.md`](figma-design-mapping.md)（フォントは同時に [`xd-file/DESIGN-TOKENS.md`](xd-file/DESIGN-TOKENS.md)） |
 | Figma から1セクション実装 | [`figma-design-section-prompt.md`](figma-design-section-prompt.md) + [`figma-design-mapping.md`](figma-design-mapping.md) |
 | XD から実装 | [`xd-file/PROMPT.md`](xd-file/PROMPT.md)（ステップ 0 フォント必須） |
-| 修正 FB をまとめて1回 | [`fb.md`](fb.md)（`figma-qa-compare` の修正依頼文を転記可） |
+| 修正 FB（制作側 QA・クライアント回次） | [`fb/README.md`](fb/README.md)（`figma-qa-compare` → `fb/qa/`） |
 | （案件で追加したルール） | 下表を更新 |
 
 | ファイル | 要約 | 最終更新 |
@@ -55,6 +55,6 @@
 | [`xd-file/IMAGE-EXPORT.md`](xd-file/IMAGE-EXPORT.md) | XD 画像パス雛形 | 2026-07-31 |
 | [`xd-file/PROMPT.md`](xd-file/PROMPT.md) | XD 実装手順（案件リポと同型） | 2026-07-31 |
 | [`xd-file/HTML-SCSS_PROMPT.md`](xd-file/HTML-SCSS_PROMPT.md) | 規約ポインタ（複製禁止） | 2026-07-31 |
-| [`fb.md`](fb.md) | 修正 FB 一括指示 | 2026-07-17 |
+| [`fb/README.md`](fb/README.md) | 修正 FB（qa / client・回次別） | 2026-08-01 |
 
 **メンテ:** ファイル追加・改訂時はこの索引表も更新する。
