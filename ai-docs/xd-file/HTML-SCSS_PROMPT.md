@@ -59,6 +59,7 @@ XD JSON / PNG から HTML+SCSS（WordPress テーマ）を書くときの案内�
 - **SP カンプが無い案件**では PC を正とし、既存 `mq()` で折返し・縦積み程度の SP 対応をする（作り込みすぎない）。SP カンプがある場合は PC/SP 両方を確認する。
 - JSON の `text` から `fontFamily`, `fontSize`, `fontStyle`, `letterSpacing`, `fill` を取る。family / weight は [`DESIGN-TOKENS.md`](./DESIGN-TOKENS.md) と `_root` に合わせる。
 - **文字色:** JSON `fill` はノード代表色のみ（文字単位色は落ちうる）。PNG は「色が分かれているか」の検知用。具体 hex はトークン照合を正とし、一致しない色だけ要確認。詳細は [`PROMPT.md`](./PROMPT.md) ステップ 3。
+- **セクション背景:** アートボード塗りなし＋PNG 透明なら面を黒などで埋めない（ビューアの黒マットをデザインと誤認しない）。詳細は [`PROMPT.md`](./PROMPT.md) ステップ 7。
 - `letter-spacing`: XD のトラッキング（AV）値は **値 / 1000** で `em`（例: `40` → `0.04em`）。
 - **座標**: `相対 = ノード.bounds − アートボード.bounds`（絶対座標をそのまま CSS にしない）。詳細は [`PROMPT.md`](./PROMPT.md)。
 - レイアウトの大枠は PNG、細部の数値は相対化した JSON `bounds` を優先。ずれを直すときは理由をコメントに残す。
