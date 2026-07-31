@@ -54,7 +54,8 @@ bash raw/fonts/font-compress-subset.sh ./raw/fonts/Inter-VariableFont_opsz,wght.
 
 フォント圧縮の出力を `src/assets/fonts/` に配置したら、フォント名・ファイル名が一致するようにプロジェクト側の指定を合わせてください。
 
-このテンプレート内の `NotoSansJP...` はあくまでサンプルです（あなたの実フォントに置き換え前提）。
+このテンプレート内の `NotoSansJP...` はあくまでサンプルです（あなたの実フォントに置き換え前提）。  
+案件ではセクション実装前に `ai-docs/xd-file/DESIGN-TOKENS.md` を埋め、カンプのファミリーへ差し替える（手順は `ai-docs/xd-file/PROMPT.md` ステップ 0 / Skill `font-setup-web`）。
 
 ### 静的テンプレ（Vite + EJS）の場合
 

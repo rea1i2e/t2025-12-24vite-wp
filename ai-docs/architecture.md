@@ -225,12 +225,14 @@ gh repo clone GitHubのユーザー名/新規リポジトリ名
 
 ### 7. フォントの登録
 
-1. デザインデータから使用フォントを確認
-2. 必要なフォントファイルをダウンロード
-3. `raw/fonts/README-font-compress.md` に従い、`fonttools` で woff2 化（全グリフ or サブセット）
+**セクション実装より前に完了する**（仮の Noto 等のままコーディングしない）。トークン正本は [`xd-file/DESIGN-TOKENS.md`](xd-file/DESIGN-TOKENS.md)、XD 手順は [`xd-file/PROMPT.md`](xd-file/PROMPT.md) ステップ 0。Skill: `font-setup-web`。
+
+1. デザインデータ（XD 全 `export_*.json` または Figma）から `fontFamily` / ウェイトを集計し `DESIGN-TOKENS.md` に書く
+2. 必要なフォントファイルを入手（原則自己ホスト。CDN 直読みはガイドライン例外のみ）
+3. `raw/fonts/README-font-compress.md` に従い、`fonttools` で woff2 化（全グリフ or サブセット）。バリアブルがあれば優先
 4. 出力を `src/assets/fonts/` に配置
-5. `src/assets/sass/base/_root.scss` の `@font-face` とカスタムプロパティを編集
-6. `header.php` の `preload` を必要に応じて追加（`ty_vite_asset_url('src/assets/fonts/...')`）
+5. `src/assets/sass/base/_root.scss` の `@font-face` と `--base-font-family`（必要なら `--font-family-en`）を編集
+6. `header.php` の `preload` は FV 用 **1 ファイルのみ**（`ty_vite_asset_url('src/assets/fonts/...')`）
 
 ### 8. カスタムプロパティ・Sass変数の登録
 

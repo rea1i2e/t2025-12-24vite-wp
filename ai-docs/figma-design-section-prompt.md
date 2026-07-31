@@ -17,10 +17,11 @@
 
 ## 手順
 
-1. mapping の URL から **上記1セクションのみ** Figma MCP（get_design_context / get_screenshot）でデザインを取得する
-2. 実装前に `mockup-to-existing-page` Skill に従い、対象 PHP テンプレ・既存 SCSS・reset/base/root を読む
-3. 取得したデザインを既存設計に合わせ **最小差分** で実装する
-4. このセクションだけ完了したら止める。次セクションは別依頼
+1. `ai-docs/xd-file/DESIGN-TOKENS.md` と `_root.scss` を確認。仮フォントのままなら **セクション実装を止め**、kickoff / `font-setup-web` で先に揃える
+2. mapping の URL から **上記1セクションのみ** Figma MCP（get_design_context / get_screenshot）でデザインを取得する
+3. 実装前に `mockup-to-existing-page` Skill に従い、対象 PHP テンプレ・既存 SCSS・reset/base/root を読む
+4. 取得したデザインを既存設計に合わせ **最小差分** で実装する（family / weight は DESIGN-TOKENS と `_root` に合わせる）
+5. このセクションだけ完了したら止める。次セクションは別依頼
 
 ## 実装ファイル（mapping より）
 
@@ -30,6 +31,7 @@
 
 - ページ全体の一括コーディング
 - mapping に無い Figma URL を勝手に使う（必要なら mapping を先に更新）
+- テンプレ仮フォントのまま実装を進める
 - PHP/HTML のテキストコンテンツを自動生成（既存 or ユーザー提供を正とする）
 
 ## 完了後
@@ -53,5 +55,7 @@
 ## 関連
 
 - [`figma-design-kickoff-prompt.md`](figma-design-kickoff-prompt.md) — mapping 初回整備
+- [`xd-file/DESIGN-TOKENS.md`](xd-file/DESIGN-TOKENS.md) — フォント等トークン
+- ナレッジ `skills/font-setup-web/SKILL.md`
 - ナレッジ `skills/mockup-to-existing-page/SKILL.md`
 - ナレッジ `skills/figma-qa-compare/SKILL.md` — 初稿前 QA

@@ -18,18 +18,22 @@
 3. 正本 fileKey・ファイル名を mapping 冒頭に記載する
 4. 複雑ページは `ai-docs/plans/page-{slug}-plan.md` の要否を判断し、必要なら雛形を作る
 5. セクションが多いページは「セクション索引」表を追加する
-6. 以降、ユーザーが Figma URL を再共有しなくてよい状態にする
+6. **フォント:** Figma から使用ファミリー / ウェイトを集計し `ai-docs/xd-file/DESIGN-TOKENS.md` を埋める。仮フォントのままなら Skill `font-setup-web` で自己ホストまで完了する（セクション実装の前）
+7. 以降、ユーザーが Figma URL を再共有しなくてよい状態にする
 
 ## 参照
 
 - `ai-docs/figma-design-mapping.md`（雛形）
 - `ai-docs/figma-design-section-prompt.md`（1セクション実装時）
+- `ai-docs/xd-file/DESIGN-TOKENS.md`（フォント等トークン）
+- ナレッジ `skills/font-setup-web/SKILL.md`
 - ナレッジ `skills/mockup-to-existing-page/SKILL.md`（既存ページへの反映時）
 - ナレッジ `skills/figma-design-refresh-pixexport/SKILL.md`（正本 Figma 差し替え時）
 
 ## 禁止
 
 - mapping を整えずにページ全体の一括コーディングを始める
+- テンプレ仮フォントのままセクション実装を始める
 ```
 
 ---
@@ -38,6 +42,7 @@
 
 - [ ] `figma-design-mapping.md` に fileKey と対象ページの URL が揃っている
 - [ ] 各ページ節に実装ファイルの見込みパスがある
+- [ ] `DESIGN-TOKENS.md` と `_root.scss` のフォントがカンプと一致している（仮フォントでない）
 - [ ] 次の実装依頼は [`figma-design-section-prompt.md`](figma-design-section-prompt.md) から始められる
 
 ---

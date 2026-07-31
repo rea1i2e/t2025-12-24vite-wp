@@ -45,6 +45,7 @@
 - **方針の正本**: ナレッジ `wiki/web-fonts-guidelines.md`
 - **圧縮コマンドの正本**: 本テーマ **`raw/fonts/README-font-compress.md`**（静的テンプレと**同じディレクトリ構成・手順**。`font-compress.sh` / `font-compress-subset.sh`）
 - **反映先**: `src/assets/sass/base/_root.scss`、`header.php` の preload（`ty_vite_asset_url('src/assets/fonts/...')`）
+- **案件キックオフ（必須）**: セクション実装前に `ai-docs/xd-file/DESIGN-TOKENS.md` を埋め、仮フォントのまま進めない（手順は `ai-docs/xd-file/PROMPT.md` ステップ 0。Figma でも mapping と同時に可）
 
 ### インタラクション実装時の型録参照（必須）
 
