@@ -47,6 +47,12 @@
 - **反映先**: `src/assets/sass/base/_root.scss`、`header.php` の preload（`ty_vite_asset_url('src/assets/fonts/...')`）
 - **案件キックオフ（必須）**: セクション実装前に `ai-docs/xd-file/DESIGN-TOKENS.md` を埋め、仮フォントのまま進めない（手順は `ai-docs/xd-file/PROMPT.md` ステップ 0。Figma でも mapping と同時に可）
 
+### 案件着手時のデモ削除
+
+テンプレを案件リポへ複製したら、実装前に **`npm run init`**（`scripts/init-project.sh`）を実行する。**テンプレ本体では実行しない**（カタログが消える）。
+
+方針: **必ず使う土台以外は削除**し、あとから要るものは WP テンプレ原本または静的テンプレ（型録）から複製する（「残しておくと判断が難しい」サンプルを案件に残さない）。削除対象の例: `components-demo`、仮の `images/demo` / `images/common`、demo 向け JS、`func-set-posttype-works`、Ajax load-more。仮フォントは別途 `font-setup-web` で差し替え。案件リポへデモを復元しない。
+
 ### インタラクション実装時の型録参照（必須）
 
 **`{型録}`** — **静的テンプレのルートディレクトリ**を指すプレースホルダ。ローカルでは下記の絶対パスと同一（環境ごとに異なる。定義は [operated-repositories.md](/Users/yoshiaki/working/2026-04-23kn/wiki/operated-repositories.md)）。
