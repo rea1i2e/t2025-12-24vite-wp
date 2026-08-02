@@ -12,6 +12,7 @@
 - 案件の正本は `ai-docs/figma-design-mapping.md`。未登録なら `ai-docs/figma-design-kickoff-prompt.md` で URL / node-id を先に記録する。
 - `ai-docs/figma-design-section-prompt.md` に従い、Figma MCP で PC/SP を確認して **1セクションずつ**実装する。取得できないデザインを推測しない。
 - 正本差し替えは `figma-design-refresh-pixexport`、初稿前比較は `figma-qa-compare` を使う。
+- **セクション実装の完了条件（省略禁止）**: ユーザーが「セルフQA不要」と明示しない限り、`ai-docs/pre-human-qa-loop-prompt.md` で当該範囲のセルフQA（規約→デザイン再現→カンプ幅・最大2周）→ `ai-docs/fb/qa/` に残件 →「人間チェック待ち」。運用正本: ナレッジ `wiki/ai-pre-human-qa-and-fb-rounds.md`
 
 ---
 
