@@ -13,14 +13,20 @@ XD エクスポート（JSON + PNG）を手がかりに、HTML / SCSS / PHP を�
 
 このファイルを読み込んだら、以下の手順を順番に実行し、該当箇所の HTML と SCSS を更新・追記してください。作業後は JSON と PNG を再確認して差異がないことを必ず検証します。
 
-0. **デザイントークン・フォント（セクション実装の前・必須）**
+0. **デザイントークン・フォント・レイアウト幅（セクション実装の前・必須）**
 
-   - [`DESIGN-TOKENS.md`](./DESIGN-TOKENS.md) と `src/assets/sass/base/_root.scss` を確認する。
+   - [`DESIGN-TOKENS.md`](./DESIGN-TOKENS.md) と `src/assets/sass/base/_root.scss` / `src/assets/sass/global/_setting.scss` を確認する。
    - トークン未記入、または `--base-font-family` がテンプレ仮フォント（例: Noto Sans JP）のままなら、**セクション実装を止めて**先にフォントを設置する。
    - 全 `export_*.json` から `fontFamily` / `fontStyle` を集計し、本文用・欧文用（数字・電話）・ウェイト対応を DESIGN-TOKENS に書く。
    - Skill `font-setup-web` + `raw/fonts/README-font-compress.md` で自己ホスト（WOFF2）。CDN 直読みは原則禁止。バリアブルがあれば優先。
    - `:root` に `--base-font-family`、必要なら `--font-family-en`。`body` は前者。数字・電話は `font-family: var(--font-family-en)`。
    - preload は FV 用 **1 ファイルのみ**（`header.php` + `ty_vite_asset_url`）。
+   - **レイアウト幅（フォントと同様、セクション実装前に確定）**
+     1. 全 `export_*.json` の `artboards[].bounds.width`（キャンバス）と、主要コンテンツ塊の幅を集計する
+     2. `$width-pc` … カンプ／キャンバス幅の代表値（例: 1600）
+     3. `$inner-pc` … セクションで多いコンテンツ幅（例: 1200。例外は後から `__inner` で `--inner` のみ上書き）
+     4. DESIGN-TOKENS の「レイアウト幅」表と `_setting.scss` を同時に更新する（後から変えると `l-inner`・リキッド・`vw()` が一気にずれる）
+     5. 既定より広い塊だけ `.p-*__inner` で `--inner` を上書き（`--inner-padding` は大きくしない。詳細は coding-ejs-html のセクションインナー）
 
 1. **規約の正本を読む（実装前）**
 
