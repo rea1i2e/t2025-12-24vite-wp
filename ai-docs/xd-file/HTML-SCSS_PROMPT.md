@@ -36,6 +36,7 @@ XD JSON / PNG から HTML+SCSS（WordPress テーマ）を書くときの案内�
 
 - コンポーネント SCSS は先頭で `@use "../global" as *;`（既存 partial に合わせる）。
 - 単位は `rem()` / 必要なら `maxrem()`。ブレイクポイント差分は `@include mq() { … }`（セレクタの `&` ネストはしない。詳細は `coding-sass.md`）。
+- PHP/HTML に出した当該ブロックのクラスは、**マークアップ出現順**で SCSS に並べる。指定がなくても空セレクタ `{}` を残す（`coding-sass.md`「マークアップ出現順にセレクタを並べ、空でも書く」）。
 - **バリアントは BEM modifier（`--xxx`）ではなく `data-*`**（例: `data-color="contact"`）。SCSS は `.p-block__el[data-color="contact"]`。正本は `coding-sass.md` の「バリアント設計」。
 - CSS 変数・繰り返しトークンは `src/assets/sass` の既存（`global` / `base/_root.scss` 等）と [`DESIGN-TOKENS.md`](./DESIGN-TOKENS.md) を優先。新規変数は必要なときだけ追加。
 - HTML 内のテーマ画像は `ty_img()` / `ty_theme_image_url()`（`get_template_directory_uri()/images/` は使わない）。
