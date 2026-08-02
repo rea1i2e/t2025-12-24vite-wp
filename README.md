@@ -26,14 +26,7 @@ npm run build
 
 **手順の詳細・新規案件セットアップ・デプロイ**は [ai-docs/architecture.md](ai-docs/architecture.md) の目次から辿る。
 
-**Vite は既定で `localhost:5173`。** 他プロジェクトが同じポートを使うと、dev 判定やアセット読み込みがずれることがある。必要なら **5173 を使っているプロセスを確認したうえで** 終了する（macOS の例）。
-
-```bash
-lsof -nP -iTCP:5173 -sTCP:LISTEN
-kill $(lsof -t -i :5173)
-```
-
-`kill $(lsof -t -i :5173)` は **ポート 5173 を掴んでいるプロセスすべて**にシグナルを送る。コマンド名や PID が Vite / Node の該当サーバーであることを、`lsof` の出力で確かめてから実行すること。
+**Vite は `vite.hot` 方式。** `npm run dev` 中だけテーマ直下 `vite.hot` に実 URL が書かれ、PHP はそれを見て dev 判定する。他案件が 5173 を掴んでいても、このテーマで dev していなければ `dist` を読む。5173 占有時は次の空きポートで起動する。
 
 ### 導入時の注意（Git / husky）
 

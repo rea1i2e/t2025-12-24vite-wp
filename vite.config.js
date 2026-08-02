@@ -80,6 +80,61 @@ function wpPhpFullReload() {
  * パスをPOSIX形式（スラッシュ区切り）に変換
  * Windowsのバックスラッシュをスラッシュに統一
  */
+/**
+ * Vite 起動中だけテーマ直下に vite.hot を書き、実際の URL（localhost:ポート）を PHP に伝える。
+ * ポート衝突時は strictPort:false で次の空きへ移るため、固定 5173 前提の誤判定を避ける。
+ */
+function wpViteHotFile() {
+  const hotPath = path.resolve(__dirname, "vite.hot");
+
+  const removeHot = () => {
+    try {
+      if (fs.existsSync(hotPath)) fs.unlinkSync(hotPath);
+    } catch {
+      // 終了時の掃除失敗は無視
+    }
+  };
+
+  const writeHot = (server) => {
+    const addr = server.httpServer?.address();
+    const port =
+      typeof addr === "object" && addr && typeof addr.port === "number"
+        ? addr.port
+        : server.config.server.port;
+    const protocol = server.config.server.https ? "https" : "http";
+    // PHP / ブラウザからは localhost 固定（host:true の LAN IP は使わない）
+    const url = `${protocol}://localhost:${port}`;
+    fs.writeFileSync(hotPath, `${url}\n`, "utf8");
+  };
+
+  return {
+    name: "wp-vite-hot-file",
+    configureServer(server) {
+      process.once("exit", removeHot);
+      for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
+        process.once(signal, () => {
+          removeHot();
+          process.exit(0);
+        });
+      }
+
+      const onListening = () => {
+        writeHot(server);
+      };
+      // 実ポート確定後に書く（post-hook だけだと未 listening のことがある）
+      if (server.httpServer?.listening) {
+        onListening();
+      } else {
+        server.httpServer?.once("listening", onListening);
+      }
+    },
+    buildStart() {
+      // 本番ビルド前に残骸を消す
+      removeHot();
+    },
+  };
+}
+
 function toPosixPath(p) {
   return p.replaceAll("\\", "/");
 }
@@ -224,7 +279,8 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    strictPort: true,
+    // 占有時は次の空きポートへ（vite.hot に実 URL を書く）
+    strictPort: false,
     cors: true,
     headers: {
       "Access-Control-Allow-Origin": "*",
@@ -281,6 +337,7 @@ export default defineConfig({
    * WordPress用のカスタムプラグインと画像最適化プラグインを登録
    */
   plugins: [
+    wpViteHotFile(),
     wpPhpFullReload(),
     wpThemeImagesManifest(),
     sassGlobImports(),

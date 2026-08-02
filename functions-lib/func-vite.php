@@ -22,20 +22,82 @@ declare(strict_types=1);
  *   ty_enqueue_vite_style_entry('src/assets/sass/style.scss', 'ty');
  */
 
-if (!defined('TY_VITE_DEV_SERVER')) {
-	define('TY_VITE_DEV_SERVER', is_ssl() ? 'https://localhost:5173' : 'http://localhost:5173');
+/**
+ * Vite が書き出す hot ファイル（テーマ直下 vite.hot）。中身は https?://localhost:PORT 1行。
+ * 固定 5173 の誤判定を避けるため、hot があるときだけその URL を使う。
+ */
+function ty_vite_hot_path(): string
+{
+	return rtrim(get_stylesheet_directory(), '/') . '/vite.hot';
 }
 
-// 開発中かどうかを判定
+/**
+ * hot ファイルから dev server URL を読む。不正・不在なら空文字。
+ */
+function ty_vite_hot_url(): string
+{
+	$path = ty_vite_hot_path();
+	if (!is_readable($path)) {
+		return '';
+	}
+
+	$raw = file_get_contents($path);
+	if ($raw === false) {
+		return '';
+	}
+
+	$url = trim($raw);
+	if ($url === '') {
+		return '';
+	}
+
+	// localhost / 127.0.0.1 のみ許可（任意ポート）
+	if (!preg_match('#^https?://(?:localhost|127\.0\.0\.1)(?::\d+)?/?$#i', $url)) {
+		return '';
+	}
+
+	return rtrim($url, '/');
+}
+
+/**
+ * このテーマ用の Vite URL を解決する。
+ * 優先: vite.hot →（任意）wp-config 等の TY_VITE_DEV_SERVER → なし（prod）
+ * 既定の 5173 ハードコードはしない（他案件の Vite 誤判定を避ける）。
+ */
+function ty_vite_resolve_dev_server(): string
+{
+	static $resolved = null;
+	if (is_string($resolved)) {
+		return $resolved;
+	}
+
+	$hot = ty_vite_hot_url();
+	if ($hot !== '') {
+		$resolved = $hot;
+		return $resolved;
+	}
+
+	if (defined('TY_VITE_DEV_SERVER') && is_string(TY_VITE_DEV_SERVER) && TY_VITE_DEV_SERVER !== '') {
+		$resolved = rtrim(TY_VITE_DEV_SERVER, '/');
+		return $resolved;
+	}
+
+	$resolved = '';
+	return $resolved;
+}
+
+// 開発中かどうかを判定（このテーマの hot または明示定数 + 到達確認）
 function ty_vite_is_dev(): bool
 {
-	$dev_server = defined('TY_VITE_DEV_SERVER') ? (string) TY_VITE_DEV_SERVER : '';
-	if ($dev_server === '') return false;
+	$dev_server = ty_vite_resolve_dev_server();
+	if ($dev_server === '') {
+		return false;
+	}
 
-	$health_url = rtrim($dev_server, '/') . '/@vite/client';
+	$health_url = $dev_server . '/@vite/client';
 	// HEAD は Vite の仮想モジュール (/@vite/client) で 404 になることがあるため GET で確認する
 	$response = wp_remote_get($health_url, ['timeout' => 0.25, 'sslverify' => false]);
-	// 他案件の Vite が 5173 を占有して 404 を返す場合がある。2xx のみ開発中とみなす
+	// 他案件の Vite がポートを占有して 404 を返す場合がある。2xx のみ開発中とみなす
 	$code = (int) wp_remote_retrieve_response_code($response);
 	return !is_wp_error($response) && $code >= 200 && $code < 300;
 }
@@ -43,8 +105,7 @@ function ty_vite_is_dev(): bool
 // Vite dev server のベースURLを返す（末尾スラッシュなし）
 function ty_vite_dev_server(): string
 {
-	$dev_server = defined('TY_VITE_DEV_SERVER') ? (string) TY_VITE_DEV_SERVER : 'http://localhost:5173';
-	return rtrim($dev_server, '/');
+	return ty_vite_resolve_dev_server();
 }
 
 // dist ディレクトリのURLを返す

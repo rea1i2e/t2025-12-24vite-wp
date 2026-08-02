@@ -454,12 +454,13 @@ dist/ から実際のファイルを enqueue
 
 判定は `functions-lib/func-vite.php` の `ty_vite_is_dev()` で行います。
 
-- `functions-lib/func-vite.php` で `TY_VITE_DEV_SERVER` を定義（`is_ssl()` に応じて `https://localhost:5173` または `http://localhost:5173`）
-- `TY_VITE_DEV_SERVER/@vite/client` に `wp_remote_head()` で到達確認（短いtimeout）
-  - 到達できる: **dev扱い**（Vite dev serverから `@vite/client` と `src/assets/**` を読み込む）
-  - 到達できない: **prod扱い**（`dist/.vite/manifest.json` を参照して `dist/assets/**` をenqueue）
+- `npm run dev` 時、Vite プラグイン（`wpViteHotFile`）がテーマ直下 `vite.hot` に実 URL（例: `http://localhost:5174`）を書く（`strictPort: false` で空きポートへ退避可）
+- PHP は **`vite.hot` を優先**し、その URL の `/@vite/client` に `wp_remote_get()` で到達確認（短い timeout）
+  - hot があり到達できる: **dev扱い**（Vite dev serverから `@vite/client` と `src/assets/**` を読み込む）
+  - hot が無い／到達できない: **prod扱い**（`dist/.vite/manifest.json` を参照して `dist/assets/**` をenqueue）
+- 任意の上書きのみ `TY_VITE_DEV_SERVER`（wp-config 等）。**既定の 5173 ハードコードはしない**（他案件の Vite 誤判定を避ける）
 
-同一マシン上で **別プロセスの Vite が同じ `TY_VITE_DEV_SERVER` で応答している場合も dev 扱い**になる。運用では **5173 をこのテーマ用に確保**し、衝突時は占有側を止める（詳細はナレッジ [wp-template-decision-records.md（§9）](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md#9-vite-開発時のポート-5173-運用)、手順は [開発ガイド](#開発ガイド) の「Vite dev server（ポート5173）の運用」と [トラブルシューティング](#トラブルシューティング)）。
+方針: ナレッジ [wp-template-decision-records.md（§9）](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md#9-vite-開発時のポート-5173-運用)。手順は [開発ガイド](#開発ガイド) の「Vite dev server（vite.hot 方式）」と [トラブルシューティング](#トラブルシューティング)。
 
 ### 画像・フォントの扱い
 
@@ -594,12 +595,13 @@ CSSプロパティの指定順は、メディアクエリの有無を優先し�
 3. `src/` 以下を編集（Sass/JS/画像/フォント）
 4. ブラウザで自動反映を確認（HMR対応）
 
-### Vite dev server（ポート5173）の運用
+### Vite dev server（vite.hot 方式）
 
-dev / prod の切り替えは `ty_vite_is_dev()` が **`TY_VITE_DEV_SERVER` の `/@vite/client` に到達できるか**で判定する（既定は `localhost:5173`）。**別プロジェクトの Vite が同じポートで動いていると、こちらも dev 扱いになる**ため、このテーマで開発するときは **5173 をこのテーマ用の Vite に専有**させる。
+dev / prod の切り替えは、**このテーマの `npm run dev` が書いた `vite.hot`** と、その URL への到達確認で判定する。他案件が 5173 を掴んでいても、`vite.hot` が無ければ prod（`dist`）になる。
 
-- 他案件で 5173 を使っている場合は、**必要に応じて先にそちらを止める**（または該当の dev サーバーを終了する）。
-- ポートがどのプロセスか確認する例（macOS）: `lsof -nP -iTCP:5173 -sTCP:LISTEN`
+- 起動: `npm run dev` → テーマ直下 `vite.hot` に実 URL（希望ポートは 5173。占有時は次の空きへ）
+- 停止時・`npm run build` 開始時に `vite.hot` を削除
+- 任意上書き: `wp-config.php` 等で `define('TY_VITE_DEV_SERVER', 'http://localhost:PORT');`（hot が無いときだけ）
 - 方針の記録: ナレッジ [wp-template-decision-records.md（§9）](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md#9-vite-開発時のポート-5173-運用)
 
 ## スクリプト
@@ -1083,19 +1085,18 @@ chmod +x scripts/setup-secrets.sh
 
 ### ポート5173が占有されている、または別プロジェクトのViteが動いている
 
-**症状**: `npm run dev` が **5173 で待受できない**（`EADDRINUSE` など）。または WordPress 上で **dev 用の読み込みになるが CSS/JS が期待と違う**・HMR がおかしい。
-
-**原因**: 同一マシンで **別の Vite（または別プロジェクト）がすでに 5173 を使用**している。`ty_vite_is_dev()` は「その URL の `/@vite/client` に応答があるか」だけを見るため、**別案件の dev サーバーでも dev 判定**になりうる。
+**症状**: 以前は誤って他案件の `localhost:5173` から CSS/JS が読まれることがあった。現行は `vite.hot` 方式のため、**このテーマで `npm run dev` していなければ prod** になる。
 
 **解決方法**:
 
-1. 待受プロセスを確認する（macOS の例）:
+1. このテーマで開発するときは `npm run dev` を起動し、テーマ直下 `vite.hot` に実 URL があることを確認する。
+2. 5173 が埋まっていても `strictPort: false` により次のポートで起動できる。確認例:
    ```bash
-   lsof -nP -iTCP:5173 -sTCP:LISTEN
+   cat vite.hot
+   lsof -nP -iTCP:5173-5180 -sTCP:LISTEN
    ```
-2. **PID とコマンド名を確認**し、Vite / Node の該当プロセスであることを確かめてから終了する（不要なら該当ターミナルで `Ctrl+C`）。**内容が分からないプロセスを無闇に kill しない**こと。
-3. このテーマで開発する場合は、**5173 はこのリポジトリの `npm run dev` に空ける**運用とする（方針はナレッジ [wp-template-decision-records.md（§9）](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md#9-vite-開発時のポート-5173-運用)）。
-4. 日々の手順は [開発ガイド](#開発ガイド) の「Vite dev server（ポート5173）の運用」を参照。
+3. それでもおかしいときは `vite.hot` の残骸（停止後も残っている）を削除し、`npm run build` 済みの `dist` を確認する。
+4. 方針はナレッジ [wp-template-decision-records.md（§9）](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md#9-vite-開発時のポート-5173-運用)。
 
 ### HTTPS環境でMixed Contentエラー
 

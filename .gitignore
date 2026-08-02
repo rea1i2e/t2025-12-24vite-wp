@@ -16,6 +16,9 @@ dist-ssr
 # Deploy secrets (local only)
 .env.deploy
 
+# Vite dev server URL（npm run dev 中のみ。このテーマの実ポート）
+vite.hot
+
 # CI 生成: ドキュメントルート向け Basic（.htaccess / .htpasswd）
 staging/docroot/
 
