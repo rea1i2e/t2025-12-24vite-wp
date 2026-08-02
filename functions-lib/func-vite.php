@@ -33,8 +33,11 @@ function ty_vite_is_dev(): bool
 	if ($dev_server === '') return false;
 
 	$health_url = rtrim($dev_server, '/') . '/@vite/client';
-	$response = wp_remote_head($health_url, ['timeout' => 0.25, 'sslverify' => false]);
-	return !is_wp_error($response) && (int) wp_remote_retrieve_response_code($response) >= 200;
+	// HEAD は Vite の仮想モジュール (/@vite/client) で 404 になることがあるため GET で確認する
+	$response = wp_remote_get($health_url, ['timeout' => 0.25, 'sslverify' => false]);
+	// 他案件の Vite が 5173 を占有して 404 を返す場合がある。2xx のみ開発中とみなす
+	$code = (int) wp_remote_retrieve_response_code($response);
+	return !is_wp_error($response) && $code >= 200 && $code < 300;
 }
 
 // Vite dev server のベースURLを返す（末尾スラッシュなし）
