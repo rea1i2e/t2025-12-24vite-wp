@@ -1,7 +1,7 @@
 # Coding Prompt for XD Assets（`ai-docs/xd-file/`）
 
 XD エクスポート（JSON + PNG）を手がかりに、HTML / SCSS / PHP を更新するときの**作業手順**。  
-コーディング規約の本文はここに持たない。規約は [`HTML-SCSS_PROMPT.md`](./HTML-SCSS_PROMPT.md) の「正本」を Read すること。
+コーディング規約の本文はここに持たない。規約は [`HTML-SCSS_PROMPT.md`](./HTML-SCSS_PROMPT.md)（ローカル入口）経由でナレッジ `wiki/camp-html-scss-implementation.md` を Read すること。
 
 ## 素材の置き場
 
@@ -30,7 +30,7 @@ XD エクスポート（JSON + PNG）を手がかりに、HTML / SCSS / PHP を�
 
 1. **規約の正本を読む（実装前）**
 
-   - [`HTML-SCSS_PROMPT.md`](./HTML-SCSS_PROMPT.md) の正本パスを開き、汎用 Wiki・案件 `AGENTS.md` / `architecture.md` を把握する。
+   - [`HTML-SCSS_PROMPT.md`](./HTML-SCSS_PROMPT.md) からナレッジ `camp-html-scss-implementation.md` と案件 `AGENTS.md` / `architecture.md` を把握する。
    - 旧プロンプトにあった規約の再掲・推測実装はしない。
 
 2. **対象アートボードを特定**
