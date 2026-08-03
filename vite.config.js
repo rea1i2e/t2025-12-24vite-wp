@@ -86,6 +86,8 @@ function wpPhpFullReload() {
  */
 function wpViteHotFile() {
   const hotPath = path.resolve(__dirname, "vite.hot");
+  /** @type {'build' | 'serve'} */
+  let command = "serve";
 
   const removeHot = () => {
     try {
@@ -109,6 +111,9 @@ function wpViteHotFile() {
 
   return {
     name: "wp-vite-hot-file",
+    configResolved(config) {
+      command = config.command;
+    },
     configureServer(server) {
       process.once("exit", removeHot);
       for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
@@ -129,8 +134,10 @@ function wpViteHotFile() {
       }
     },
     buildStart() {
-      // 本番ビルド前に残骸を消す
-      removeHot();
+      // serve（dev）でも buildStart が走るため、本番ビルド時のみ削除する
+      if (command === "build") {
+        removeHot();
+      }
     },
   };
 }
