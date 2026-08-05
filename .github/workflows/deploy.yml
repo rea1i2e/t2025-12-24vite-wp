@@ -98,13 +98,14 @@ jobs:
       if: steps.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch'
       run: npm run build
 
-    # リポジトリ名が案件ID形式（YYYY-MM-DDxx）のときだけ docroot Basic を生成・FTP（テンプレ t2025-… はスキップ）
+    # リポジトリ名が案件ID形式（YYYY-MM-DDxx + 任意の英数字・ハイフンのサフィックス）のときだけ
+    # docroot Basic を生成・FTP（テンプレ t2025-… は先頭が数字4桁でないためスキップ）
     - name: Determine docroot Basic eligibility
       id: docroot_basic
       if: steps.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch'
       run: |
         name="${{ github.event.repository.name }}"
-        if [[ "${name}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}[a-zA-Z]{2}[0-9]*$ ]]; then
+        if [[ "${name}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}[a-zA-Z]{2}[a-zA-Z0-9-]*$ ]]; then
           echo "enabled=true" >> "$GITHUB_OUTPUT"
           echo "**docroot Basic:** 有効（\`${name}\` は案件ID形式）" >> "$GITHUB_STEP_SUMMARY"
         else

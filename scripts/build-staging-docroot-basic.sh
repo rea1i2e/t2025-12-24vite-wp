@@ -25,8 +25,9 @@ AUTH_NAME="${BASIC_STAGING_AUTH_NAME:-Staging}"
 
 derive_from_case_id() {
   local id="$1"
-  # 英字2文字＋任意の末尾数字（数字は導出で無視）。ex 使い回しの連番テスト ID や bz2 等の実案件に対応。
-  if [[ "${id}" =~ ^([0-9]{4})-([0-9]{2})-([0-9]{2})([a-zA-Z]{2})([0-9]*)$ ]]; then
+  # 英字2文字＋任意の英数字・ハイフンのサフィックス（サフィックスは導出で無視）。
+  # ex 使い回しの連番テスト ID・bz2 等の実案件・静的からの WordPress 化（2026-08-05ex-wp）に対応。
+  if [[ "${id}" =~ ^([0-9]{4})-([0-9]{2})-([0-9]{2})([a-zA-Z]{2})([a-zA-Z0-9-]*)$ ]]; then
     local mm="${BASH_REMATCH[2]}"
     local dd="${BASH_REMATCH[3]}"
     local sfx="${BASH_REMATCH[4]}"
@@ -46,7 +47,7 @@ if [[ -n "${STAGING_BASIC_USER:-}" && -n "${STAGING_BASIC_PASS:-}" ]]; then
 elif derive_from_case_id "${CASE_ID}"; then
   :
 else
-  echo "CASE_ID が YYYY-MM-DDxx（英字2文字、任意で末尾数字）に一致しません: ${CASE_ID}" >&2
+  echo "CASE_ID が YYYY-MM-DDxx（英字2文字、任意で英数字・ハイフンのサフィックス）に一致しません: ${CASE_ID}" >&2
   echo "一致しない運用では STAGING_BASIC_USER / STAGING_BASIC_PASS を環境変数で渡してください。" >&2
   exit 1
 fi
