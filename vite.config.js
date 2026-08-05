@@ -77,24 +77,65 @@ function wpPhpFullReload() {
 }
 
 /**
- * パスをPOSIX形式（スラッシュ区切り）に変換
- * Windowsのバックスラッシュをスラッシュに統一
- */
-/**
  * Vite 起動中だけテーマ直下に vite.hot を書き、実際の URL（localhost:ポート）を PHP に伝える。
  * ポート衝突時は strictPort:false で次の空きへ移るため、固定 5173 前提の誤判定を避ける。
+ *
+ * vite.hot の中身は 2 行:
+ *   1行目: https?://localhost:PORT （PHP が読む。1行目だけ見る）
+ *   2行目: 書いた dev サーバーの PID（所有者判定用。PHP は無視）
+ *
+ * dev と build はプロセスが別なので、build が「動作中の dev の hot」を消さないよう
+ * 削除前に必ず所有者を確認する。
  */
 function wpViteHotFile() {
   const hotPath = path.resolve(__dirname, "vite.hot");
   /** @type {'build' | 'serve'} */
   let command = "serve";
 
-  const removeHot = () => {
+  const unlinkHot = () => {
     try {
       if (fs.existsSync(hotPath)) fs.unlinkSync(hotPath);
     } catch {
-      // 終了時の掃除失敗は無視
+      // 掃除の失敗は無視
     }
+  };
+
+  /** vite.hot の 2 行目に書かれた PID。無い／壊れていれば null */
+  const readHotPid = () => {
+    try {
+      const lines = fs.readFileSync(hotPath, "utf8").split(/\r?\n/);
+      const pid = Number.parseInt((lines[1] ?? "").trim(), 10);
+      return Number.isInteger(pid) && pid > 0 ? pid : null;
+    } catch {
+      return null;
+    }
+  };
+
+  /** シグナル 0 で生存確認（EPERM は「居るが権限が無い」なので生存扱い） */
+  const isProcessAlive = (pid) => {
+    try {
+      process.kill(pid, 0);
+      return true;
+    } catch (err) {
+      return err?.code === "EPERM";
+    }
+  };
+
+  /** 自分が書いた hot のときだけ消す（dev 終了時の後片付け用） */
+  const removeOwnHot = () => {
+    if (!fs.existsSync(hotPath)) return;
+    const pid = readHotPid();
+    // PID 未記録（旧形式）は自分の残骸とみなして掃除する
+    if (pid !== null && pid !== process.pid) return;
+    unlinkHot();
+  };
+
+  /** 残骸のときだけ消す（build 開始時の掃除用。生きている dev の hot は残す） */
+  const removeStaleHot = () => {
+    if (!fs.existsSync(hotPath)) return;
+    const pid = readHotPid();
+    if (pid !== null && pid !== process.pid && isProcessAlive(pid)) return;
+    unlinkHot();
   };
 
   const writeHot = (server) => {
@@ -106,7 +147,7 @@ function wpViteHotFile() {
     const protocol = server.config.server.https ? "https" : "http";
     // PHP / ブラウザからは localhost 固定（host:true の LAN IP は使わない）
     const url = `${protocol}://localhost:${port}`;
-    fs.writeFileSync(hotPath, `${url}\n`, "utf8");
+    fs.writeFileSync(hotPath, `${url}\n${process.pid}\n`, "utf8");
   };
 
   return {
@@ -115,16 +156,24 @@ function wpViteHotFile() {
       command = config.command;
     },
     configureServer(server) {
-      process.once("exit", removeHot);
+      process.once("exit", removeOwnHot);
       for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
         process.once(signal, () => {
-          removeHot();
+          removeOwnHot();
           process.exit(0);
         });
       }
 
       const onListening = () => {
         writeHot(server);
+
+        // 何かに消されても書き戻す保険（未更新の別リポの build など）。
+        // unref なので dev の終了は妨げない。
+        const keepAlive = setInterval(() => {
+          if (!fs.existsSync(hotPath)) writeHot(server);
+        }, 2000);
+        keepAlive.unref?.();
+        server.httpServer?.once("close", () => clearInterval(keepAlive));
       };
       // 実ポート確定後に書く（post-hook だけだと未 listening のことがある）
       if (server.httpServer?.listening) {
@@ -134,14 +183,19 @@ function wpViteHotFile() {
       }
     },
     buildStart() {
-      // serve（dev）でも buildStart が走るため、本番ビルド時のみ削除する
+      // serve（dev）でも buildStart が走るため、本番ビルド時のみ掃除する。
+      // 生きている dev が書いた hot は奪わない（build 後に dist を読み続ける不具合の原因）。
       if (command === "build") {
-        removeHot();
+        removeStaleHot();
       }
     },
   };
 }
 
+/**
+ * パスをPOSIX形式（スラッシュ区切り）に変換
+ * Windowsのバックスラッシュをスラッシュに統一
+ */
 function toPosixPath(p) {
   return p.replaceAll("\\", "/");
 }

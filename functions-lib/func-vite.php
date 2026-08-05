@@ -23,7 +23,8 @@ declare(strict_types=1);
  */
 
 /**
- * Vite が書き出す hot ファイル（テーマ直下 vite.hot）。中身は https?://localhost:PORT 1行。
+ * Vite が書き出す hot ファイル（テーマ直下 vite.hot）。
+ * 1行目: https?://localhost:PORT / 2行目: 書き出した dev サーバーの PID（PHP では使わない）。
  * 固定 5173 の誤判定を避けるため、hot があるときだけその URL を使う。
  */
 function ty_vite_hot_path(): string
@@ -46,7 +47,9 @@ function ty_vite_hot_url(): string
 		return '';
 	}
 
-	$url = trim($raw);
+	// 2行目以降（PID など）は無視して 1行目だけを URL として扱う
+	$lines = preg_split('/\R/', $raw);
+	$url = is_array($lines) ? trim((string) ($lines[0] ?? '')) : '';
 	if ($url === '') {
 		return '';
 	}
