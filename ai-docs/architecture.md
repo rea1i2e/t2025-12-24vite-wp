@@ -213,8 +213,8 @@ gh repo clone GitHubのユーザー名/新規リポジトリ名
 
 1. サブディレクトリ作成
 2. サブFTPアカウント作成
-3. Basic認証設定
-4. WordPressインストール
+3. WordPressインストール
+4. （推奨）案件セットアップの `apply-wordpress-basic-remote.sh` でサイト全体 Basic。パネルと二重管理しない
 
 ### 6. 固定ページ登録
 
@@ -868,8 +868,9 @@ HTTPS設定が有効な場合、`https://localhost:5173` でアクセス可能�
 GitHub ActionsでFTP経由の自動デプロイを実行します。
 
 - **トリガー**: `main`/`master` ブランチへのpush、PR作成
-- **デプロイ先**: FTPサーバー（**テーマ**用と**ドキュメントルート Basic**用の2ステップ）
+- **デプロイ先**: FTPサーバー（**テーマディレクトリのみ**）
 - **デプロイ対象**: ビルド成果物（`dist/`、`*.php`、`style.css` など）
+- **サイト全体 Basic**: 通常 CI では扱わない。案件セットアップ時のナレッジ `apply-wordpress-basic-remote.sh`（`basic-auth-staging`）が docroot の `.htaccess` / `.htpasswd` を一度設定する
 
 ## 必要なGitHub Secrets
 
@@ -883,9 +884,6 @@ GitHub ActionsでFTP経由の自動デプロイを実行します。
 - `FTP_SERVER_DIR`: サーバー上のデプロイ先ディレクトリ
   - 例: `/public_html/wp-content/themes/t2025-12-24vite-wp/`
   - 「テーマディレクトリ直下」にこのリポジトリの中身（`style.css`, `*.php`, `functions-lib/`, `components/`, `dist/` など）を配置する想定
-- `FTP_SERVER_DIR_DOCROOT`: **サイトのドキュメントルート**（`index.php` がある階層）向けの FTP パス。`staging/docroot/` に生成した **`.htaccess`（HTTP Basic + WordPress 既定リライト）** と **`.htpasswd`** だけを送るジョブで使用
-  - サブ FTP のチルートがそのサイト直下なら、多くは `/` でよい（ホストのパス表記に合わせて調整）
-- **既存リポジトリ:** `.env.deploy` に `FTP_SERVER_DIR_DOCROOT=/`（適宜ホストに合わせる）を**追記**し、`./scripts/setup-secrets.sh` を再実行して GitHub Secret を登録する
 
 ### 任意
 
@@ -894,8 +892,9 @@ GitHub ActionsでFTP経由の自動デプロイを実行します。
 
 ### 注意（ドキュメントルートの `.htaccess`）
 
-- CI が生成する `.htaccess` は **上段: Basic**、**下段: WordPress 標準のリライト**です。**既にサーバーに手修正したルール**がある場合、デプロイで **上書きされると失う**ので、初回は **差分を退避**するか、**「設定 → パーマリンク」で保存し直し**て WP にブロックを再生成させる運用を検討してください。
-- **サブディレクトリに WordPress を置いた構成**では `RewriteBase` / 最終 `RewriteRule` を **手直し**する必要があります。
+- **通常のテーマデプロイは docroot を書き換えない。** Basic はセットアップ時のリモート設定スクリプトが `# BEGIN YOSHIAKI STAGING BASIC` … `# END YOSHIAKI STAGING BASIC` マーカーだけを追加／更新する。
+- WordPress リライト・EWWW 等のブロックは各所有者（WP / プラグイン）が管理する。CI は触らない。
+- **サブディレクトリに WordPress を置いた構成**では `RewriteBase` / 最終 `RewriteRule` を **手直し**する必要がある場合がある。
 
 ## Secrets設定のスクリプト化（gh）
 
@@ -917,7 +916,6 @@ FTP_SERVER=ftp.example.com
 FTP_USERNAME=username
 FTP_PASSWORD=password
 FTP_SERVER_DIR=/public_html/wp-content/themes/t2025-12-24vite-wp/
-FTP_SERVER_DIR_DOCROOT=/
 DISCORD_WEBHOOK=https://discord.com/api/webhooks/...
 TEST_URL=https://example.com
 ```
@@ -953,13 +951,11 @@ chmod +x scripts/setup-secrets.sh
 2. **Node.js環境セットアップ**: Node.js 20をセットアップし、npmキャッシュを有効化
 3. **依存関係のインストール**: `npm ci` で依存関係をインストール
 4. **ビルド**: `npm run build` でViteビルドを実行（`dist/` に成果物を出力）
-5. **docroot Basic の可否**: リポジトリ名（`github.event.repository.name`）が案件 ID 形式（正規表現 `^[0-9]{4}-[0-9]{2}-[0-9]{2}[a-zA-Z]{2}$`、例 `2026-05-08ex`）のときのみ docroot 系ステップへ進む。**テンプレート名**（例 `t2025-12-24vite-wp`）では docroot はスキップし、テーマ FTP のみで完走する
-6. **apache2-utils**: `htpasswd` 用にパッケージをインストール（Ubuntu ランナー・**上記がマッチするときのみ**）
-7. **ドキュメントルート用 Basic 生成**: `scripts/build-staging-docroot-basic.sh` が `CASE_ID=${{ github.event.repository.name }}` で `staging/docroot/.htaccess` と `.htpasswd` を生成（サイト全体 Basic + WP 既定リライト・**マッチ時のみ**）
-8. **デプロイサマリー生成**: GitHub Actionsのサマリーにデプロイ情報を出力
-9. **FTPデプロイ（テーマ）**: `SamKirkland/FTP-Deploy-Action` で `FTP_SERVER_DIR` へアップロード（従来どおり・常に実行）
-10. **FTPデプロイ（ドキュメントルート Basic）**: 同 Action で `staging/docroot/` を `FTP_SERVER_DIR_DOCROOT` へ（**`dangerous-*` は使わず**、ルートの他ファイルは削除しない・**マッチ時のみ**）
-11. **Discord通知**: デプロイ成功/失敗時にDiscordに通知（オプション）
+5. **デプロイサマリー生成**: GitHub Actionsのサマリーにデプロイ情報を出力
+6. **FTPデプロイ（テーマ）**: `SamKirkland/FTP-Deploy-Action` で `FTP_SERVER_DIR` へアップロード
+7. **Discord通知**: デプロイ成功/失敗時にDiscordに通知（オプション）
+
+サイト全体の HTTP Basic は本ワークフローの対象外（セットアップ時に docroot へ一度設定）。
 
 ### デプロイ対象の環境
 
