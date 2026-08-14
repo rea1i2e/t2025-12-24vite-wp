@@ -1404,6 +1404,23 @@ dist/            # ビルド成果物
 - **汎用方針・タグ記述の注意**: ナレッジ [`wiki/wordpress-contact-form-7-autop.md`](file:///Users/yoshiaki/working/2026-04-23kn/wiki/wordpress-contact-form-7-autop.md)
 - **送信ボタン**: `.p-form__submit` ラッパー + `input` 本体（詳細は上記 Wiki「送信ボタン」節）。Sass は `src/assets/sass/components/_p-form.scss`。
 
+### Contact Form 7（通知メール）
+
+- **送信先（To）**: 通知を受け取る管理者アドレス（例: `info@example.com`）。
+- **送信元（From）**: To と分けた、サイトドメインの実在する固定アドレス（例: `Webサイト <form@example.com>`）。フォーム入力者のアドレスは指定しない。
+- **追加ヘッダー**: `Reply-To: [your-email]` のように、必須のメール項目を指定する。
+- **理由**: To と From が同一だと、受信者本人を名乗るメールが Web サーバーから届く形になり、SPF / DKIM との組み合わせによっては、なりすまし判定や迷惑メール振り分けの原因になり得る。
+- **SMTP 利用時**: 原則として SMTP 認証アカウントと From を一致させる。
+- **確認**: テスト送信では画面上の成功だけでなく、着信、Reply-To、迷惑メール振り分け、可能な範囲で SPF / DKIM / DMARC を確認する。
+
+設定例:
+
+```text
+送信先: info@example.com
+送信元: Webサイト <form@example.com>
+追加ヘッダー: Reply-To: [your-email]
+```
+
 ## 画像最適化設定
 
 - **WebP生成**: 有効/無効
