@@ -3,4 +3,4 @@
 set -euo pipefail
 
 root="$(pwd)"
-"$root/scripts/handoff-snapshot.sh" "SessionEnd (Cursor)" "cursor chat ended" "$root"
+"$root/ai-docs/tools/handoff-snapshot.sh" "SessionEnd (Cursor)" "cursor chat ended" "$root"

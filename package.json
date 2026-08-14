@@ -15,7 +15,7 @@
     "init": "bash scripts/init-project.sh",
     "prepare": "husky",
     "capture:qa": "node scripts/capture-qa-screenshot.mjs",
-    "capture:qa:all": "node scripts/capture-qa-all.mjs",
+    "capture:qa:all": "CAPTURE_QA_CONFIG=ai-docs/capture-qa.config.json node scripts/capture-qa-all.mjs",
     "check:unused": "node scripts/check-unused.mjs",
     "check:images": "node scripts/check-images.mjs"
   },

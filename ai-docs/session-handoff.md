@@ -9,7 +9,7 @@
 | 層 | Claude Code | Cursor |
 |----|-------------|--------|
 | 1 | `CLAUDE.md` 運用ルール | `.cursor/rules/session-handoff.mdc` |
-| 2 | `/handoff` | 「引き継ぎ」指示 / `scripts/handoff-note.sh` |
+| 2 | `/handoff` | 「引き継ぎ」指示 / `ai-docs/tools/handoff-note.sh` |
 | 3 | `StopFailure` フック | `sessionEnd` フック |
 
 ## Claude Code → Cursor
@@ -29,7 +29,7 @@ cd ~/Local\ Sites/t2025-12-24vite-wp/app/public/wp-content/themes/t2025-12-24vit
 ## 人間用
 
 ```bash
-./scripts/handoff-note.sh "次: …"
+./ai-docs/tools/handoff-note.sh "次: …"
 ```
 
 ## 再インストール
@@ -37,3 +37,6 @@ cd ~/Local\ Sites/t2025-12-24vite-wp/app/public/wp-content/themes/t2025-12-24vit
 ```bash
 python3 /path/to/2026-04-23kn/skills/cross-tool-session-handoff/scripts/install-handoff.py --target .
 ```
+
+再インストールするとフック実体が `scripts/` `.cursor/hooks/` `.claude/hooks/` に書き戻る。
+その後はナレッジ `skills/ai-docs-consolidation/SKILL.md` で `ai-docs/tools/` へ再集約する。

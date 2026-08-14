@@ -34,7 +34,7 @@ files=(
   "env.deploy.example"
   "ai-docs/architecture.md"
   "tools/README.md"
-  "capture-qa.config.json"
+  "ai-docs/capture-qa.config.json"
 )
 
 # 置換実行

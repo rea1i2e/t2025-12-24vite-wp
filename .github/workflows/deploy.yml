@@ -30,6 +30,9 @@ env:
     **/.cursor/**
     **/CLAUDE.md
     **/capture-qa.config.json
+    **/qa-screenshots/**
+    **/config/**
+    **/staging/**
 
 on:
   push:

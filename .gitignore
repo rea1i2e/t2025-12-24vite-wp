@@ -42,6 +42,7 @@ raw/videos/compress-report.md
 *.sw?
 
 # QA 比較用スクショ（ローカル生成のみ）
+ai-docs/qa-screenshots/
 qa-screenshots/
 
 # cross-tool-session-handoff: session-log（ローカルのみ。チーム非共有）

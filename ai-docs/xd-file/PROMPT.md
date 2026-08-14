@@ -85,7 +85,7 @@ XD エクスポート（JSON + PNG）を手がかりに、HTML / SCSS / PHP を�
 9. **人間チェック前セルフQA（省略禁止）**
 
    - 当該セクションの実装が終わったら、ユーザーが「セルフQA不要」と明示しない限り [`../pre-human-qa-loop-prompt.md`](../pre-human-qa-loop-prompt.md) に従う。
-   - 対象はこのセクションのファイルのみ。順: 規約 → デザイン再現 → **カンプ幅**（`capture-qa.config.json` の widths。SP カンプ無しなら PC のみ）。最大2周。
+   - 対象はこのセクションのファイルのみ。順: 規約 → デザイン再現 → **カンプ幅**（`ai-docs/capture-qa.config.json` の widths。SP カンプ無しなら PC のみ）。最大2周。
    - 残件を `ai-docs/fb/qa/YYYY-MM-DD-pre-human-<slug>.md` に書き、「人間チェック待ち」で止める。commit / push しない。
    - 凍結中・ペン待ちの他セクションは触らない。
    - 運用正本: ナレッジベース `wiki/ai-pre-human-qa-and-fb-rounds.md`

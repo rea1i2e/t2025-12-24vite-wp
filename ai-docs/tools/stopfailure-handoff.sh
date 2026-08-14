@@ -58,4 +58,4 @@ print(" | ".join(parts))
 PY
 )
 
-"$root/scripts/handoff-snapshot.sh" "StopFailure" "$detail" "$root"
+"$root/ai-docs/tools/handoff-snapshot.sh" "StopFailure" "$detail" "$root"

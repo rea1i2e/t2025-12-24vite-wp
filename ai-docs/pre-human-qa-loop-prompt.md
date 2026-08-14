@@ -19,7 +19,7 @@ Skill 化前の運用用。案件の `ai-docs/` に置き、変数を埋める�
 
 ### 前提チェック（開始前）
 
-- [ ] `capture-qa.config.json` がある（**`widths` がカンプ幅と一致**。SP 無し案件は PC のみ）
+- [ ] `ai-docs/capture-qa.config.json` がある（**`widths` がカンプ幅と一致**。SP 無し案件は PC のみ）
 - [ ] 対象ページのデザイン正本（Figma URL または XD export）が分かる
 - [ ] ローカルで対象ページが表示できる（`baseUrl` がテンプレ名のままになっていない）
 - [ ] デザイン再現を回すなら必要な MCP / 素材が使える（使えないときは軸2をスキップして報告）

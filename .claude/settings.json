@@ -23,7 +23,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/stopfailure-handoff.sh",
+            "command": "ai-docs/tools/stopfailure-handoff.sh",
             "timeout": 15
           }
         ]
