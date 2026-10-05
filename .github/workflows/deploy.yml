@@ -33,6 +33,7 @@ env:
     **/qa-screenshots/**
     **/config/**
     **/staging/**
+    **/manual/**
 
 on:
   push:
