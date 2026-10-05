@@ -69,6 +69,7 @@ add_filter(
 		// ドキュメント
 		$exclude_filters[] = $theme_dir . '/README.md';
 		$exclude_filters[] = $theme_dir . '/docs';
+		$exclude_filters[] = $theme_dir . '/manual'; // 更新マニュアルの元データ（HTML・スクショ・PDF）
 
 		return $exclude_filters;
 	}
