@@ -1,0 +1,12 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:17"
+      timezone: Asia/Tokyo
+    # 通常のバージョン更新 PR は作らず、security updates だけを対象にする。
+    open-pull-requests-limit: 0
