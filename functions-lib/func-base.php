@@ -23,7 +23,24 @@ function ty_setup(): void
 }
 add_action('after_setup_theme', 'ty_setup');
 
+/**
+ * コメント／ピンバック受付のクローズ
+ *
+ * フロントにコメント UI が無くても wp-comments-post.php 等の受付口は残るため、
+ * comments_open / pings_open を閉じる。管理メニュー非表示（func-admin-menu.php）とは別。
+ *
+ * 再有効化: テーマ内で define('TY_ENABLE_COMMENTS', true); するか、下の定数を true にする。
+ *
+ * @see https://github.com/rea1i2e/t2025-12-24vite-wp/issues/5
+ */
+if (!defined('TY_ENABLE_COMMENTS')) {
+	define('TY_ENABLE_COMMENTS', false);
+}
 
+if (!TY_ENABLE_COMMENTS) {
+	add_filter('comments_open', '__return_false', 20);
+	add_filter('pings_open', '__return_false', 20);
+}
 
 /* 絵文字の無効化（モダンブラウザでは、標準で対応しているため無効化してパフォーマンスを上げる） */
 function ty_disable_emoji(): void

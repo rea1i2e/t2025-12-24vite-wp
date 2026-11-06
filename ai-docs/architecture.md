@@ -1378,7 +1378,7 @@ dist/            # ビルド成果物
 |------------|------|
 | `func-admin-menu.php` | 管理画面メニューのカスタマイズ（非表示にするメニュー・トップレベルに表示する固定ページを配列で管理） |
 | `func-ai1wm-exclude.php` | All-in-One WP Migrationでエクスポートする際に一部ファイルを除外 |
-| `func-base.php` | WordPressの基本的な機能を設定（テーマサポート、コメント無効化、絵文字無効化等） |
+| `func-base.php` | WordPressの基本的な機能を設定（テーマサポート、コメント／ピンバック受付クローズ、絵文字無効化等）。受付クローズは `comments_open` / `pings_open` を false（既定）。再有効化は `TY_ENABLE_COMMENTS`。管理メニュー非表示は `func-admin-menu.php` |
 | `func-images.php` | 画像関連のヘルパー関数（画像URL取得、画像表示等） |
 | `func-modify-youtube-oembed.php` | YouTube埋め込み時のパラメータ調整 |
 | `func-nav-items.php` | ナビメニューを一元管理 |
