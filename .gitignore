@@ -47,3 +47,5 @@ qa-screenshots/
 
 # cross-tool-session-handoff: session-log（ローカルのみ。チーム非共有）
 ai-docs/session-log.md
+ai-docs/session-log.md.lock
+ai-docs/archive/session-log-*.md
