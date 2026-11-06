@@ -146,7 +146,9 @@ build-essential が表示されればOKです。
 ### 1. LOCALのセットアップ
 
 Local環境のセットアップを行います。
-サイト名には案件idを使う
+サイト名には案件idを使う。
+
+テーマを git 作業ツリーへの symlink にするのは、ナレッジの `create-local-site.sh --link-theme` と `setup-case.sh`（`skills/case-full-provisioning`）です。symlink のあいだは、管理画面から Ai1WM Restore をしない。取り込むなら同スキルの `scripts/restore-wpress-to-local.py`（`--exclude-theme`。付け忘れても symlink の子フォルダは rsync から外す）。
 
 ### 2. リポジトリ複製
 
