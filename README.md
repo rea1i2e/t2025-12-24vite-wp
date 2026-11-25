@@ -13,7 +13,20 @@
 
 - **開発**: WordPress で表示しつつ、CSS/JS は Vite dev server（HMR）を参照
 - **本番**: `npm run build` で `dist/` を生成し、WordPress 側で読み込み
-- **自動デプロイ**: GitHub Actions で FTP 経由の自動デプロイに対応
+- **自動デプロイ**: GitHub Actions で FTP 経由の自動デプロイに対応（**develop／main 分離**）
+
+### ブランチとデプロイ
+
+詳細は [`ai-docs/git-branch-and-deploy.md`](ai-docs/git-branch-and-deploy.md)。
+
+| ブランチ | workflow | 環境 |
+|----------|----------|------|
+| `develop` | `deploy.yml` | テスト FTP（リポジトリ Secrets `FTP_*`） |
+| `main` | `deploy-production.yml` | 本番 FTP（Environment `production` の `PROD_FTP_*`） |
+
+本番はテスト用 `FTP_*` にフォールバックしません。`PROD_FTP_SERVER` / `PROD_FTP_USERNAME` / `PROD_FTP_PASSWORD` / `PROD_FTP_SERVER_DIR` が Environment `production` に揃っていること（Deployment branches は `main` のみ）。値は案件側で登録し、リポ・チャットに書かない。`env.deploy.example` と `scripts/setup-secrets.sh` が項目の正本。
+
+本番直書きガード: 転送前に `scripts/check-prod-deploy-drift.mjs` が前回成功時の `.prod-deploy-baseline.json` と本番実体を照合。初回は `workflow_dispatch` の `bootstrap_baseline`（テーマは上げず基準だけ置く）。ローカル検証は `npm run test:prod-deploy-drift`。
 
 ## クイックスタート
 

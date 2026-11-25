@@ -863,22 +863,19 @@ HTTPS設定が有効な場合、`https://localhost:5173` でアクセス可能�
 
 ## デプロイ
 
-このドキュメントでは、GitHub Actionsを使った自動デプロイの設定方法を説明します。
+GitHub Actions で FTP 経由の自動デプロイを行う。**ブランチ役割・本番ゲート・直書きガードの正本**は [`git-branch-and-deploy.md`](git-branch-and-deploy.md)。
 
 ## 概要
 
-GitHub ActionsでFTP経由の自動デプロイを実行します。
-
-- **トリガー**: `main`/`master` ブランチへのpush、PR作成
+- **develop／main 分離**: テストは `develop` → `deploy.yml`（リポジトリ Secrets `FTP_*`）。本番は `main` → `deploy-production.yml`（Environment `production` の `PROD_FTP_*`。テスト用へフォールバックしない）
 - **デプロイ先**: FTPサーバー（**テーマディレクトリのみ**）
 - **デプロイ対象**: ビルド成果物（`dist/`、`*.php`、`style.css` など）
+- **本番直書きガード**: 転送前に `scripts/check-prod-deploy-drift.mjs`。初回は `bootstrap_baseline`。ローカルは `npm run test:prod-deploy-drift`
 - **サイト全体 Basic**: 通常 CI では扱わない。案件セットアップ時のナレッジ `apply-wordpress-basic-remote.sh`（`basic-auth-staging`）が docroot の `.htaccess` / `.htpasswd` を一度設定する
 
 ## 必要なGitHub Secrets
 
-以下のシークレットをGitHubリポジトリに設定する必要があります。
-
-### 必須
+### テスト（リポジトリ Secrets・必須）
 
 - `FTP_SERVER`: FTPサーバーのアドレス
 - `FTP_USERNAME`: FTPユーザー名
@@ -887,10 +884,16 @@ GitHub ActionsでFTP経由の自動デプロイを実行します。
   - 例: `/public_html/wp-content/themes/t2025-12-24vite-wp/`
   - 「テーマディレクトリ直下」にこのリポジトリの中身（`style.css`, `*.php`, `functions-lib/`, `components/`, `dist/` など）を配置する想定
 
-### 任意
+### テスト（任意）
 
 - `DISCORD_WEBHOOK`: Discord通知を使う場合のWebhook URL
 - `TEST_URL`: デプロイ通知/サマリーに表示するURL
+
+### 本番（Environment `production`・案件側）
+
+- `PROD_FTP_SERVER` / `PROD_FTP_USERNAME` / `PROD_FTP_PASSWORD` / `PROD_FTP_SERVER_DIR`（4つ揃えるか、すべて空）
+- 任意: `PROD_URL`
+- 項目の正本は `env.deploy.example`。値はリポ・チャットに書かない
 
 ### 注意（ドキュメントルートの `.htaccess`）
 
@@ -945,17 +948,18 @@ chmod +x scripts/setup-secrets.sh
 
 ### ワークフローファイル
 
-`.github/workflows/deploy.yml` でデプロイワークフローを定義しています。
+- テスト: `.github/workflows/deploy.yml`（`develop`）
+- 本番: `.github/workflows/deploy-production.yml`（`main`・Environment `production`・直書きガード）
 
-### デプロイの流れ
+詳細な流れ・ゲートは [`git-branch-and-deploy.md`](git-branch-and-deploy.md)。
 
-1. **コードチェックアウト**: リポジトリのコードを取得
-2. **Node.js環境セットアップ**: Node.js 20をセットアップし、npmキャッシュを有効化
-3. **依存関係のインストール**: `npm ci` で依存関係をインストール
-4. **ビルド**: `npm run build` でViteビルドを実行（`dist/` に成果物を出力）
-5. **デプロイサマリー生成**: GitHub Actionsのサマリーにデプロイ情報を出力
-6. **FTPデプロイ（テーマ）**: `SamKirkland/FTP-Deploy-Action` で `FTP_SERVER_DIR` へアップロード
-7. **Discord通知**: デプロイ成功/失敗時にDiscordに通知（オプション）
+### テスト線の流れ（要約）
+
+1. **コードチェックアウト**
+2. **Node.js 24** + `npm ci`
+3. **ビルド**: `npm run build`
+4. **FTP（テーマ）**: Secrets があれば `FTP_SERVER_DIR` へ。無ければスキップ（run は緑）
+5. **Discord通知**（任意）
 
 サイト全体の HTTP Basic は本ワークフローの対象外（セットアップ時に docroot へ一度設定）。
 
@@ -963,15 +967,14 @@ chmod +x scripts/setup-secrets.sh
 
 #### テスト環境（自動デプロイ）
 
-- **トリガー**: `main`/`master` ブランチへのpush
-- **条件**: 常に自動実行
+- **トリガー**: `develop` への push（または `workflow_dispatch`）
+- **Secrets**: リポジトリの `FTP_*`
 - **通知**: 成功時にDiscord通知（`DISCORD_WEBHOOK` が設定されている場合）
 
-#### PRテスト環境（自動デプロイ）
+#### 本番環境（自動デプロイ）
 
-- **トリガー**: `main`/`master` へのPR作成
-- **条件**: PRが作成された場合に自動実行
-- **通知**: 成功時にDiscord通知（`DISCORD_WEBHOOK` が設定されている場合）
+- **トリガー**: `main` への push（テーマ対象変更時）／手動（`dry_run` 既定 true・`bootstrap_baseline`）
+- **Secrets**: Environment `production` の `PROD_FTP_*`（テスト用へフォールバックしない）
 
 ## デプロイ除外ファイル
 
