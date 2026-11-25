@@ -10,3 +10,6 @@ updates:
       timezone: Asia/Tokyo
     # 通常のバージョン更新 PR は作らず、security updates だけを対象にする。
     open-pull-requests-limit: 0
+    # Review requests に載せて見落とさない（数件規模の想定）。
+    reviewers:
+      - rea1i2e
