@@ -1,6 +1,6 @@
 # 案件着手 — デモ／仮アセット一掃プロンプト
 
-案件リポで Figma／コーディングを始める**前に 1 回**使う。方針の正本はナレッジ [`wiki/wp-template-case-init.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-case-init.md)。
+案件リポで Figma／コーディングを始める**前に 1 回**使う。方針の正本はナレッジ [`{ナレッジ}/wiki/wp-template-case-init.md`]。
 
 **テンプレ本体では実行しない**（デモカタログが消える）。
 

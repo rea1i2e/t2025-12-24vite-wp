@@ -3,7 +3,7 @@
 フォントファイルをwoff2形式に圧縮するためのスクリプトです。
 
 > このドキュメントは **このテンプレート内の運用手順（テンプレ固有）** を扱います。  
-> 導線の索引はナレッジベース `wiki/asset-compression-notes.md`（`/Users/yoshiaki/working/2026-04-23kn/wiki/asset-compression-notes.md`）を参照してください。**手順の詳細の正本は本ファイルおよび同ディレクトリの `font-compress.sh` / `font-compress-subset.sh`** とします。
+> 導線の索引はナレッジベース `wiki/asset-compression-notes.md`（`{ナレッジ}/wiki/asset-compression-notes.md`）を参照してください。**手順の詳細の正本は本ファイルおよび同ディレクトリの `font-compress.sh` / `font-compress-subset.sh`** とします。
 
 ## 初回セットアップ（1回だけ実行）
 

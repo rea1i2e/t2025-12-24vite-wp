@@ -2,7 +2,7 @@
 
 このドキュメントは、AIエージェント（Cursor / ChatGPT）がこのプロジェクトを理解し、適切なコード変更や提案を行うためのガイドです。
 
-対象は **WordPress サイト制作用テンプレート**（略称 **WP テンプレ**）。呼称の正本はナレッジベースの [wiki/operated-repositories.md](/Users/yoshiaki/working/2026-04-23kn/wiki/operated-repositories.md#表記ルール3-リポジトリと型録)（表記ルール）。
+対象は **WordPress サイト制作用テンプレート**（略称 **WP テンプレ**）。呼称の正本はナレッジベースの [`{ナレッジ}/wiki/operated-repositories.md#表記ルール3-リポジトリと型録`]（表記ルール）。
 
 **人間が読む場合は、ルート [README.md](README.md) と [ai-docs/architecture.md](ai-docs/architecture.md) を参照してください。**
 
@@ -18,23 +18,23 @@
 
 ## ローカル絶対パス（個人環境・Cursor 用）
 
-複製テンプレ運用で、エージェントが `@` 参照やファイル読み込みに使う。`npm run init` 等でデモを消した案件でも、JS（タブ・スライダー・モーダル等）の**型録**は**静的テンプレ**側を参照できる。共有マシン・リモートではパスが一致しない。テーマを Local 上で別名にした場合は下表の「WP テンプレ」を更新すること。
+複製テンプレ運用で、エージェントが `@` 参照やファイル読み込みに使う。`npm run init` 等でデモを消した案件でも、JS（タブ・スライダー・モーダル等）の**型録**は**静的テンプレ**側を参照できる。共有マシン・リモートではパスが一致しない。テーマを Local 上で別名にした場合は下表の「WP テンプレ」を更新すること。**絶対パスの定義は本表のみ。** 他ドキュメントは `{ナレッジ}` / `{型録}` または `wiki/...` で書く。
 
 | 役割 | パス |
 |------|------|
 | WP テンプレ（本リポジトリ・この WordPress テーマ） | `/Users/yoshiaki/Local Sites/t2025-12-24vite-wp/app/public/wp-content/themes/t2025-12-24vite-wp` |
 | 静的テンプレ（型録・EJS / デモの参照先。`{型録}` はこのルートを指す） | `/Users/yoshiaki/working/t2025-10-01vite` |
-| ナレッジベース（コーディング規約の汎用正本・`wiki`） | `/Users/yoshiaki/working/2026-04-23kn` |
+| ナレッジベース（`{ナレッジ}`・コーディング規約の汎用正本・`wiki`） | `/Users/yoshiaki/working/2026-04-23kn` |
 
 ### 案件ナレッジ（stock）
 
 - **実装・コミット**はこのリポジトリ（WP テンプレ）で行う。
-- **案件ナレッジの md** の置き方・書式の目安は、ナレッジベースの [`/Users/yoshiaki/working/2026-04-23kn/wiki/stock-format.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/stock-format.md) に従う（`wiki` 上に案件用ページを切る、または `raw/`・案件リポ等）。**このリポジトリ内に `stock/` や案件メモ専用の md を新設しない**。
+- **案件ナレッジの md** の置き方・書式の目安は、ナレッジベースの [`{ナレッジ}/wiki/stock-format.md`] に従う（`wiki` 上に案件用ページを切る、または `raw/`・案件リポ等）。**このリポジトリ内に `stock/` や案件メモ専用の md を新設しない**。
 - Cursor では、必要に応じてナレッジベースをマルチルートで開くか、チャットにその `AGENTS.md` または `wiki/stock-format.md` を添付する。
 
 ### 動画の Web 向け圧縮（エージェント）
 
-- **手順の Skill（正本）**: `/Users/yoshiaki/working/2026-04-23kn/.cursor/skills/video-compress-web/SKILL.md`（ナレッジをワークスペースに含めない場合は `~/.cursor/skills/` へ同内容を置いてもよい）
+- **手順の Skill（正本）**: `{ナレッジ}/.cursor/skills/video-compress-web/SKILL.md`（ナレッジをワークスペースに含めない場合は `~/.cursor/skills/` へ同内容を置いてもよい）
 - **`raw/videos/` の正本**: **静的テンプレ（型録）のみ**。本テーマで圧縮フローを使うときは、**型録から `raw/videos/` を手動で丸ごとコピー**し、テーマルートに置く。`package.json` に `inspect:video` / `compress:video` を型録と同じ内容で追加する。手順の細部は `{型録}/raw/videos/README-video-compress.md` の「WordPress・案件リポで使う場合」を参照。
 - **未複製のとき**: 型録のルートで圧縮し、出力だけを `src/assets/videos/` 等へ取り込む。
 - **技術手順の正本**: `{型録}/raw/videos/README-video-compress.md`（チャット依頼は型録の README「動画圧縮を AI に依頼するとき」を参照）
@@ -42,7 +42,7 @@
 
 ### Web フォントの設置・圧縮（エージェント）
 
-- **手順の Skill（正本）**: `/Users/yoshiaki/working/2026-04-23kn/.cursor/skills/font-setup-web/SKILL.md`（ナレッジをワークスペースに含めない場合は `~/.cursor/skills/` へ同内容を置いてもよい）
+- **手順の Skill（正本）**: `{ナレッジ}/.cursor/skills/font-setup-web/SKILL.md`（ナレッジをワークスペースに含めない場合は `~/.cursor/skills/` へ同内容を置いてもよい）
 - **方針の正本**: ナレッジ `wiki/web-fonts-guidelines.md`
 - **圧縮コマンドの正本**: 本テーマ **`raw/fonts/README-font-compress.md`**（静的テンプレと**同じディレクトリ構成・手順**。`font-compress.sh` / `font-compress-subset.sh`）
 - **反映先**: `src/assets/sass/base/_root.scss`、`header.php` の preload（`ty_vite_asset_url('src/assets/fonts/...')`）
@@ -56,11 +56,11 @@
 
 ### インタラクション実装時の型録参照（必須）
 
-**`{型録}`** — **静的テンプレのルートディレクトリ**を指すプレースホルダ。ローカルでは下記の絶対パスと同一（環境ごとに異なる。定義は [operated-repositories.md](/Users/yoshiaki/working/2026-04-23kn/wiki/operated-repositories.md)）。
+**`{型録}`** — **静的テンプレのルートディレクトリ**を指すプレースホルダ。ローカルでは下記の絶対パスと同一（環境ごとに異なる。定義は [`{ナレッジ}/wiki/operated-repositories.md`]）。
 
 ユーザーが **短い指示だけ**（例:「タブ切り替えを実装して」「スライダーを付けて」「モーダルにして」）で依頼した場合も、**WP テンプレ内に該当コードが無い・`npm run init` 後でデモが無いときは、実装・提案に着手する前に** **静的テンプレ（型録）** を読むこと。
 
-- **`{型録}` の例（ローカル絶対パス）**: `/Users/yoshiaki/working/t2025-10-01vite`
+- **`{型録}` の実パス**: 上表「静的テンプレ（型録）」を参照（環境ごとに異なる）
 - パス表記では `{型録}` と **静的テンプレのルート** を結合する（例: `{型録}/src/assets/js/demo/_tab.js`）。
 
 **手順（この順で行う）**
@@ -82,7 +82,7 @@
 
 ### アクセシビリティ仮基準（参照）
 
-- **正本（共通）:** ナレッジベース `/Users/yoshiaki/working/2026-04-23kn/wiki/a11y-baseline.md`（**Must / Should / 運用 / チェックリスト**）。**基準の改訂はこの Wiki で行う。**
+- **正本（共通）:** ナレッジベース `{ナレッジ}/wiki/a11y-baseline.md`（**Must / Should / 運用 / チェックリスト**）。**基準の改訂はこの Wiki で行う。**
 - **WP テンプレでの実装の手がかり:** [ai-docs/architecture.md](ai-docs/architecture.md) 冒頭の A11y 補足、[コーディング規約（WP テンプレ固有）](ai-docs/architecture.md#コーディング規約wp-テンプレ固有)、および本ファイルの「型録参照」（stub ファイルは置かない）。
 - **適用**は**静的サイトに限らない**（WCAG 適合の宣言文書ではない）。PHP・テンプレート・JS の**新規・修正**の際、Wiki 正本の **Must** を当該範囲で満たす。
 
@@ -103,15 +103,15 @@
 
 ### 汎用ルール（WordPress・静的コーディング共通）
 
-ナレッジベースの `/Users/yoshiaki/working/2026-04-23kn/wiki/coding-conventions.md` を入口に、`wiki/coding-*.md` を参照すること。旧 `2026-03-20kn/coding-rules/` は**廃止**した。
+ナレッジベースの `{ナレッジ}/wiki/coding-conventions.md` を入口に、`wiki/coding-*.md` を参照すること。旧 `2026-03-20kn/coding-rules/` は**廃止**した。
 
 | ページ | 内容 |
 |---|---|
-| [`wiki/coding-common.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/coding-common.md) | 実装方針・判断基準 |
-| [`wiki/coding-php.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/coding-php.md) | PHP |
-| [`wiki/coding-ejs-html.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/coding-ejs-html.md) | HTML 構造・クラス名・考え方 |
-| [`wiki/coding-sass.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/coding-sass.md) | Sass/SCSS |
-| [`wiki/coding-javascript.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/coding-javascript.md) | JavaScript |
+| [`{ナレッジ}/wiki/coding-common.md`] | 実装方針・判断基準 |
+| [`{ナレッジ}/wiki/coding-php.md`] | PHP |
+| [`{ナレッジ}/wiki/coding-ejs-html.md`] | HTML 構造・クラス名・考え方 |
+| [`{ナレッジ}/wiki/coding-sass.md`] | Sass/SCSS |
+| [`{ナレッジ}/wiki/coding-javascript.md`] | JavaScript |
 
 ### WP テンプレ固有のルール
 
@@ -182,14 +182,14 @@ Claude Code と Cursor を併用するときは `ai-docs/session-log.md` に `- 
 
 ## ドキュメント（更新時）
 
-**いつ・何を文書化するか、ADR の基準**はナレッジ [template-repository-docs.md](/Users/yoshiaki/working/2026-04-23kn/wiki/template-repository-docs.md) を参照。
+**いつ・何を文書化するか、ADR の基準**はナレッジ [`{ナレッジ}/wiki/template-repository-docs.md`] を参照。
 
 **このリポジトリでの行き先（WP テンプレ固有）**
 
 | 内容 | 行き先 |
 |------|--------|
 | 技術仕様・手順の追記・案件固有ルール | **`ai-docs/`**（正本 [`architecture.md`](ai-docs/architecture.md)、索引 [INDEX.md](ai-docs/INDEX.md)） |
-| 意思決定 | ナレッジ [wp-template-decision-records.md](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md)・[adr-workflow.md](/Users/yoshiaki/working/2026-04-23kn/wiki/adr-workflow.md)／新規 ADR は必要なら `ai-docs/decisions/NNNN-topic.md` |
+| 意思決定 | ナレッジ [`{ナレッジ}/wiki/wp-template-decision-records.md`]・[`{ナレッジ}/wiki/adr-workflow.md`]／新規 ADR は必要なら `ai-docs/decisions/NNNN-topic.md` |
 | A11y の実装の手がかり | [ai-docs/architecture.md](ai-docs/architecture.md) 冒頭・コーディング規約節／Wiki 正本 `wiki/a11y-baseline.md` |
 
 ---

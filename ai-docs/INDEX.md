@@ -5,9 +5,9 @@
 ## なぜ `docs/` ではなく `ai-docs/` か
 
 - 案件サイトに **`/docs/` URL** や **`docs/` ディレクトリ**があることが多く、リポ内の「docs」と**名前がかぶって曖昧**になりやすい。
-- 開発用 md は **FTP・納品対象外**と明示しやすい名前にする（[`legacy-wp-diff-export`](/Users/yoshiaki/working/2026-04-23kn/skills/legacy-wp-diff-export/SKILL.md) 既定除外と同型）。
+- 開発用 md は **FTP・納品対象外**と明示しやすい名前にする（[`legacy-wp-diff-export`（`{ナレッジ}/skills/legacy-wp-diff-export/SKILL.md`）] 既定除外と同型）。
 
-詳細: ナレッジ [`wiki/template-repository-docs.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/template-repository-docs.md)
+詳細: ナレッジ [`{ナレッジ}/wiki/template-repository-docs.md`]
 
 ## 正本（テンプレ共通）
 
@@ -16,7 +16,7 @@
 | [`architecture.md`](architecture.md) | スタック固有の技術正本（導入・設計・開発・デプロイ・トラブル・WP 固有コーディング規約） |
 | [`git-branch-and-deploy.md`](git-branch-and-deploy.md) | develop／main 分離・本番 Environment・直書きガード |
 
-リポ固有の意思決定（ADR）が増えたら **`ai-docs/decisions/`** に置いてよい。**ADR の書き方・命名**はナレッジ [adr-workflow.md](/Users/yoshiaki/working/2026-04-23kn/wiki/adr-workflow.md)。WP テンプレの記録集約: [wp-template-decision-records.md](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md)。
+リポ固有の意思決定（ADR）が増えたら **`ai-docs/decisions/`** に置いてよい。**ADR の書き方・命名**はナレッジ [`{ナレッジ}/wiki/adr-workflow.md`]。WP テンプレの記録集約: [`{ナレッジ}/wiki/wp-template-decision-records.md`]。
 
 ## 案件複製後に追記する例
 

@@ -25,7 +25,7 @@ src/assets/images/{page-slug}/{ブロック名}_{名前}.{ext}
 
 ## 寸法・圧縮（必須）
 
-正本: ナレッジ `/Users/yoshiaki/working/2026-04-23kn/wiki/coding-ejs-html.md` §画像 / Skill `image-scale-check`・`image-size-check`。
+正本: ナレッジ `{ナレッジ}/wiki/coding-ejs-html.md` §画像 / Skill `image-scale-check`・`image-size-check`。
 
 | レイヤ | 方針 | 誰がやる |
 |--------|------|----------|

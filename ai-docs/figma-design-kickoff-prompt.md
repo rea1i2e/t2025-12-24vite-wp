@@ -49,5 +49,5 @@
 
 ## 関連
 
-- ナレッジ [`wiki/ai-security-adoption-checklist.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/ai-security-adoption-checklist.md) フェーズ2
+- ナレッジ [`{ナレッジ}/wiki/ai-security-adoption-checklist.md`] フェーズ2
 - Notion TODO: AI活用_FigmaのURLを1度渡せば済む状態を作る（ひろむさん）

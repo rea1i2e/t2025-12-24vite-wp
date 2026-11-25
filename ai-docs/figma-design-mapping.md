@@ -4,8 +4,8 @@ Figmaファイル（現行）: `{ファイル名}`
 ファイルキー: `{fileKey}`
 
 > **運用:** このファイルが案件の **Figma 正本**。URL はプロジェクト開始時に1回 mapping へストックし、以降はここを参照する（再共有不要）。  
-> **正本 Figma の複製差し替え**（fileKey 変更・node-id 再特定）: ナレッジ [`skills/figma-design-refresh-pixexport/SKILL.md`](/Users/yoshiaki/working/2026-04-23kn/skills/figma-design-refresh-pixexport/SKILL.md)  
-> **ピクパ設定（任意）:** `figma-pixexport.config.json` — 例は [`figma-pixexport.config.example.json`](/Users/yoshiaki/working/2026-04-23kn/skills/figma-design-refresh-pixexport/figma-pixexport.config.example.json)  
+> **正本 Figma の複製差し替え**（fileKey 変更・node-id 再特定）: ナレッジ [`{ナレッジ}/skills/figma-design-refresh-pixexport/SKILL.md`]  
+> **ピクパ設定（任意）:** `figma-pixexport.config.json` — 例は [`figma-pixexport.config.example.json`（`{ナレッジ}/skills/figma-design-refresh-pixexport/figma-pixexport.config.example.json`）]  
 > **実案件の参考:** クリクラ `ai-docs/figma-design-mapping.md`（2026-06-10yk）
 
 ---

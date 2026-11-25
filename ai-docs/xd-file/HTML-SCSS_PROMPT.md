@@ -5,7 +5,7 @@ XD JSON / PNG から HTML+SCSS（WordPress テーマ）を書くときの**こ�
 
 ## 汎用の正本（必読）
 
-`/Users/yoshiaki/working/2026-04-23kn/wiki/camp-html-scss-implementation.md`
+`{ナレッジ}/wiki/camp-html-scss-implementation.md`
 
 実装前に必ず Read すること（規約ポインタ・Sass/画像/XD 共通）。
 
