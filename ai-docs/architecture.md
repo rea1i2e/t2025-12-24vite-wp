@@ -2,7 +2,7 @@
 
 人間向けの入口はリポジトリ直下の [README.md](../README.md)。**設計・導入・開発・デプロイ・トラブル・案件メモ・移行ログ**は本ファイルに集約する。
 
-- **文書化の基準・Git/husky・ADR の基準**（汎用）: ナレッジベースの [template-repository-docs.md](/Users/yoshiaki/working/2026-04-23kn/wiki/template-repository-docs.md)
+- **文書化の基準・Git/husky・ADR の基準**（汎用）: ナレッジベースの [`{ナレッジ}/wiki/template-repository-docs.md`]
 - **A11y 仮基準の正本**: ナレッジ `wiki/a11y-baseline.md`。**WP テンプレ固有の補足** — [コーディング規約（WP テンプレ固有）](#コーディング規約wp-テンプレ固有) の `ty_`・PHP テンプレート方針に従う。**型録（EJS）**は [AGENTS.md](../AGENTS.md) の「型録参照」（静的テンプレ `{型録}/` の `demo`・`components-demo`）。**文言の捏造は禁止**（汎用ラベル・プレースホルダに留め、表示文言は既存データ・ユーザー定義に任せる）。個別の `docs/a11y-baseline.md` は置かない。
 
 ## 目次
@@ -372,7 +372,7 @@ Vite dev serverが起動し、`localhost:5173` でアクセス可能になりま
 
 - **非表示・トップレベル表示**: `functions-lib/func-admin-menu.php` で配列（`$ty_admin_menu_remove_slugs`, `$ty_admin_page_menu_slugs`）により制御します。
 - **`edit.php` を非表示にする場合**: 「投稿」メニューが消えるため、`func-set-posttype-post.php` のラベル変更（お知らせ）は見た目に効かなくなります。お知らせとして残す場合は非表示リストに `edit.php` を入れないこと。
-- 意思決定の背景はナレッジ [wp-template-decision-records.md（§6）](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md#6-管理画面メニューのカスタマイズ) を参照。
+- 意思決定の背景はナレッジ [`{ナレッジ}/wiki/wp-template-decision-records.md#6-管理画面メニューのカスタマイズ`] を参照。
 
 ### 標準投稿（post）— カテゴリー・タグ UI の非表示（任意）
 
@@ -400,7 +400,7 @@ const TY_POST_HIDE_TAG_UI = false;      // 使わない案件は true
 
 ### リクエスト〜テンプレートの時系列
 
-WordPress コア一般の整理（レイヤー図・`functions.php` ローダー・`get_header` 周りの Mermaid）は、ナレッジベースの [`wordpress-request-and-theme-lifecycle.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/wordpress-request-and-theme-lifecycle.md) を参照してください。
+WordPress コア一般の整理（レイヤー図・`functions.php` ローダー・`get_header` 周りの Mermaid）は、ナレッジベースの [`wordpress-request-and-theme-lifecycle.md`（`{ナレッジ}/wiki/wordpress-request-and-theme-lifecycle.md`）] を参照してください。
 
 **WP テンプレ内**で押さえるファイル（実装の正本）は次のとおりです。
 
@@ -462,7 +462,7 @@ dist/ から実際のファイルを enqueue
   - hot が無い／到達できない: **prod扱い**（`dist/.vite/manifest.json` を参照して `dist/assets/**` をenqueue）
 - 任意の上書きのみ `TY_VITE_DEV_SERVER`（wp-config 等）。**既定の 5173 ハードコードはしない**（他案件の Vite 誤判定を避ける）
 
-方針: ナレッジ [wp-template-decision-records.md（§9）](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md#9-vite-開発時のポート-5173-運用)。手順は [開発ガイド](#開発ガイド) の「Vite dev server（vite.hot 方式）」と [トラブルシューティング](#トラブルシューティング)。
+方針: ナレッジ [`{ナレッジ}/wiki/wp-template-decision-records.md#9-vite-開発時のポート-5173-運用`]。手順は [開発ガイド](#開発ガイド) の「Vite dev server（vite.hot 方式）」と [トラブルシューティング](#トラブルシューティング)。
 
 ### 画像・フォントの扱い
 
@@ -479,7 +479,7 @@ dist/ から実際のファイルを enqueue
 
 ## コーディング規約（WP テンプレ固有）
 
-汎用的なコーディングルール（HTML/CSS/Sass/JS/PHP 共通）は、ナレッジベースの `/Users/yoshiaki/working/2026-04-23kn/wiki/coding-conventions.md` および子ページ（`wiki/coding-*.md`）を参照してください。旧 `2026-03-20kn` の `coding-rules/` は廃止とする。
+汎用的なコーディングルール（HTML/CSS/Sass/JS/PHP 共通）は、ナレッジベースの `{ナレッジ}/wiki/coding-conventions.md` および子ページ（`wiki/coding-*.md`）を参照してください。旧 `2026-03-20kn` の `coding-rules/` は廃止とする。
 
 このドキュメントには、**WP テンプレ固有のルール**のみを記載します。
 
@@ -509,7 +509,7 @@ dist/ から実際のファイルを enqueue
 
 ### `components/` のマークアップとデータ
 
-固定ページセクション等を `components/*.php` に切り出すときの**中身の書き方**（固定コピーは HTML 直書き、繰り返しだけ配列、配列は `foreach` 直前、エスケープの住み分け）は、ナレッジ [`wiki/coding-php.md`](/Users/yoshiaki/working/2026-04-23kn/wiki/coding-php.md) の **「データ取得とテンプレート」** を正本とする。コンポーネント化そのもののトレードオフは同 wiki の [wordpress-php-templates-component-vs-inline-tradeoff.md](/Users/yoshiaki/working/2026-04-23kn/wiki/wordpress-php-templates-component-vs-inline-tradeoff.md)。
+固定ページセクション等を `components/*.php` に切り出すときの**中身の書き方**（固定コピーは HTML 直書き、繰り返しだけ配列、配列は `foreach` 直前、エスケープの住み分け）は、ナレッジ [`{ナレッジ}/wiki/coding-php.md`] の **「データ取得とテンプレート」** を正本とする。コンポーネント化そのもののトレードオフは同 wiki の [`{ナレッジ}/wiki/wordpress-php-templates-component-vs-inline-tradeoff.md`]。
 
 ---
 
@@ -604,7 +604,7 @@ dev / prod の切り替えは、**このテーマの `npm run dev` が書いた 
 - 起動: `npm run dev` → テーマ直下 `vite.hot` に実 URL（希望ポートは 5173。占有時は次の空きへ）
 - 停止時・`npm run build` 開始時に `vite.hot` を削除
 - 任意上書き: `wp-config.php` 等で `define('TY_VITE_DEV_SERVER', 'http://localhost:PORT');`（hot が無いときだけ）
-- 方針の記録: ナレッジ [wp-template-decision-records.md（§9）](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md#9-vite-開発時のポート-5173-運用)
+- 方針の記録: ナレッジ [`{ナレッジ}/wiki/wp-template-decision-records.md#9-vite-開発時のポート-5173-運用`]
 
 ## スクリプト
 
@@ -987,7 +987,7 @@ chmod +x scripts/setup-secrets.sh
 - `*.map`, `README.md`
 - `.DS_Store`, `Thumbs.db`
 
-**方針**: サーバには **開発用ファイルを置かない**想定です。
+**方針**: サーバには **開発用ファイルを置かない**想定です。正本は `.github/workflows/deploy.yml`（および本番の `deploy-production.yml`）の `FTP_EXCLUDE`。All-in-One WP Migration 側は `functions-lib/func-ai1wm-exclude.php`。ズレ確認は `npm run check:exclude-parity`（自動修正はしない）。
 
 ## デプロイの確認
 
@@ -1097,7 +1097,7 @@ chmod +x scripts/setup-secrets.sh
    lsof -nP -iTCP:5173-5180 -sTCP:LISTEN
    ```
 3. それでもおかしいときは `vite.hot` の残骸（停止後も残っている）を削除し、`npm run build` 済みの `dist` を確認する。
-4. 方針はナレッジ [wp-template-decision-records.md（§9）](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md#9-vite-開発時のポート-5173-運用)。
+4. 方針はナレッジ [`{ナレッジ}/wiki/wp-template-decision-records.md#9-vite-開発時のポート-5173-運用`]。
 
 ### HTTPS環境でMixed Contentエラー
 
@@ -1406,7 +1406,7 @@ dist/            # ビルド成果物
 - **実装**: `functions-lib/func-wpcf7.php` — `add_filter( 'wpcf7_autop_or_not', '__return_false' );`
 - **理由**: フォームは `p-form` BEM（`dl` / `dt` / `dd` / `.p-form__select-wrap` 等）で HTML を組む。CF7 既定の autop だと余計な `<p>` が入りレイアウトが崩れる。
 - **スコープ**: サイト内の**全 CF7 フォーム**（`the_content` の `wpautop` とは別）。
-- **汎用方針・タグ記述の注意**: ナレッジ [`wiki/wordpress-contact-form-7-autop.md`](file:///Users/yoshiaki/working/2026-04-23kn/wiki/wordpress-contact-form-7-autop.md)
+- **汎用方針・タグ記述の注意**: ナレッジ [`{ナレッジ}/wiki/wordpress-contact-form-7-autop.md`]
 - **送信ボタン**: `.p-form__submit` ラッパー + `input` 本体（詳細は上記 Wiki「送信ボタン」節）。Sass は `src/assets/sass/components/_p-form.scss`。
 
 ### Contact Form 7（通知メール）

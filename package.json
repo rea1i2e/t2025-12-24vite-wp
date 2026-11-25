@@ -19,7 +19,8 @@
     "check:unused": "node scripts/check-unused.mjs",
     "check:images": "node scripts/check-images.mjs",
     "check:prod-deploy-drift": "node scripts/check-prod-deploy-drift.mjs",
-    "test:prod-deploy-drift": "node --test scripts/check-prod-deploy-drift.test.mjs"
+    "test:prod-deploy-drift": "node --test scripts/check-prod-deploy-drift.test.mjs",
+    "check:exclude-parity": "node scripts/check-exclude-parity.mjs"
   },
   "devDependencies": {
     "@vheemstra/vite-plugin-imagemin": "^2.2.1",
