@@ -17,16 +17,18 @@
     "capture:qa": "node scripts/capture-qa-screenshot.mjs",
     "capture:qa:all": "CAPTURE_QA_CONFIG=ai-docs/capture-qa.config.json node scripts/capture-qa-all.mjs",
     "check:unused": "node scripts/check-unused.mjs",
-    "check:images": "node scripts/check-images.mjs"
+    "check:images": "node scripts/check-images.mjs",
+    "check:prod-deploy-drift": "node scripts/check-prod-deploy-drift.mjs",
+    "test:prod-deploy-drift": "node --test scripts/check-prod-deploy-drift.test.mjs"
   },
   "devDependencies": {
     "@vheemstra/vite-plugin-imagemin": "^2.2.1",
     "autoprefixer": "^10.4.21",
     "husky": "^9.1.7",
     "image-size": "^1.1.1",
+    "imagemin-avif": "^0.1.6",
     "imagemin-gif2webp": "^3.0.0",
     "imagemin-gifsicle": "^7.0.0",
-    "imagemin-avif": "^0.1.6",
     "imagemin-mozjpeg": "^10.0.0",
     "imagemin-optipng": "^8.0.0",
     "imagemin-svgo": "^12.0.0",
@@ -41,7 +43,9 @@
   "dependencies": {
     "@splidejs/splide": "^4.1.4",
     "@splidejs/splide-extension-auto-scroll": "^0.5.3",
+    "basic-ftp": "^6.2.6",
     "flatpickr": "^4.6.13",
-    "kiso.css": "^1.2.2"
+    "kiso.css": "^1.2.2",
+    "micromatch": "^4.0.8"
   }
 }

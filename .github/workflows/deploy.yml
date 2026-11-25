@@ -1,5 +1,10 @@
 name: Deploy Theme to FTP
 
+# WordPress テーマのテスト環境デプロイ（develop → テスト FTP）。
+# 本番は deploy-production.yml（main のみ）。develop／main 分離。
+# サイト全体 Basic（docroot の .htaccess / .htpasswd）は CI では扱わない。
+# 案件セットアップ時の apply-wordpress-basic-remote.sh（ナレッジ basic-auth-staging）が正。
+
 # FTP デプロイの除外リスト（env で1箇所定義）
 env:
   FTP_EXCLUDE: |
@@ -34,12 +39,13 @@ env:
     **/config/**
     **/staging/**
     **/manual/**
+    **/vite.hot
+    **/.prod-deploy-baseline.json
+    **/.ftp-deploy-sync-state.json
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+    branches: [develop]
   workflow_dispatch:
 
 jobs:
@@ -49,6 +55,8 @@ jobs:
     # FTP_SERVER の有無でデプロイ／通知ステップを出し分けるための写し。
     env:
       FTP_SERVER: ${{ secrets.FTP_SERVER }}
+      FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
     steps:
     - name: Checkout code
@@ -102,9 +110,6 @@ jobs:
       if: steps.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch'
       run: npm run build
 
-    # サイト全体 Basic（docroot の .htaccess / .htpasswd）は CI では扱わない。
-    # 案件セットアップ時の apply-wordpress-basic-remote.sh（ナレッジ basic-auth-staging）が正。
-
     - name: Generate deployment summary
       if: always() && (steps.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch')
       run: |
@@ -116,10 +121,8 @@ jobs:
         echo "**イベント:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
 
-        if [ "${{ github.event_name }}" = "push" ] && { [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.ref }}" = "refs/heads/master" ]; }; then
+        if [ -n "${{ secrets.TEST_URL }}" ]; then
           echo "**🌐 テスト環境:** ${{ secrets.TEST_URL }}" >> $GITHUB_STEP_SUMMARY
-        elif [ "${{ github.event_name }}" = "pull_request" ]; then
-          echo "**🌐 PRテスト環境:** ${{ secrets.TEST_URL }}" >> $GITHUB_STEP_SUMMARY
         fi
 
         echo "" >> $GITHUB_STEP_SUMMARY
@@ -136,25 +139,29 @@ jobs:
         echo "### 🔗 確認リンク" >> $GITHUB_STEP_SUMMARY
         echo "- [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
         echo "- [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})" >> $GITHUB_STEP_SUMMARY
-        if [ "${{ github.event_name }}" = "pull_request" ]; then
-          echo "- [プルリクエスト](https://github.com/${{ github.repository }}/pull/${{ github.event.number }})" >> $GITHUB_STEP_SUMMARY
+
+    - name: Determine deploy eligibility
+      id: eligible
+      if: steps.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch'
+      run: |
+        if [ -n "${FTP_SERVER}" ] && [ -n "${FTP_SERVER_DIR}" ]; then
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "enabled=false" >> "$GITHUB_OUTPUT"
+          echo "**テーマ FTP:** スキップ（\`FTP_SERVER\` または \`FTP_SERVER_DIR\` が未登録）" >> "$GITHUB_STEP_SUMMARY"
         fi
 
-    # 本番(main)テーマデプロイは一時的な FTP 接続タイムアウト（Timeout (control socket)）を吸収するため、
-    # continue-on-error で1回だけ自動リトライする。2回目も失敗したら本当の失敗として赤くする（失敗通知もそのとき出る）。
+    # 一時的な FTP 接続タイムアウトを吸収するため、continue-on-error で1回だけ自動リトライする。
     - name: Deploy to Test Environment
       id: deploy_main
-      if: (steps.changes.outputs.deploy == 'true' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') || github.event_name == 'workflow_dispatch') && env.FTP_SERVER != ''
+      if: (steps.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch') && steps.eligible.outputs.enabled == 'true'
       continue-on-error: true
       uses: SamKirkland/FTP-Deploy-Action@v4.4.0
       with:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        # Deploy the entire theme directory (excluding dev-only files).
         local-dir: ./
-        # Example: /wp-content/themes/t2025-12-24vite-wp/
-        # Set this in repo secrets.
         server-dir: ${{ secrets.FTP_SERVER_DIR }}
         timeout: 120000
         exclude: ${{ env.FTP_EXCLUDE }}
@@ -176,21 +183,20 @@ jobs:
         timeout: 120000
         exclude: ${{ env.FTP_EXCLUDE }}
 
-    - name: Deploy to Test Environment (PR)
-      id: deploy_pr
-      if: steps.changes.outputs.deploy == 'true' && github.event_name == 'pull_request' && env.FTP_SERVER != ''
-      uses: SamKirkland/FTP-Deploy-Action@v4.4.0
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./
-        server-dir: ${{ secrets.FTP_SERVER_DIR }}
-        timeout: 120000
-        exclude: ${{ env.FTP_EXCLUDE }}
+    - name: Fail if deploy did not succeed
+      if: always() && steps.build_project.outcome == 'success' && steps.eligible.outputs.enabled == 'true'
+      run: |
+        if [ "${{ steps.deploy_main.outcome }}" = "success" ]; then
+          exit 0
+        fi
+        if [ "${{ steps.deploy_retry.outcome }}" = "success" ]; then
+          exit 0
+        fi
+        echo "テスト FTP が失敗しました"
+        exit 1
 
     - name: Send Discord Notification - Test Deploy
-      if: success() && (steps.changes.outputs.deploy == 'true' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') || github.event_name == 'workflow_dispatch') && env.FTP_SERVER != ''
+      if: success() && (steps.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch') && steps.eligible.outputs.enabled == 'true' && env.DISCORD_WEBHOOK != ''
       uses: Ilshidur/action-discord@master
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
@@ -209,30 +215,8 @@ jobs:
           • [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
 
-    - name: Send Discord Notification - PR Test Deploy
-      if: success() && steps.changes.outputs.deploy == 'true' && github.event_name == 'pull_request' && env.FTP_SERVER != ''
-      uses: Ilshidur/action-discord@master
-      env:
-        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-      with:
-        args: |
-          🔍 **PRテスト環境デプロイ完了**
-
-          **PR:** #${{ github.event.number }}
-          **ブランチ:** ${{ github.head_ref }}
-          **コミット:** ${{ github.sha }}
-          **作成者:** ${{ github.actor }}
-
-          **PRテストURL:** ${{ secrets.TEST_URL }}
-
-          **🔍 変更確認:**
-          • [PRテスト環境を開く](${{ secrets.TEST_URL }})
-          • [プルリクエスト](https://github.com/${{ github.repository }}/pull/${{ github.event.number }})
-          • [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-          • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-
     - name: Send Discord Notification - Build Failure
-      if: failure() && (steps.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch') && steps.build_project.outcome == 'failure'
+      if: failure() && (steps.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch') && steps.build_project.outcome == 'failure' && env.DISCORD_WEBHOOK != ''
       uses: Ilshidur/action-discord@master
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
@@ -250,7 +234,7 @@ jobs:
           • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
 
     - name: Send Discord Notification - Deploy Failure
-      if: failure() && (steps.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch') && env.FTP_SERVER != '' && steps.build_project.outcome != 'failure' && (steps.deploy_main.outcome == 'failure' || steps.deploy_retry.outcome == 'failure' || steps.deploy_pr.outcome == 'failure')
+      if: failure() && (steps.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch') && steps.eligible.outputs.enabled == 'true' && steps.build_project.outcome != 'failure' && (steps.deploy_main.outcome == 'failure' || steps.deploy_retry.outcome == 'failure') && env.DISCORD_WEBHOOK != ''
       uses: Ilshidur/action-discord@master
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
@@ -266,8 +250,6 @@ jobs:
           **🔍 詳細確認:**
           • [GitHub Actions ログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           • [コミット詳細](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-          ${{ github.event_name == 'pull_request' && format('• [プルリクエスト](https://github.com/{0}/pull/{1})', github.repository, github.event.number) || '' }}
 
           **🌐 環境URL:**
-          ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && format('• テスト環境: {0}', secrets.TEST_URL) || '' }}
-          ${{ github.event_name == 'pull_request' && format('• PRテスト環境: {0}', secrets.TEST_URL) || '' }}
+          • テスト環境: ${{ secrets.TEST_URL }}
