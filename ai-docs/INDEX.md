@@ -14,6 +14,7 @@
 | ファイル | 内容 |
 |---|---|
 | [`architecture.md`](architecture.md) | スタック固有の技術正本（導入・設計・開発・デプロイ・トラブル・WP 固有コーディング規約） |
+| [`git-branch-and-deploy.md`](git-branch-and-deploy.md) | develop／main 分離・本番 Environment・直書きガード |
 
 リポ固有の意思決定（ADR）が増えたら **`ai-docs/decisions/`** に置いてよい。**ADR の書き方・命名**はナレッジ [adr-workflow.md](/Users/yoshiaki/working/2026-04-23kn/wiki/adr-workflow.md)。WP テンプレの記録集約: [wp-template-decision-records.md](/Users/yoshiaki/working/2026-04-23kn/wiki/wp-template-decision-records.md)。
 
